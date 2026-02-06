@@ -19,6 +19,8 @@ Design Decisions:
  - Node positions are stored as this allows programs to be reloaded to the front end without having to decide where they will be placed on the page.
  - Data Sources are predefined so that the relivenet data sources can be requested as early as possible to improve execution time.
 
+ - This implementation doesn't allow for programs to be run at different rates. This could be done by having a relational database that stores what files should be run at what time interval. This still required for this database to be polled at some rate.
+
 
 List of all possible node types and descriptions:
  - ADD : output is the + operator applied to all inputs.
