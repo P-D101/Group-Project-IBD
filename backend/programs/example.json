@@ -3,29 +3,35 @@
     "Data Sources" : ["Cloud_Serves_1", "Cloud_Serves_2"],
     "Nodes" : [
         {
-            "Node Type" : "Input",
-            "Node Position" : [100, 100],
+            "Index": 0,
+            "Type" : "Input",
+            "Position" : [100, 100],
             "Input Channel" : "Usage",
             "Input Provider" : "Cloud_Serves_1"
         }, {
-            "Node Type" : "Input",
-            "Node Position" : [100, 200],
+            "Index": 1,
+            "Type" : "Input",
+            "Position" : [100, 200],
             "Input Channel" : "Usage",
             "Input Provider" : "Cloud_Serves_2"
         }, {
-            "Node Type" : "Greater Than",
-            "Node Position" : [200, 100]
+            "Index": 2,
+            "Type" : "Greater Than",
+            "Position" : [200, 100]
         }, {
-            "Node Type" : "Greater Than",
-            "Node Position" : [200, 200]
+            "Index": 3,
+            "Type" : "Greater Than",
+            "Position" : [200, 200]
         }, {
-            "Node Type" : "Ticket",
-            "Node Position" : [300, 100],
+            "Index": 4,
+            "Type" : "Ticket",
+            "Position" : [300, 100],
             "Receiver" : "example.email@calero.com",
             "Description" : "example 1"
         }, {
-            "Node Type" : "Ticket",
-            "Node Position" : [300, 200],
+            "Index": 5,
+            "Type" : "Ticket",
+            "Position" : [300, 200],
             "Receiver" : "example.email@calero.com",
             "Description" : "example 2"
         }

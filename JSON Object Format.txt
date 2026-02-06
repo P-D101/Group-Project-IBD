@@ -5,12 +5,13 @@ This is the file to define what the structure of the JSON version of the VPL pro
     "Data Sources" : [ \\ List of all the data sources that the policy will act of],
     "Nodes" : [ \\ List of all the nodes in the program
         {
-            "Node Type" : \\ Type of the node (eg ADD),
-            "Node Position" : \\ Rendered position of the node in the VLP [x, y]
+            "Index" : \\ Pick a node index. All nodes must have a unique index
+            "Type" : \\ Type of the node (eg ADD),
+            "Position" : \\ Rendered position of the node in the VLP [x, y]
             \\ More options are possible depending on the node type
         }
     ],
-    "Connections" : [ \\ List of all the connections between nodes in the program pairs from input node to output. The order matters as in the case that the inputs of the block are not commutative then the inputs are in the same order as this list
+    "Connections" : [ \\ List of all the connections between nodes in the program pairs from input node to output. The order matters as in the case that the inputs of the block are not commutative then the inputs are in the same order as this list. Connections must form an acyclic graph.
         [0, 1]
     ]
 }

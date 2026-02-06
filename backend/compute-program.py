@@ -1,49 +1,32 @@
-def compute_program(JSON_program):
-    pass
+import json
+import os
 
-example_program = """
-{
-    "Policy Name" : "Example",
-    "Data Sources" : ["Cloud_Serves_1", "Cloud_Serves_2"],
-    "Nodes" : [
-        {
-            "Node Type" : "Input",
-            "Node Position" : [100, 100],
-            "Input Channel" : "Usage",
-            "Input Provider" : "Cloud_Serves_1"
-        }, {
-            "Node Type" : "Input",
-            "Node Position" : [100, 200],
-            "Input Channel" : "Usage",
-            "Input Provider" : "Cloud_Serves_2"
-        }, {
-            "Node Type" : "Greater Than",
-            "Node Position" : [200, 100]
-        }, {
-            "Node Type" : "Greater Than",
-            "Node Position" : [200, 200]
-        }, {
-            "Node Type" : "Ticket",
-            "Node Position" : [300, 100],
-            "Receiver" : "example.email@calero.com",
-            "Description" : "example 1"
-        }, {
-            "Node Type" : "Ticket",
-            "Node Position" : [300, 200],
-            "Receiver" : "example.email@calero.com",
-            "Description" : "example 2"
-        }
-    ],
-    "Connections" : [
-        [0, 2],
-        [1, 2],
-        [1, 3],
-        [0, 3],
-        [2, 4],
-        [3, 5]
-    ]
-}
-"""
+def get_data(channel_name):
+    if channel_name == "Cloud_Serves_1:Usage":
+        return Cloud_Serves_1_Usage
+    if channel_name == "Cloud_Serves_2:Usage":
+        return Cloud_Serves_2_Usage
+
+def DAG_sort(connections, start_nodes):
+    sorted_order = []
+    nodes = start_nodes.copy()
+    while len(nodes) > 0:
+        node = nodes.pop()
+        sorted_order.append(node)
+        for out_edge in connections[:]:
+            if out_edge[0] == node:
+                connections.remove(out_edge)
+                check = False
+                for in_edge in connections:
+                    if out_edge[1] == in_edge[1]:
+                        check = True
+                if not check:
+                    nodes.append(out_edge[1])
+    
+    return sorted_order
+
+def compute_program(JSON_program):
+    DAG_sort(JSON_program.connections)
 
 Cloud_Serves_1_Usage = 0.5
 Cloud_Serves_2_Usage = 0.1
@@ -51,4 +34,19 @@ Cloud_Serves_2_Usage = 0.1
 if __name__ == '__main__':
     # Test Execution
 
-    compute_program(example_program)
+
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    
+    with open(dir_path + '/programs/example.json', 'r') as example_file:
+        example_program = json.load(example_file)
+
+    start_nodes = []
+    
+    for node in example_program["Nodes"]:
+        if node["Type"] == "Input":
+            start_nodes.append(node["Index"])
+
+    print(DAG_sort(example_program["Connections"], start_nodes))
+
+
+    #compute_program(example_program)
