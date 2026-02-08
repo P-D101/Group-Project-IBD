@@ -63,6 +63,14 @@ class INPUT(Node):
     def compute(self, args):
         return get_data(f'{self.provider}:{self.channel}')
     
+class OUTPUT(Node):
+    def __init__(self):
+        super().__init__()
+
+    def compute(self, args):
+        print(args)
+        return 0
+    
 def assign_node(type, node):
     
     if type == "Add":
@@ -77,3 +85,5 @@ def assign_node(type, node):
         return TICKET(node)
     if type == "Input":
         return INPUT(node)
+    if type == "Output":
+        return OUTPUT()

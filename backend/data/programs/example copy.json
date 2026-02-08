@@ -1,0 +1,32 @@
+{
+    "Policy Name" : "example copy",
+    "Data Sources" : ["Cloud_Serves_1", "Cloud_Serves_2"],
+    "Nodes" : [
+        {
+            "Index": 5,
+            "Type" : "Input",
+            "Position" : [100, 100],
+            "Input Channel" : "Usage",
+            "Input Provider" : "Cloud_Serves_1"
+        }, {
+            "Index": 10,
+            "Type" : "Input",
+            "Position" : [100, 200],
+            "Input Channel" : "Usage",
+            "Input Provider" : "Cloud_Serves_2"
+        }, {
+            "Index": 2,
+            "Type" : "Add",
+            "Position" : [200, 100]
+        }, {
+            "Index": 4,
+            "Type" : "Output",
+            "Position" : [300, 100]
+        }
+    ],
+    "Connections" : [
+        [5, 2],
+        [10, 2],
+        [2, 4]
+    ]
+}

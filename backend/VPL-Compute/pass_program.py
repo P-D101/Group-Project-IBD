@@ -8,7 +8,13 @@ def convert_program(json_program):
     program_graph = Graph(json_program["Connections"])
     index_mapping = {}
 
-    sorted_order = program_graph.DAG_sort([0,1])
+    start_nodes = []
+
+    for node in json_program["Nodes"]:
+        if node["Type"] == "Input":
+            start_nodes.append(node["Index"])
+
+    sorted_order = program_graph.DAG_sort(start_nodes)
     for i, j in enumerate(sorted_order):
         index_mapping[j] = i
 

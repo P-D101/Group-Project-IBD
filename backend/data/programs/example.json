@@ -1,5 +1,5 @@
 {
-    "Policy Name" : "Example",
+    "Policy Name" : "example",
     "Data Sources" : ["Cloud_Serves_1", "Cloud_Serves_2"],
     "Nodes" : [
         {
