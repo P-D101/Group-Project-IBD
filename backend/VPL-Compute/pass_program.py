@@ -26,8 +26,13 @@ def convert_program(json_program):
 
 
     for node in json_program["Nodes"]:
-        output_program["nodes"][index_mapping[node["Index"]]] = assign_node(node["Type"], node)
-        try:
+        try: 
+# There is an error case for a node that is not connected to the graph as this would no be in the index table and hence error would throw. 
+# We don't want to add this node to the outputs so just passing works.
+# Another error case is for input nodes, these nodes are not in the in_set so an error would throw.
+# We want to leave the inputs in this case as an empty list so just passing works.
+
+            output_program["nodes"][index_mapping[node["Index"]]] = assign_node(node["Type"], node)
             output_program["inputs"][index_mapping[node["Index"]]] = [index_mapping[i] for i in program_graph.in_set[node["Index"]]]
         except:
             pass
