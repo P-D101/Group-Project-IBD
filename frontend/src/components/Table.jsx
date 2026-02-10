@@ -2,6 +2,7 @@ import THead from "./THead";
 import Row from "./Row";
 import TableTitle from "./TableTitle";
 import TableFooter from "./TableFooter";
+import TableBody from "./TableBody";
 
 function Table() {
     const headers = [
