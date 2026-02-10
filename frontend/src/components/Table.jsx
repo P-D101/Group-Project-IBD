@@ -1,5 +1,7 @@
 import THead from "./THead";
 import Row from "./Row";
+import TableTitle from "./TableTitle";
+import TableFooter from "./TableFooter";
 
 function Table() {
     const headers = [
@@ -53,28 +55,11 @@ function Table() {
             >
                 <div className="bg-indigo-100 h-1 w-full rounded-t-lg" />
 
-                <header className="px-4 py-3 border-b">
-                    <h2 className="text-lg font-semibold text-gray-800">
-                        Cloud Usage Data
-                    </h2>
-                    <p className="text-sm text-gray-500">
-                        Preview of cloud service usage across platform.
-                    </p>
-                </header>
+                <TableTitle />
 
-                <div className="flex-1 overflow-auto">
-                    <table className="min-w-full table-fixed divide-y divide-gray-200">
-                        <THead headers={headers} />
-                        <tbody className="bg-white divide-y divide-gray-100">
-                            {rows.map((r, i) => (
-                                <Row key={i} cells={r} highlight="light" />
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-                <div className="px-4 py-2 border-t text-sm text-gray-400">
-                    Showing {rows.length} rows
-                </div>
+                <TableBody headers={headers} rows={rows} />
+
+                <TableFooter>Showing {rows.length} rows</TableFooter>
             </div>
         </div>
     );
