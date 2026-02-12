@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import "./PolicyCreator.css";
 
 function PolicyCreator() {
     const [blocksPanelExpanded, setBlocksPanelExpanded] = useState(false);
@@ -10,12 +11,49 @@ function PolicyCreator() {
         {
             id: "t-scale",
             title: "Scale when low usage",
-            description: "Create ticket to scale down instances when usage < 20%",
+            description:
+                "Create ticket to scale down instances when usage < 20%",
             vplBlocks: [
-                { id: "b-usage", type: "input", label: "Usage %", ticket: { recipient: "ops@example.com", action: "read usage", description: "Read current usage %" } },
-                { id: "b-const", type: "const", label: "20", ticket: { recipient: "ops@example.com", action: "const value", description: "Threshold value" } },
-                { id: "b-compare", type: "decider", label: "<", ticket: { recipient: "ops@example.com", action: "compare", description: "Compare usage with threshold" } },
-                { id: "b-ticket", type: "output", label: "Create Ticket", ticket: { recipient: "ops@example.com", action: "Scale down instances", description: "Scale down due to low usage" } },
+                {
+                    id: "b-usage",
+                    type: "input",
+                    label: "Usage %",
+                    ticket: {
+                        recipient: "ops@example.com",
+                        action: "read usage",
+                        description: "Read current usage %",
+                    },
+                },
+                {
+                    id: "b-const",
+                    type: "const",
+                    label: "20",
+                    ticket: {
+                        recipient: "ops@example.com",
+                        action: "const value",
+                        description: "Threshold value",
+                    },
+                },
+                {
+                    id: "b-compare",
+                    type: "decider",
+                    label: "<",
+                    ticket: {
+                        recipient: "ops@example.com",
+                        action: "compare",
+                        description: "Compare usage with threshold",
+                    },
+                },
+                {
+                    id: "b-ticket",
+                    type: "output",
+                    label: "Create Ticket",
+                    ticket: {
+                        recipient: "ops@example.com",
+                        action: "Scale down instances",
+                        description: "Scale down due to low usage",
+                    },
+                },
             ],
         },
         {
@@ -23,10 +61,46 @@ function PolicyCreator() {
             title: "Notify on high cost",
             description: "Notify when daily cost > $200",
             vplBlocks: [
-                { id: "b-cost", type: "input", label: "Daily Cost", ticket: { recipient: "finance@example.com", action: "read cost", description: "Read daily cost" } },
-                { id: "b-cconst", type: "const", label: "200", ticket: { recipient: "finance@example.com", action: "const value", description: "Cost threshold" } },
-                { id: "b-ccompare", type: "decider", label: ">", ticket: { recipient: "finance@example.com", action: "compare", description: "Compare cost with threshold" } },
-                { id: "b-cticket", type: "output", label: "Notify Team", ticket: { recipient: "finance@example.com", action: "Notify on high cost", description: "Send notification to finance team" } },
+                {
+                    id: "b-cost",
+                    type: "input",
+                    label: "Daily Cost",
+                    ticket: {
+                        recipient: "finance@example.com",
+                        action: "read cost",
+                        description: "Read daily cost",
+                    },
+                },
+                {
+                    id: "b-cconst",
+                    type: "const",
+                    label: "200",
+                    ticket: {
+                        recipient: "finance@example.com",
+                        action: "const value",
+                        description: "Cost threshold",
+                    },
+                },
+                {
+                    id: "b-ccompare",
+                    type: "decider",
+                    label: ">",
+                    ticket: {
+                        recipient: "finance@example.com",
+                        action: "compare",
+                        description: "Compare cost with threshold",
+                    },
+                },
+                {
+                    id: "b-cticket",
+                    type: "output",
+                    label: "Notify Team",
+                    ticket: {
+                        recipient: "finance@example.com",
+                        action: "Notify on high cost",
+                        description: "Send notification to finance team",
+                    },
+                },
             ],
         },
     ];
@@ -54,7 +128,9 @@ function PolicyCreator() {
             if (entry) {
                 const t = templates.find((x) => x.id === entry.templateId);
                 setSelectedTemplate(t || templates[0]);
-                const block = (t || templates[0]).vplBlocks.find((b) => b.id === entry.blockId);
+                const block = (t || templates[0]).vplBlocks.find(
+                    (b) => b.id === entry.blockId,
+                );
                 setSelectedBlock(block || null);
             }
         }
@@ -96,7 +172,9 @@ function PolicyCreator() {
                                 }}
                             >
                                 <div className="template-title">{t.title}</div>
-                                <div className="template-desc">{t.description}</div>
+                                <div className="template-desc">
+                                    {t.description}
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -105,27 +183,28 @@ function PolicyCreator() {
                 {/* Center Canvas Area */}
                 <main className="flowchart-canvas">
                     <div className="vpl-canvas">
-                        {selectedTemplate && selectedTemplate.vplBlocks.map((b, i) => (
-                            <div
-                                key={b.id}
-                                className={`vpl-node ${selectedBlock && selectedBlock.id === b.id ? "active" : ""}`}
-                                style={{ left: 60 + i * 160 }}
-                                onClick={() => setSelectedBlock(b)}
-                            >
-                                <div className="node-top">{b.type}</div>
-                                <div className="node-label">{b.label}</div>
-                                <button
-                                    className="node-plus"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        // open ticket editor for this block
-                                        setSelectedBlock(b);
-                                    }}
+                        {selectedTemplate &&
+                            selectedTemplate.vplBlocks.map((b, i) => (
+                                <div
+                                    key={b.id}
+                                    className={`vpl-node ${selectedBlock && selectedBlock.id === b.id ? "active" : ""}`}
+                                    style={{ left: 60 + i * 160 }}
+                                    onClick={() => setSelectedBlock(b)}
                                 >
-                                    +
-                                </button>
-                            </div>
-                        ))}
+                                    <div className="node-top">{b.type}</div>
+                                    <div className="node-label">{b.label}</div>
+                                    <button
+                                        className="node-plus"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            // open ticket editor for this block
+                                            setSelectedBlock(b);
+                                        }}
+                                    >
+                                        +
+                                    </button>
+                                </div>
+                            ))}
                     </div>
                 </main>
 
@@ -141,10 +220,20 @@ function PolicyCreator() {
                             <input
                                 type="text"
                                 placeholder="Recipient"
-                                value={selectedBlock ? selectedBlock.ticket.recipient : ""}
+                                value={
+                                    selectedBlock
+                                        ? selectedBlock.ticket.recipient
+                                        : ""
+                                }
                                 onChange={(e) => {
                                     if (!selectedBlock) return;
-                                    setSelectedBlock({ ...selectedBlock, ticket: { ...selectedBlock.ticket, recipient: e.target.value } });
+                                    setSelectedBlock({
+                                        ...selectedBlock,
+                                        ticket: {
+                                            ...selectedBlock.ticket,
+                                            recipient: e.target.value,
+                                        },
+                                    });
                                 }}
                             />
                         </label>
@@ -154,10 +243,20 @@ function PolicyCreator() {
                             <input
                                 type="text"
                                 placeholder="Action"
-                                value={selectedBlock ? selectedBlock.ticket.action : ""}
+                                value={
+                                    selectedBlock
+                                        ? selectedBlock.ticket.action
+                                        : ""
+                                }
                                 onChange={(e) => {
                                     if (!selectedBlock) return;
-                                    setSelectedBlock({ ...selectedBlock, ticket: { ...selectedBlock.ticket, action: e.target.value } });
+                                    setSelectedBlock({
+                                        ...selectedBlock,
+                                        ticket: {
+                                            ...selectedBlock.ticket,
+                                            action: e.target.value,
+                                        },
+                                    });
                                 }}
                             />
                         </label>
@@ -166,16 +265,31 @@ function PolicyCreator() {
                             Description
                             <textarea
                                 placeholder="Describe the ticket..."
-                                value={selectedBlock ? selectedBlock.ticket.description : ""}
+                                value={
+                                    selectedBlock
+                                        ? selectedBlock.ticket.description
+                                        : ""
+                                }
                                 onChange={(e) => {
                                     if (!selectedBlock) return;
-                                    setSelectedBlock({ ...selectedBlock, ticket: { ...selectedBlock.ticket, description: e.target.value } });
+                                    setSelectedBlock({
+                                        ...selectedBlock,
+                                        ticket: {
+                                            ...selectedBlock.ticket,
+                                            description: e.target.value,
+                                        },
+                                    });
                                 }}
                             />
                         </label>
 
                         <div className="ticket-actions">
-                            <button className="save-btn" onClick={() => alert('Ticket saved (mock)')}>Save</button>
+                            <button
+                                className="save-btn"
+                                onClick={() => alert("Ticket saved (mock)")}
+                            >
+                                Save
+                            </button>
                         </div>
                     </div>
                 </aside>
