@@ -26,6 +26,7 @@ dist-ssr
 # backend
 .venv/
 backend/__pycache__/
+backend/venv/
 backend/VPL-Compute/__pycache__/
 
 # database
