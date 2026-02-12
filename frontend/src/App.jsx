@@ -2,6 +2,7 @@ import Table from "./components/Table";
 import { Route, Routes } from "react-router-dom";
 import AIdashboard from "./pages/AIdashboard";
 import PolicyCreator from "./pages/PolicyCreator";
+import ServiceViewer from "./pages/ServiceViewer";
 
 function App() {
     return (
@@ -13,6 +14,7 @@ function App() {
             <Route index element={<Table />} />
             <Route path="/ai-dashboard" element={<AIdashboard />} />
             <Route path="/policy-editor" element={<PolicyCreator />} />
+            <Route path="/service-viewer" element={<ServiceViewer />} />
         </Routes>
     );
 }
