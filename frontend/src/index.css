@@ -78,6 +78,21 @@ body{
 	border-radius: var(--radius);
 	box-shadow: var(--shadow-sm);
 }
+
+/* Make segments look and behave like interactive cards */
+.data-segments .segment{
+    cursor: pointer;
+    text-align: center;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.data-segments .segment:hover{
+    transform: translateY(-6px);
+    box-shadow: 0 10px 24px rgba(11,37,84,0.08);
+}
+.data-segments .segment:focus{
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
+}
 .servers-table { background: var(--card-bg); padding: 16px; border-radius: 12px; border: 1px solid #eef6ff; box-shadow: var(--shadow-sm); }
 .simple-table { width: 100%; border-collapse: collapse; }
 .simple-table th, .simple-table td { padding: 12px 10px; border-bottom: 1px solid #f1f5fb; text-align:left; }

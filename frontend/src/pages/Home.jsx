@@ -26,9 +26,9 @@ function Home() {
             </div>
 
             <div className="data-segments">
-                <div className="segment">Data segment 1</div>
-                <div className="segment">Data segment 2</div>
-                <div className="segment">Data segment 3</div>
+                <button type="button" className="segment" onClick={() => navigate('/ai-dashboard')}>AI Insight 1</button>
+                <button type="button" className="segment" onClick={() => navigate('/ai-dashboard')}>AI Insight 2</button>
+                <button type="button" className="segment" onClick={() => navigate('/ai-dashboard')}>AI Insight 3</button>
             </div>
 
             <div className="servers-table">
