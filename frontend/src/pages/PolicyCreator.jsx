@@ -1,10 +1,5 @@
-<<<<<<< HEAD
-import { useState } from "react";
-=======
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import "./PolicyCreator.css";
->>>>>>> a85fcc6 (feat(ui): add navigation, pages, VPL prototype, and theme updates)
 
 function PolicyCreator() {
     const [blocksPanelExpanded, setBlocksPanelExpanded] = useState(false);
@@ -90,18 +85,6 @@ function PolicyCreator() {
                             className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
                         />
                     </div>
-<<<<<<< HEAD
-                    <div className="flex-1 p-2 flex flex-col gap-1.5 overflow-y-auto">
-                        <div className="px-3 py-3 bg-gray-50 border border-gray-200 rounded text-sm text-gray-900 cursor-pointer hover:bg-emerald-50 hover:border-emerald-400 transition-all">
-                            Template 1
-                        </div>
-                        <div className="px-3 py-3 bg-gray-50 border border-gray-200 rounded text-sm text-gray-900 cursor-pointer hover:bg-emerald-50 hover:border-emerald-400 transition-all">
-                            Template 2
-                        </div>
-                        <div className="px-3 py-3 bg-gray-50 border border-gray-200 rounded text-sm text-gray-900 cursor-pointer hover:bg-emerald-50 hover:border-emerald-400 transition-all">
-                            Template 5
-                        </div>
-=======
                     <div className="template-list">
                         {templates.map((t) => (
                             <div
@@ -116,16 +99,10 @@ function PolicyCreator() {
                                 <div className="template-desc">{t.description}</div>
                             </div>
                         ))}
->>>>>>> a85fcc6 (feat(ui): add navigation, pages, VPL prototype, and theme updates)
                     </div>
                 </aside>
 
                 {/* Center Canvas Area */}
-<<<<<<< HEAD
-                <main className="flex-1 bg-white border border-gray-200 rounded shadow-sm flex items-center justify-center overflow-hidden">
-                    <div className="flex items-center justify-center w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 text-gray-400 text-lg">
-                        <p>Flowchart Editor Canvas</p>
-=======
                 <main className="flowchart-canvas">
                     <div className="vpl-canvas">
                         {selectedTemplate && selectedTemplate.vplBlocks.map((b, i) => (
@@ -149,7 +126,6 @@ function PolicyCreator() {
                                 </button>
                             </div>
                         ))}
->>>>>>> a85fcc6 (feat(ui): add navigation, pages, VPL prototype, and theme updates)
                     </div>
                 </main>
 
