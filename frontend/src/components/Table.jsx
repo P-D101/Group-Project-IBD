@@ -46,7 +46,7 @@ function Table() {
         ],
     ];
 
-    const outerBg = "bg-gray-100";
+    const outerBg = "bg-white";
     const containerBg = "bg-white border-gray-200";
 
     return (
