@@ -1,6 +1,6 @@
-import React, { use, useEffect } from "react";
+import { useEffect } from "react";
 import { useState } from "react";
-import { Line } from "react-chartjs-2";
+// import { Line } from "react-chartjs-2";
 import { Chart } from "chart.js/auto";
 import "chartjs-adapter-date-fns";
 import Table from "../components/Table";
@@ -15,7 +15,7 @@ const tickets = [
     "ticket 6 description",
 ];
 
-const TicketCard = ({}) => {
+const TicketCard = () => {
     return (
         <div style={styles.item}>
             {" "}
@@ -228,20 +228,6 @@ const styles = {
         border: "1px solid #ffffff",
         backgroundColor: "#e1e7fa",
     },
-};
-
-const tickets = ["bg-red-200", "bg-green-200", "bg-blue-200"];
-
-const TicketCard = () => {
-    return (
-        <div style={styles.item}>
-            {" "}
-            <h3>Ticket Title</h3> <p>Short description of the ticket...</p>{" "}
-        </div>
-    );
-};
-
-const styles = {
     navRow: {
         display: "flex",
         gap: "10px",

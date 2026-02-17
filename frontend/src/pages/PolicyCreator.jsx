@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import "./PolicyCreator.css";
 
 function PolicyCreator() {
     const [blocksPanelExpanded, setBlocksPanelExpanded] = useState(false);
