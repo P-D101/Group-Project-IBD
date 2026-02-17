@@ -4,7 +4,9 @@ import { useState } from "react";
 import { Chart } from "chart.js/auto";
 import "chartjs-adapter-date-fns";
 import Table from "../components/Table";
+import BaseLayout from "../components/BaseLayout";
 import { useNavigate } from "react-router-dom";
+
 
 const tickets = [
     "example ticket 1 policy text",
@@ -108,16 +110,23 @@ function AIdashboard() {
         }
     }, []);
     return (
+
         <div className="bg-[#e8ebed]">
-            {/* Main Container */}
-            <header className="items-left px-6 py-4 bg-[#191d29] border-b">
-                <header className="text-xl font-bold text-white">
-                    Calero Cloud Server Management
-                </header>
-            </header>
+
+            <BaseLayout></BaseLayout>
+            
+            <ol class="flex items-center whitespace-nowrap ">
+            <li class="pl-6 pt-4 inline-flex items-center">
+                <a  class="flex items-center text-sm text-muted-foreground-1 hover:text-primary-focus focus:outline-hidden focus:text-primary-focus" href = "../ai-dashboard">
+                Home
+                </a>
+                <svg class="shrink-0 mx-2 size-4 text-muted-foreground"  width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </li>
+  
+            </ol>
 
             <div style={styles.pageContainer} className="p-6">
-                <h3 className="text-lg font-semibold pt-4">Welcome User</h3>
+                <h3 className="text-lg font-semibold">Welcome User</h3>
 
                 {/* Navigation Tabs */}
                 <div style={styles.navRow} className="">
