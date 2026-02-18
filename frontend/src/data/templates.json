@@ -12,7 +12,8 @@
                     "recipient": "ops@example.com",
                     "action": "read usage",
                     "description": "Read current usage %"
-                }
+                },
+                "value": "0"
             },
             {
                 "id": "b-const",
