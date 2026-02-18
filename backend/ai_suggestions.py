@@ -1,9 +1,9 @@
+import sys
+import subprocess
 import pandas as pd
 from database import get_db
-from sklearn.preprocessing import OneHotEncoder as ohe
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 from sklearn.ensemble import IsolationForest
 from google import genai
 from pydantic import BaseModel, Field
@@ -29,7 +29,7 @@ data['anomaly_score'] = forest_model.decision_function(features) #checks how ano
 data['anomaly'] = forest_model.predict(features) #classify as anomlay or not
 '''
 
-data = get_db().execute("SELECT * FROM hundred_k") ##test code
+#data = get_db().execute("SELECT * FROM hundred_k") ##test code
 
 ##llm - works as expected but not tested on database data 
 client = genai.Client(api_key="")
