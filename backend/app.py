@@ -179,6 +179,36 @@ def top_services(provider,timestep):
     # return json object
     return pivot_df.to_json()
 
+
+############################################
+#                VPL Policy API            #
+############################################
+
+import os
+import uuid
+import json
+
+@app.route("/api/policies", methods=["POST"])
+def save_policy():
+    """
+    Receives a VPL policy JSON and stores it as a file in backend/data/programs/.
+    """
+    policy = request.get_json()
+    if not policy or 'blocks' not in policy:
+        return {"error": "Invalid policy format"}, 400
+    # Generate a unique filename
+    policy_id = str(uuid.uuid4())
+    filename = f"policy_{policy_id}.json"
+    save_dir = os.path.join(os.path.dirname(__file__), "data", "programs")
+    os.makedirs(save_dir, exist_ok=True)
+    save_path = os.path.join(save_dir, filename)
+    try:
+        with open(save_path, "w") as f:
+            json.dump(policy, f, indent=2)
+    except Exception as e:
+        return {"error": f"Failed to save policy: {e}"}, 500
+    return {"message": "Policy saved", "policy_id": policy_id, "filename": filename}, 200
+
 ############################################
 #                VPL Routes                #
 ############################################

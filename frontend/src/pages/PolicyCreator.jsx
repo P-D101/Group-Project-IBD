@@ -100,6 +100,162 @@ const TEMPLATES = [
             },
         ],
     },
+    // New template: Notify on high usage
+    {
+        id: "t-notify-high-usage",
+        title: "Notify on high usage",
+        description: "Send notification when usage > 80%",
+        vplBlocks: [
+            {
+                id: "b-usage",
+                type: "input",
+                label: "Usage %",
+            },
+            {
+                id: "b-const80",
+                type: "const",
+                label: "80",
+            },
+            {
+                id: "b-compare",
+                type: "decider",
+                label: ">",
+            },
+            {
+                id: "b-notify",
+                type: "output",
+                label: "Send Notification",
+                ticket: {
+                    recipient: "ops@example.com",
+                    action: "Notify on high usage",
+                    description: "Send notification when usage exceeds 80%",
+                },
+            },
+        ],
+    },
+    // New template: Log event on custom metric
+    {
+        id: "t-log-custom-metric",
+        title: "Log event on custom metric",
+        description: "Log event when custom metric < 50",
+        vplBlocks: [
+            {
+                id: "b-custom",
+                type: "input",
+                label: "Custom Metric",
+            },
+            {
+                id: "b-const50",
+                type: "const",
+                label: "50",
+            },
+            {
+                id: "b-compare",
+                type: "decider",
+                label: "<",
+            },
+            {
+                id: "b-log",
+                type: "output",
+                label: "Log Event",
+                ticket: {
+                    recipient: "logs@example.com",
+                    action: "Log custom metric event",
+                    description: "Log event when custom metric is below 50",
+                },
+            },
+        ],
+    },
+    // New template: Auto-scale up when usage spikes and cost is reasonable
+    {
+        id: "t-auto-scale-up",
+        title: "Auto-scale up on spike",
+        description: "Scale up if usage > 90% and cost < 150",
+        vplBlocks: [
+            { id: "usage", type: "input", label: "Usage %" },
+            { id: "cost", type: "input", label: "Daily Cost" },
+            { id: "const90", type: "const", label: "90" },
+            { id: "const150", type: "const", label: "150" },
+            { id: "usage_gt", type: "decider", label: ">" },
+            { id: "cost_lt", type: "decider", label: "<" },
+            { id: "and1", type: "and" },
+            { id: "ticket", type: "output", label: "Create Ticket", ticket: {
+                recipient: "ops@example.com",
+                action: "Scale up",
+                description: "Scale up if usage > 90% and cost < 150"
+            }},
+        ],
+    },
+    // New template: Alert when custom metric exceeds threshold
+    {
+        id: "t-alert-custom-metric",
+        title: "Alert on custom metric",
+        description: "Send alert if custom metric > 75",
+        vplBlocks: [
+            { id: "custom", type: "input", label: "Custom Metric" },
+            { id: "const75", type: "const", label: "75" },
+            { id: "custom_gt", type: "decider", label: ">" },
+            { id: "notify", type: "output", label: "Send Notification", ticket: {
+                recipient: "alerts@example.com",
+                action: "Alert",
+                description: "Alert if custom metric > 75"
+            }},
+        ],
+    },
+    // New template: Log event when usage drops below minimum
+    {
+        id: "t-log-low-usage",
+        title: "Log low usage event",
+        description: "Log event if usage < 10%",
+        vplBlocks: [
+            { id: "usage", type: "input", label: "Usage %" },
+            { id: "const10", type: "const", label: "10" },
+            { id: "usage_lt", type: "decider", label: "<" },
+            { id: "log", type: "output", label: "Log Event", ticket: {
+                recipient: "logs@example.com",
+                action: "Log low usage",
+                description: "Log event if usage < 10%"
+            }},
+        ],
+    },
+    // New template: Notify team if cost increases rapidly (using subtract)
+    {
+        id: "t-notify-cost-increase",
+        title: "Notify on cost increase",
+        description: "Notify if today's cost - yesterday's cost > 100",
+        vplBlocks: [
+            { id: "cost_today", type: "input", label: "Daily Cost" },
+            { id: "cost_yesterday", type: "input", label: "Yesterday Cost" },
+            { id: "const100", type: "const", label: "100" },
+            { id: "subtract", type: "subtract" },
+            { id: "increase_gt", type: "decider", label: ">" },
+            { id: "notify", type: "output", label: "Send Notification", ticket: {
+                recipient: "finance@example.com",
+                action: "Notify cost increase",
+                description: "Notify if cost increases by more than 100"
+            }},
+        ],
+    },
+    // New template: Create ticket if usage AND custom metric both exceed thresholds
+    {
+        id: "t-ticket-usage-custom",
+        title: "Ticket if usage & custom metric high",
+        description: "Create ticket if usage > 80% AND custom metric > 60",
+        vplBlocks: [
+            { id: "usage", type: "input", label: "Usage %" },
+            { id: "custom", type: "input", label: "Custom Metric" },
+            { id: "const80", type: "const", label: "80" },
+            { id: "const60", type: "const", label: "60" },
+            { id: "usage_gt", type: "decider", label: ">" },
+            { id: "custom_gt", type: "decider", label: ">" },
+            { id: "and1", type: "and" },
+            { id: "ticket", type: "output", label: "Create Ticket", ticket: {
+                recipient: "ops@example.com",
+                action: "Ticket high usage & custom metric",
+                description: "Create ticket if usage > 80% AND custom metric > 60"
+            }},
+        ],
+    },
 ];
 
 function PolicyCreator() {
@@ -120,9 +276,32 @@ function PolicyCreator() {
         setSelectedBlock(updatedBlock);
     };
 
-    const handleSave = () => {
-        // TODO: Implement save logic
-        console.log("Saving policy...", { selectedTemplate, selectedBlock });
+    const handleSave = async () => {
+        if (!selectedTemplate) {
+            alert("No policy selected to save.");
+            return;
+        }
+        // Export policy as JSON using the new schema
+        // Import transformVplToSchema from vplToJson.js
+        try {
+            const { transformVplToSchema } = await import("../components/PolicyCreator/vplToJson");
+            const policyJson = transformVplToSchema(selectedTemplate);
+            // Send to backend
+            const response = await fetch("/api/policies", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(policyJson),
+            });
+            if (response.ok) {
+                alert("Policy saved and sent to backend!");
+            } else {
+                alert("Failed to save policy: " + (await response.text()));
+            }
+        } catch (err) {
+            alert("Error saving policy: " + err);
+        }
     };
 
     return (
