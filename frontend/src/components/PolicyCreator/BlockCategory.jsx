@@ -36,13 +36,23 @@ function BlockCategory({ title, blocks }) {
         e.target.style.backgroundColor = "#e8e8e8";
         e.target.style.borderColor = "#1a4d2e";
         e.target.style.boxShadow = "0 1px 3px rgba(26, 77, 46, 0.1)";
-        e.target.style.cursor = "grab";
     };
 
     const handleMouseLeave = (e) => {
         e.target.style.backgroundColor = "#f5f5f5";
         e.target.style.borderColor = "#d0d0d0";
         e.target.style.boxShadow = "none";
+    };
+
+    const handleDragStart = (e, block) => {
+        e.dataTransfer.effectAllowed = "copy";
+        e.dataTransfer.setData("application/vpl-block", block.type || "");
+        e.dataTransfer.setData("application/vpl-label", block.label);
+        e.target.style.cursor = "grabbing";
+    };
+
+    const handleDragEnd = (e) => {
+        e.target.style.cursor = "grab";
     };
 
     return (
@@ -56,6 +66,8 @@ function BlockCategory({ title, blocks }) {
                         onMouseEnter={handleMouseEnter}
                         onMouseLeave={handleMouseLeave}
                         draggable
+                        onDragStart={(e) => handleDragStart(e, block)}
+                        onDragEnd={handleDragEnd}
                     >
                         {block.label}
                     </div>
