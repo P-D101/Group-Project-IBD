@@ -113,19 +113,7 @@ function AIdashboard() {
 
         <div className="bg-[#e8ebed]">
 
-            <BaseLayout></BaseLayout>
-            
-            <ol class="flex items-center whitespace-nowrap ">
-            <li class="pl-6 pt-4 inline-flex items-center">
-                <a  class="flex items-center text-sm text-muted-foreground-1 hover:text-primary-focus focus:outline-hidden focus:text-primary-focus" href = "../ai-dashboard">
-                Home
-                </a>
-                <svg class="shrink-0 mx-2 size-4 text-muted-foreground"  width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-            </li>
-  
-            </ol>
-
-            <div style={styles.pageContainer} className="p-6">
+            <div style={styles.pageContainer} className="pb-6 pt-4 pl-6 pr-6">
                 <h3 className="text-lg font-semibold">Welcome User</h3>
 
                 {/* Navigation Tabs */}
@@ -149,7 +137,7 @@ function AIdashboard() {
                     style={styles.inputBox}
                     placeholder="Enter AI query here"
                 ></input>
-                {/* need to add python script for AI recommendations*/}
+                {/* need to add finish python script for AI recommendations - see ai_suggestions.py in backend*/}
 
                 {/*scrollable ticket suggestions with dummy tickets for now*/}
                 <h3 className="text-lg font-semibold pt-4">

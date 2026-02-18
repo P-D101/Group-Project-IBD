@@ -1,4 +1,8 @@
-        function BaseLayout() {
+import React from "react";  
+import { Outlet } from "react-router-dom";
+import Breadcrumbs from "./Breadcrumbs";
+
+function BaseLayout() {
     return (
 
         <div>
@@ -8,7 +12,12 @@
                     </header>
             </div>
 
-            </div>
+            <main className="flex-grow">
+                <Breadcrumbs/>
+                <Outlet />
+            </main>
+
+        </div>
 
         );
 }
