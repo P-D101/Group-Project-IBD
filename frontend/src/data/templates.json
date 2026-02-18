@@ -1,0 +1,97 @@
+[
+    {
+        "id": "t-scale",
+        "title": "Scale when low usage",
+        "description": "Create ticket to scale down instances when usage < 20%",
+        "vplBlocks": [
+            {
+                "id": "b-usage",
+                "type": "input",
+                "label": "Usage %",
+                "ticket": {
+                    "recipient": "ops@example.com",
+                    "action": "read usage",
+                    "description": "Read current usage %"
+                },
+                "value": "0"
+            },
+            {
+                "id": "b-const",
+                "type": "const",
+                "label": "20",
+                "ticket": {
+                    "recipient": "ops@example.com",
+                    "action": "const value",
+                    "description": "Threshold value"
+                }
+            },
+            {
+                "id": "b-compare",
+                "type": "decider",
+                "label": "<",
+                "ticket": {
+                    "recipient": "ops@example.com",
+                    "action": "compare",
+                    "description": "Compare usage with threshold"
+                }
+            },
+            {
+                "id": "b-ticket",
+                "type": "output",
+                "label": "Create Ticket",
+                "ticket": {
+                    "recipient": "ops@example.com",
+                    "action": "Scale down instances",
+                    "description": "Scale down due to low usage"
+                }
+            }
+        ]
+    },
+    {
+        "id": "t-cost",
+        "title": "Notify on high cost",
+        "description": "Notify when daily cost > $200",
+        "vplBlocks": [
+            {
+                "id": "b-cost",
+                "type": "input",
+                "label": "Daily Cost",
+                "ticket": {
+                    "recipient": "finance@example.com",
+                    "action": "read cost",
+                    "description": "Read daily cost"
+                }
+            },
+            {
+                "id": "b-cconst",
+                "type": "const",
+                "label": "200",
+                "ticket": {
+                    "recipient": "finance@example.com",
+                    "action": "const value",
+                    "description": "Cost threshold"
+                }
+            },
+            {
+                "id": "b-ccompare",
+                "type": "decider",
+                "label": ">",
+                "ticket": {
+                    "recipient": "finance@example.com",
+                    "action": "compare",
+                    "description": "Compare cost with threshold"
+                }
+            },
+            {
+                "id": "b-cticket",
+                "type": "output",
+                "label": "Notify Team",
+                "ticket": {
+                    "recipient": "finance@example.com",
+                    "action": "Notify on high cost",
+                    "description": "Send notification to finance team"
+                }
+            }
+        ]
+    }
+]

@@ -228,16 +228,6 @@ const styles = {
         border: "1px solid #ffffff",
         backgroundColor: "#e1e7fa",
     },
-    navRow: {
-        display: "flex",
-        gap: "10px",
-    },
-    inputBox: {
-        padding: "10px",
-        width: "100%",
-        borderRadius: "4px",
-        border: "1px solid #ccc",
-    },
 
     horizontalScroll: {
         display: "flex",
