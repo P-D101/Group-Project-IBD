@@ -5,37 +5,45 @@ function BlocksLibraryPanel() {
         {
             title: "Inputs",
             blocks: [
-                { id: "input-usage", label: "Usage %" },
-                { id: "input-cost", label: "Daily Cost" },
-                { id: "input-metric", label: "Custom Metric" },
+                { id: "input-usage", type: "input", label: "Usage %" },
+                { id: "input-cost", type: "input", label: "Daily Cost" },
+                { id: "input-metric", type: "input", label: "Custom Metric" },
             ],
         },
         {
             title: "Components",
             blocks: [
-                { id: "comp-const", label: "Constant" },
-                { id: "comp-add", label: "Add" },
-                { id: "comp-subtract", label: "Subtract" },
-                { id: "comp-multiply", label: "Multiply" },
-                { id: "comp-divide", label: "Divide" },
+                { id: "comp-const", type: "const", label: "Constant" },
+                { id: "comp-add", type: "process", label: "Add" },
+                { id: "comp-subtract", type: "process", label: "Subtract" },
+                { id: "comp-multiply", type: "process", label: "Multiply" },
+                { id: "comp-divide", type: "process", label: "Divide" },
             ],
         },
         {
             title: "Decisions",
             blocks: [
-                { id: "decider-lt", label: "Less Than (<)" },
-                { id: "decider-gt", label: "Greater Than (>)" },
-                { id: "decider-eq", label: "Equals (=)" },
-                { id: "decider-and", label: "AND" },
-                { id: "decider-or", label: "OR" },
+                { id: "decider-lt", type: "decider", label: "Less Than (<)" },
+                {
+                    id: "decider-gt",
+                    type: "decider",
+                    label: "Greater Than (>)",
+                },
+                { id: "decider-eq", type: "decider", label: "Equals (=)" },
+                { id: "decider-and", type: "decider", label: "AND" },
+                { id: "decider-or", type: "decider", label: "OR" },
             ],
         },
         {
             title: "Outputs",
             blocks: [
-                { id: "output-ticket", label: "Create Ticket" },
-                { id: "output-notify", label: "Send Notification" },
-                { id: "output-log", label: "Log Event" },
+                { id: "output-ticket", type: "output", label: "Create Ticket" },
+                {
+                    id: "output-notify",
+                    type: "output",
+                    label: "Send Notification",
+                },
+                { id: "output-log", type: "output", label: "Log Event" },
             ],
         },
     ];
