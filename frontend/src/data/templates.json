@@ -1,0 +1,367 @@
+[
+    {
+        "id": "t-scale",
+        "title": "Scale when low usage",
+        "description": "Create ticket to scale down instances when usage < 20%",
+        "vplBlocks": [
+            {
+                "id": "b-usage",
+                "type": "input",
+                "label": "Usage %",
+                "ticket": {
+                    "recipient": "ops@example.com",
+                    "action": "read usage",
+                    "description": "Read current usage %"
+                }
+            },
+            {
+                "id": "b-const",
+                "type": "const",
+                "label": "20",
+                "ticket": {
+                    "recipient": "ops@example.com",
+                    "action": "const value",
+                    "description": "Threshold value"
+                }
+            },
+            {
+                "id": "b-compare",
+                "type": "decider",
+                "label": "<",
+                "ticket": {
+                    "recipient": "ops@example.com",
+                    "action": "compare",
+                    "description": "Compare usage with threshold"
+                }
+            },
+            {
+                "id": "b-ticket",
+                "type": "output",
+                "label": "Create Ticket",
+                "ticket": {
+                    "recipient": "ops@example.com",
+                    "action": "Scale down instances",
+                    "description": "Scale down due to low usage"
+                }
+            }
+        ]
+    },
+    {
+        "id": "t-cost",
+        "title": "Notify on high cost",
+        "description": "Notify when daily cost > $200",
+        "vplBlocks": [
+            {
+                "id": "b-cost",
+                "type": "input",
+                "label": "Daily Cost",
+                "ticket": {
+                    "recipient": "finance@example.com",
+                    "action": "read cost",
+                    "description": "Read daily cost"
+                }
+            },
+            {
+                "id": "b-cconst",
+                "type": "const",
+                "label": "200",
+                "ticket": {
+                    "recipient": "finance@example.com",
+                    "action": "const value",
+                    "description": "Cost threshold"
+                }
+            },
+            {
+                "id": "b-ccompare",
+                "type": "decider",
+                "label": ">",
+                "ticket": {
+                    "recipient": "finance@example.com",
+                    "action": "compare",
+                    "description": "Compare cost with threshold"
+                }
+            },
+            {
+                "id": "b-cticket",
+                "type": "output",
+                "label": "Notify Team",
+                "ticket": {
+                    "recipient": "finance@example.com",
+                    "action": "Notify on high cost",
+                    "description": "Send notification to finance team"
+                }
+            }
+        ]
+    },
+    {
+        "id": "t-notify-high-usage",
+        "title": "Notify on high usage",
+        "description": "Send notification when usage > 80%",
+        "vplBlocks": [
+            {
+                "id": "b-usage",
+                "type": "input",
+                "label": "Usage %"
+            },
+            {
+                "id": "b-const80",
+                "type": "const",
+                "label": "80"
+            },
+            {
+                "id": "b-compare",
+                "type": "decider",
+                "label": ">"
+            },
+            {
+                "id": "b-notify",
+                "type": "output",
+                "label": "Send Notification",
+                "ticket": {
+                    "recipient": "ops@example.com",
+                    "action": "Notify on high usage",
+                    "description": "Send notification when usage exceeds 80%"
+                }
+            }
+        ]
+    },
+    {
+        "id": "t-log-custom-metric",
+        "title": "Log event on custom metric",
+        "description": "Log event when custom metric < 50",
+        "vplBlocks": [
+            {
+                "id": "b-custom",
+                "type": "input",
+                "label": "Custom Metric"
+            },
+            {
+                "id": "b-const50",
+                "type": "const",
+                "label": "50"
+            },
+            {
+                "id": "b-compare",
+                "type": "decider",
+                "label": "<"
+            },
+            {
+                "id": "b-log",
+                "type": "output",
+                "label": "Log Event",
+                "ticket": {
+                    "recipient": "logs@example.com",
+                    "action": "Log custom metric event",
+                    "description": "Log event when custom metric is below 50"
+                }
+            }
+        ]
+    },
+    {
+        "id": "t-auto-scale-up",
+        "title": "Auto-scale up on spike",
+        "description": "Scale up if usage > 90% and cost < 150",
+        "vplBlocks": [
+            {
+                "id": "usage",
+                "type": "input",
+                "label": "Usage %"
+            },
+            {
+                "id": "cost",
+                "type": "input",
+                "label": "Daily Cost"
+            },
+            {
+                "id": "const90",
+                "type": "const",
+                "label": "90"
+            },
+            {
+                "id": "const150",
+                "type": "const",
+                "label": "150"
+            },
+            {
+                "id": "usage_gt",
+                "type": "decider",
+                "label": ">"
+            },
+            {
+                "id": "cost_lt",
+                "type": "decider",
+                "label": "<"
+            },
+            {
+                "id": "and1",
+                "type": "and"
+            },
+            {
+                "id": "ticket",
+                "type": "output",
+                "label": "Create Ticket",
+                "ticket": {
+                    "recipient": "ops@example.com",
+                    "action": "Scale up",
+                    "description": "Scale up if usage > 90% and cost < 150"
+                }
+            }
+        ]
+    },
+    {
+        "id": "t-alert-custom-metric",
+        "title": "Alert on custom metric",
+        "description": "Send alert if custom metric > 75",
+        "vplBlocks": [
+            {
+                "id": "custom",
+                "type": "input",
+                "label": "Custom Metric"
+            },
+            {
+                "id": "const75",
+                "type": "const",
+                "label": "75"
+            },
+            {
+                "id": "custom_gt",
+                "type": "decider",
+                "label": ">"
+            },
+            {
+                "id": "notify",
+                "type": "output",
+                "label": "Send Notification",
+                "ticket": {
+                    "recipient": "alerts@example.com",
+                    "action": "Alert",
+                    "description": "Alert if custom metric > 75"
+                }
+            }
+        ]
+    },
+    {
+        "id": "t-log-low-usage",
+        "title": "Log low usage event",
+        "description": "Log event if usage < 10%",
+        "vplBlocks": [
+            {
+                "id": "usage",
+                "type": "input",
+                "label": "Usage %"
+            },
+            {
+                "id": "const10",
+                "type": "const",
+                "label": "10"
+            },
+            {
+                "id": "usage_lt",
+                "type": "decider",
+                "label": "<"
+            },
+            {
+                "id": "log",
+                "type": "output",
+                "label": "Log Event",
+                "ticket": {
+                    "recipient": "logs@example.com",
+                    "action": "Log low usage",
+                    "description": "Log event if usage < 10%"
+                }
+            }
+        ]
+    },
+    {
+        "id": "t-notify-cost-increase",
+        "title": "Notify on cost increase",
+        "description": "Notify if today's cost - yesterday's cost > 100",
+        "vplBlocks": [
+            {
+                "id": "cost_today",
+                "type": "input",
+                "label": "Daily Cost"
+            },
+            {
+                "id": "cost_yesterday",
+                "type": "input",
+                "label": "Yesterday Cost"
+            },
+            {
+                "id": "const100",
+                "type": "const",
+                "label": "100"
+            },
+            {
+                "id": "subtract",
+                "type": "subtract"
+            },
+            {
+                "id": "increase_gt",
+                "type": "decider",
+                "label": ">"
+            },
+            {
+                "id": "notify",
+                "type": "output",
+                "label": "Send Notification",
+                "ticket": {
+                    "recipient": "finance@example.com",
+                    "action": "Notify cost increase",
+                    "description": "Notify if cost increases by more than 100"
+                }
+            }
+        ]
+    },
+    {
+        "id": "t-ticket-usage-custom",
+        "title": "Ticket if usage & custom metric high",
+        "description": "Create ticket if usage > 80% AND custom metric > 60",
+        "vplBlocks": [
+            {
+                "id": "usage",
+                "type": "input",
+                "label": "Usage %"
+            },
+            {
+                "id": "custom",
+                "type": "input",
+                "label": "Custom Metric"
+            },
+            {
+                "id": "const80",
+                "type": "const",
+                "label": "80"
+            },
+            {
+                "id": "const60",
+                "type": "const",
+                "label": "60"
+            },
+            {
+                "id": "usage_gt",
+                "type": "decider",
+                "label": ">"
+            },
+            {
+                "id": "custom_gt",
+                "type": "decider",
+                "label": ">"
+            },
+            {
+                "id": "and1",
+                "type": "and"
+            },
+            {
+                "id": "ticket",
+                "type": "output",
+                "label": "Create Ticket",
+                "ticket": {
+                    "recipient": "ops@example.com",
+                    "action": "Ticket high usage & custom metric",
+                    "description": "Create ticket if usage > 80% AND custom metric > 60"
+                }
+            }
+        ]
+    }
+]
