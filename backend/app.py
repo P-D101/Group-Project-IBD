@@ -25,11 +25,12 @@ def index():
 
 ## OVERVIEW
 @app.route("/api/overview")
-def overview():
+def overview(): # TODO
     return "TODO"
 
-@app.route("/api/overview/<provider>")
-def overview_provider(provider):
+#
+@app.route("/api/overview/<provider>") 
+def overview_provider(provider): # TODO
     return "TODO"
 
 ## Data fields enumerations
@@ -61,7 +62,7 @@ def usage(timestep):
     GROUP BY {selected_usage_field}
     ORDER BY {selected_usage_field};
     """
-    
+    # TODO: pandas so it is formated nicely
     return database.query(query)
 
 @app.route('/api/usage/breakdown/<timestep>') # slower as not fully indexed
@@ -137,6 +138,8 @@ def grouped_usage(timestep):
     """
 
     print(query)
+
+    # TODO: pandas, add a top n query parameter so i can remove the route below
 
     return database.query(query)
 
@@ -228,3 +231,9 @@ def add_headers(response):
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
     return response
+
+
+
+
+
+

@@ -1,6 +1,7 @@
 from enum import Enum
 from datetime import datetime, time
 import database
+# TODO: cleanup into multiple different files and into its own folder - create folder structure
 ############
 # Internal #
 ############
@@ -52,7 +53,7 @@ class TIMESPAN(MyEnum):
             case TIMESPAN.DAILY: return [AGGREGATE_TABLE.DAILY.value,USAGE_TIME_FIELD.DAILY.value]
             case TIMESPAN.WEEKLY: return [AGGREGATE_TABLE.WEEKLY.value,USAGE_TIME_FIELD.WEEKLY.value]
             case TIMESPAN.MONTHLY: return [AGGREGATE_TABLE.MONTHLY.value,USAGE_TIME_FIELD.MONTHLY.value]
-
+# /api/usage/
 class SELECTS(MyEnum): 
     BILLED_COST = 'billed_cost'         # cost without deductions, credit or any other savings
     CREDIT = 'credit'                   # credit applied to the account shows up as negative cost
@@ -87,6 +88,7 @@ class GROUPBY(MyEnum):
             case GROUPBY.RESOURCE: return 'resource_id'
             case GROUPBY.APPLICATION: return 'application'
             case GROUPBY.BUSINESS_UNIT: return 'business_unit'
+
 
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 DATE_FORMAT = "%Y-%m-%d"
