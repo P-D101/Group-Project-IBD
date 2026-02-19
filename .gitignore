@@ -31,6 +31,7 @@ backend/VPL-Compute/__pycache__/
 backend/VPL-Compute/fuzzer.py
 backend/query_tester.ipynb
 backend/venv
+backend/data/programs/
 
 # database
 backend/data/CloudExpenses.db

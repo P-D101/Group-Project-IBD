@@ -3,6 +3,9 @@ import os
 from nodes import *
 from pass_program import convert_program
 
+class OutputError(Exception):
+    pass
+
 ###### A method to compute the output of programs
 def compute_program(program):
 
@@ -11,7 +14,19 @@ def compute_program(program):
 
 ###### Run though all the nodes in DAG order
     for node, inputs in zip(program["nodes"], program["inputs"]):
-        node_values.append(node.compute([node_values[i] for i in inputs]))
+        try:
+            for input in [node_values[i] for i in inputs]:
+                try:
+                    if input == 'Do Not Read Output':
+                        raise OutputError()
+                except OutputError as e:
+                    raise OutputError('Cannot read output of an input only block')
+                except Exception as e:
+                    pass
+            node_values.append(node.compute([node_values[i] for i in inputs]))
+        except Exception as e:
+            print('\033[91m' + f'Error with program "{program['name']}":', e, f'in node {node.__class__.__name__} with input {[node_values[i] for i in inputs]}' + '\033[0m')
+            break
 
 
 

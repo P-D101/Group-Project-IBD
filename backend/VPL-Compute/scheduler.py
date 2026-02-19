@@ -19,6 +19,8 @@ if __name__ == "__main__":
 
     while True:
 
+        print('\033[92m' + ' Start Execute '.center(110, '-') + '\033[0m')
+
         new_program_file_paths = glob(dir_path + "/data/new-programs/*.json")
         
         for file_path in new_program_file_paths:
@@ -46,6 +48,13 @@ if __name__ == "__main__":
             os.remove(dir_path + "/data/programs/" + file_name)
 
         for program in programs:
+            print()
+            print('\033[93m' + '\033[1m' + f'Program: {program['name']} '.ljust(110, '-') + '\033[0m')
+            print()
             compute_program(program)
+            print()
+
+        print('\033[96m' + ' End Execute '.center(110, '-') + '\033[0m')
+        print()
 
         time.sleep(10)

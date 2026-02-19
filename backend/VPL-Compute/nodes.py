@@ -1,13 +1,17 @@
 ###### Used for testing
+import numpy as np
 
-Cloud_Serves_1_Usage = 0.5
-Cloud_Serves_2_Usage = 0.1
+Cloud_Serves_1_Usage = np.array([0.5, 0.1, 0.1, 0.99])
+Cloud_Serves_2_Usage = np.array([0.1, 0.1, 0.3, 0.99])
+Cloud_Serves_3_Usage = np.array([0, 0.1, 0.7, 0.97])
 
 def get_data(channel_name):
     if channel_name == "Cloud_Serves_1:Usage":
         return Cloud_Serves_1_Usage
     if channel_name == "Cloud_Serves_2:Usage":
         return Cloud_Serves_2_Usage
+    if channel_name == "Cloud_Serves_3:Usage":
+        return Cloud_Serves_3_Usage
 
 ###### End section for testing
 
@@ -34,22 +38,31 @@ class GREATER_THAN(Node):
     def __init__(self):
         super().__init__()
 
-    def compute(self, args):
-        return args[0] > args[1]
+    def compute(self, args = [0]):
+        greaterthan = np.array([True for _ in range(len(args[0]))])
+        for i in range(len(args)-1):
+            greaterthan = np.logical_and(greaterthan, args[i+1] - args[i] < 0)
+        return greaterthan
 
 class LESS_THAN(Node):
     def __init__(self):
         super().__init__()
 
-    def compute(self, args):
-        return args[0] < args[1]
+    def compute(self, args = [0]):
+        lessthan = np.array([True for _ in range(len(args[0]))])
+        for i in range(len(args)-1):
+            lessthan = np.logical_and(lessthan, args[i+1] - args[i] > 0)
+        return lessthan
 
 class EQUALS(Node):
     def __init__(self):
         super().__init__()
 
-    def compute(self, args):
-        return args[0] == args[1]
+    def compute(self, args = [0]):
+        equal = np.array([True for _ in range(len(args[0]))])
+        for arg in args[1:]:
+            equal = np.logical_and(equal, arg - args[0] == 0)
+        return equal
 
 class TICKET(Node):
     def __init__(self, node_object):
@@ -58,10 +71,11 @@ class TICKET(Node):
         self.receiver = node_object["Receiver"]
 
     def compute(self, args):
-        if args[0]:
-            print(self.receiver)
-            print(self.description)
-        return 0
+        for val in args[0]:
+            if val:
+                print(self.receiver)
+                print(self.description)
+        return 'Do Not Read Output'
     
 class INPUT(Node):
     def __init__(self, node_object):
@@ -78,7 +92,7 @@ class OUTPUT(Node):
 
     def compute(self, args):
         print(args)
-        return 0
+        return 'Do Not Read Output'
     
 
 
@@ -101,3 +115,8 @@ def assign_node(type, node):
         return INPUT(node)
     if type == "Output":
         return OUTPUT()
+
+
+if __name__ == "__main__":
+    node = GREATER_THAN()
+    print(node.compute([Cloud_Serves_2_Usage, Cloud_Serves_3_Usage]))
