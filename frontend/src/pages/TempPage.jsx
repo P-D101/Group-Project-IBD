@@ -18,7 +18,7 @@ const TimeSeriesChartComponent = ({service}) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:5000/api/usage/hourly?provider=${service}`);
+        const response = await fetch(`http://127.0.0.1:5000/api/usage/daily?provider=${service}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
