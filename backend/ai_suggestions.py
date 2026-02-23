@@ -48,7 +48,9 @@ These suggestions should be actionable and/or formulae that can be implemented p
 The dataset contains the following columns: ResourceId, ResourceName, ResourceType, ServiceName, RegionName, EffectiveCost, ListUnitPrice, ConsumedQuantity, ConsumedUnit, ChargePeriodStart, CommitmentDiscountStatus, CommitmentDiscountId. 
 The dataset is in a tabular format and contains information about the resources used and their associated costs. 
 Provide insights on how to optimize costs based on this data.
+Identify anomolies in the data (cost drops, cost increases, high variance, large spikes) and also infer underutilised reservations
 Give your response in JSON format with fields: title, description, suggested_actions, reasoning and priority.
+These suggestion ticket policies can sugest actions such as reallocation of resources, deleting certain underutilised services
 """
 
 response = client.models.generate_content(

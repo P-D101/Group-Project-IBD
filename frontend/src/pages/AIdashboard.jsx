@@ -174,11 +174,11 @@ function AIdashboard() {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="bg-white p-4 rounded shadow-sm">
-                        <h3 className="">Stats Card</h3>
+                        <h3 className="">Improved Usage</h3>
                         <p>View key metrics and insights here.</p>
                     </div>
                     <div className="bg-white p-4 rounded shadow-sm">
-                        <h3 className="">Stats Card</h3>
+                        <h3 className="">Wasted Resources</h3>
                         <p>Track performance over time.</p>
                     </div>
                 </div>
