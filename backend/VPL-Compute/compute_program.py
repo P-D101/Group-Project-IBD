@@ -2,12 +2,13 @@ import json
 import os
 from nodes import *
 from pass_program import convert_program
+import time
 
 class OutputError(Exception):
     pass
 
 ###### A method to compute the output of programs
-def compute_program(program):
+def compute_program(program, t = time.time()):
 
 ###### The list of output values for each node
     node_values = []
@@ -23,7 +24,10 @@ def compute_program(program):
                     raise OutputError('Cannot read output of an input only block')
                 except Exception as e:
                     pass
-            node_values.append(node.compute([node_values[i] for i in inputs]))
+            if node.__class__.__name__ == 'INPUT':
+                node_values.append(node.compute([node_values[i] for i in inputs], t))
+            else:
+                node_values.append(node.compute([node_values[i] for i in inputs]))
         except Exception as e:
             print('\033[91m' + f'Error with program "{program['name']}":', e, f'in node {node.__class__.__name__} with input {[node_values[i] for i in inputs]}' + '\033[0m')
             break
