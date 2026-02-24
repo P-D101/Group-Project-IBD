@@ -5,45 +5,37 @@ function BlocksLibraryPanel() {
         {
             title: "Inputs",
             blocks: [
-                { id: "input-usage", type: "input", label: "Usage %" },
-                { id: "input-cost", type: "input", label: "Daily Cost" },
-                { id: "input-metric", type: "input", label: "Custom Metric" },
+                { type: "input", label: "Usage %" },
+                { type: "input", label: "Daily Cost" },
+                { type: "input", label: "Custom Metric" },
             ],
         },
         {
             title: "Components",
             blocks: [
-                { id: "comp-const", type: "const", label: "Constant" },
-                { id: "comp-add", type: "process", label: "Add" },
-                { id: "comp-subtract", type: "process", label: "Subtract" },
-                { id: "comp-multiply", type: "process", label: "Multiply" },
-                { id: "comp-divide", type: "process", label: "Divide" },
+                { type: "const", label: "Constant" },
+                { type: "add", label: "Add" },
+                { type: "subtract", label: "Subtract" },
+                { type: "multiply", label: "Multiply" },
+                { type: "divide", label: "Divide" },
             ],
         },
         {
             title: "Decisions",
             blocks: [
-                { id: "decider-lt", type: "decider", label: "Less Than (<)" },
-                {
-                    id: "decider-gt",
-                    type: "decider",
-                    label: "Greater Than (>)",
-                },
-                { id: "decider-eq", type: "decider", label: "Equals (=)" },
-                { id: "decider-and", type: "decider", label: "AND" },
-                { id: "decider-or", type: "decider", label: "OR" },
+                { type: "lt", label: "Less Than (<)" },
+                { type: "gt", label: "Greater Than (>)" },
+                { type: "eq", label: "Equals (=)" },
+                { type: "and", label: "AND" },
+                { type: "or", label: "OR" },
             ],
         },
         {
             title: "Outputs",
             blocks: [
-                { id: "output-ticket", type: "output", label: "Create Ticket" },
-                {
-                    id: "output-notify",
-                    type: "output",
-                    label: "Send Notification",
-                },
-                { id: "output-log", type: "output", label: "Log Event" },
+                { type: "output", label: "Create Ticket" },
+                { type: "output", label: "Send Notification" },
+                { type: "output", label: "Log Event" },
             ],
         },
     ];

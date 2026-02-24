@@ -44,8 +44,8 @@ function TemplateCard({ template, isSelected, onSelect }) {
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
-            <div style={titleStyle}>{template.title}</div>
-            <p style={descriptionStyle}>{template.description}</p>
+            <div style={titleStyle}>{template["Policy Name"]}</div>
+            <p style={descriptionStyle}>{template.Description}</p>
         </div>
     );
 }

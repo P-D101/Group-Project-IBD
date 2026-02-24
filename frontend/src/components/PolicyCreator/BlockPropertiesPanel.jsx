@@ -1,16 +1,4 @@
 function BlockPropertiesPanel({ block, onBlockUpdate }) {
-    const handleChange = (field, value) => {
-        if (!block) return;
-        const updatedBlock = {
-            ...block,
-            ticket: {
-                ...block.ticket,
-                [field]: value,
-            },
-        };
-        onBlockUpdate(updatedBlock);
-    };
-
     const panelStyle = {
         width: "320px",
         backgroundColor: "#ffffff",
@@ -77,6 +65,13 @@ function BlockPropertiesPanel({ block, onBlockUpdate }) {
         fontFamily: "inherit",
     };
 
+    const readOnlyInputStyle = {
+        ...inputStyle,
+        backgroundColor: "#f3f3f3",
+        color: "#777777",
+        cursor: "not-allowed",
+    };
+
     const emptyStateStyle = {
         display: "flex",
         justifyContent: "center",
@@ -125,6 +120,18 @@ function BlockPropertiesPanel({ block, onBlockUpdate }) {
         e.target.style.backgroundColor = "#1a4d2e";
     };
 
+    const handleDescriptionChange = (value) => {
+        if (!block) return;
+        const updatedBlock = {
+            ...block,
+            ticket: {
+                ...(block.ticket || {}),
+            },
+            description: value,
+        };
+        onBlockUpdate(updatedBlock);
+    };
+
     if (!block) {
         return (
             <div style={panelStyle}>
@@ -138,47 +145,41 @@ function BlockPropertiesPanel({ block, onBlockUpdate }) {
         );
     }
 
+    const ticket = block.ticket || {};
+    const ticketFieldKeys = Object.keys(ticket).filter(
+        (key) => key !== "description",
+    );
+
+    const formatLabel = (key) =>
+        key
+            .replace(/_/g, " ")
+            .replace(/\w\S*/g, (txt) => txt[0].toUpperCase() + txt.slice(1));
+
     return (
         <div style={panelStyle}>
             <div style={headerStyle}>
                 <h4 style={headerTitleStyle}>Block Properties</h4>
             </div>
             <div style={bodyStyle}>
-                <label style={labelStyle}>
-                    <span style={labelTextStyle}>Recipient</span>
-                    <input
-                        type="text"
-                        placeholder="e.g., ops@example.com"
-                        value={block.ticket.recipient}
-                        onChange={(e) =>
-                            handleChange("recipient", e.target.value)
-                        }
-                        style={inputStyle}
-                        onFocus={handleFocus}
-                        onBlur={handleBlur}
-                    />
-                </label>
-
-                <label style={labelStyle}>
-                    <span style={labelTextStyle}>Action</span>
-                    <input
-                        type="text"
-                        placeholder="e.g., Scale down instances"
-                        value={block.ticket.action}
-                        onChange={(e) => handleChange("action", e.target.value)}
-                        style={inputStyle}
-                        onFocus={handleFocus}
-                        onBlur={handleBlur}
-                    />
-                </label>
+                {ticketFieldKeys.map((key) => (
+                    <label style={labelStyle} key={key}>
+                        <span style={labelTextStyle}>{formatLabel(key)}</span>
+                        <input
+                            type="text"
+                            value={ticket[key]}
+                            disabled
+                            style={readOnlyInputStyle}
+                        />
+                    </label>
+                ))}
 
                 <label style={labelStyle}>
                     <span style={labelTextStyle}>Description</span>
                     <textarea
                         placeholder="Describe what this block does..."
-                        value={block.ticket.description}
+                        value={ticket.description || ""}
                         onChange={(e) =>
-                            handleChange("description", e.target.value)
+                            handleDescriptionChange(e.target.value)
                         }
                         style={textareaStyle}
                         onFocus={handleFocus}

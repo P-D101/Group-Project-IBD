@@ -59,9 +59,9 @@ function BlockCategory({ title, blocks }) {
         <div style={containerStyle}>
             <h4 style={titleStyle}>{title}</h4>
             <div style={blocksContainerStyle}>
-                {blocks.map((block) => (
+                {blocks.map((block, idx) => (
                     <div
-                        key={block.id}
+                        key={idx}
                         style={blockItemStyle}
                         onMouseEnter={handleMouseEnter}
                         onMouseLeave={handleMouseLeave}

@@ -10,6 +10,7 @@ import {
     templateBlocksToNodes,
     createNodeFromBlock,
     verifyProgram,
+    templateEdgesToEdges,
 } from "../components/PolicyCreator/vplUtils";
 
 function PolicyCreator() {
@@ -29,21 +30,15 @@ function PolicyCreator() {
 
     // When template changes, pre-populate nodes from its vplBlocks
     useEffect(() => {
-        if (!selectedTemplate || !selectedTemplate.vplBlocks) {
+        if (!selectedTemplate || !selectedTemplate.Nodes) {
             return;
         }
 
-        const initialNodes = templateBlocksToNodes(selectedTemplate.vplBlocks, {
-            x: 0,
-            y: 0,
-        });
-
-        const initialEdges = initialNodes.slice(0, -1).map((node, index) => ({
-            id: `e-${node.id}-${initialNodes[index + 1].id}`,
-            source: node.id,
-            target: initialNodes[index + 1].id,
-            type: "smoothstep",
-        }));
+        const initialNodes = templateBlocksToNodes(
+            selectedTemplate.Nodes,
+            selectedTemplate.Connections,
+        );
+        const initialEdges = templateEdgesToEdges(selectedTemplate.Connections);
 
         // Defer state updates to avoid cascading synchronous renders inside the effect.
         queueMicrotask(() => {
@@ -67,7 +62,6 @@ function PolicyCreator() {
 
     const handleDropBlock = (blockInfo, position) => {
         const block = {
-            id: blockInfo.id || `${blockInfo.type}-${Date.now()}`,
             type: blockInfo.type,
             label: blockInfo.label,
         };
@@ -79,19 +73,13 @@ function PolicyCreator() {
         setSelectedNodeId(nodeId || null);
     };
 
-    const handleBlockUpdate = (updatedBlock) => {
+    const handleBlockUpdate = (updatedNode) => {
         setNodes((prevNodes) =>
             prevNodes.map((node) => {
                 if (node.id !== selectedNodeId) return node;
                 return {
                     ...node,
-                    data: {
-                        ...node.data,
-                        ticket: {
-                            ...node.data.ticket,
-                            ...updatedBlock.ticket,
-                        },
-                    },
+                    ...updatedNode,
                 };
             }),
         );
@@ -103,11 +91,10 @@ function PolicyCreator() {
                   const node = nodes.find((n) => n.id === selectedNodeId);
                   if (!node) return null;
                   return {
-                      id: node.data.blockId,
+                      id: node.data.id,
                       type: node.data.type,
-                      label: node.data.label,
-                      value: node.data.value,
-                      ticket: node.data.ticket,
+                      payload: node.data.payload,
+                      description: node.data.description,
                   };
               })()
             : null;
@@ -121,9 +108,10 @@ function PolicyCreator() {
             "Policy Name": "Example",
             "Data Sources": [],
             Nodes: nodes.map((node) => ({
-                Index: node.id,
-                Type: node.data.type,
-                Position: node.position,
+                index: node.id,
+                position: node.position,
+                type: node.data.vpLType,
+                payload: node.data.payload,
             })),
             Connections: edges.map((edge) => [edge.source, edge.target]),
         };
@@ -135,7 +123,7 @@ function PolicyCreator() {
             style={{
                 display: "flex",
                 flexDirection: "column",
-                height: "100vh",
+                height: "90vh",
                 backgroundColor: "#f5f5f5",
             }}
         >

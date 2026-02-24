@@ -1,376 +1,457 @@
 [
     {
-        "id": "t-scale",
-        "title": "Scale when low usage",
-        "description": "Create ticket to scale down instances when usage < 20%",
-        "vplBlocks": [
+        "Policy Name": "Scale when low usage",
+        "Description": "Create ticket to scale down instances when usage < 20%",
+        "Data Sources": [],
+        "Nodes": [
             {
                 "id": "0",
                 "type": "input",
                 "label": "Usage %",
-                "ticket": {
-                    "recipient": "ops@example.com",
-                    "action": "read usage",
-                    "description": "Read current usage %"
-                },
-                "value": "0"
+                "description": ""
             },
             {
                 "id": "1",
                 "type": "const",
                 "label": "20",
-                "ticket": {
-                    "recipient": "ops@example.com",
-                    "action": "const value",
-                    "description": "Threshold value"
-                }
+                "data": { "value": 20 },
+                "description": ""
             },
             {
                 "id": "2",
-                "type": "decider",
+                "type": "lt",
                 "label": "<",
-                "ticket": {
-                    "recipient": "ops@example.com",
-                    "action": "compare",
-                    "description": "Compare usage with threshold"
-                }
+                "description": ""
             },
             {
                 "id": "3",
-                "type": "output",
+                "type": "ticket",
                 "label": "Create Ticket",
-                "ticket": {
+                "data": {
                     "recipient": "ops@example.com",
                     "action": "Scale down instances",
                     "description": "Scale down due to low usage"
-                }
+                },
+                "description": ""
             }
+        ],
+        "Connections": [
+            ["0", "2"],
+            ["1", "2"],
+            ["2", "3"]
         ]
     },
     {
-        "id": "t-cost",
-        "title": "Notify on high cost",
-        "description": "Notify when daily cost > $200",
-        "vplBlocks": [
+        "Policy Name": "Notify on high cost",
+        "Description": "Notify when daily cost > $200",
+        "Data Sources": [],
+        "Nodes": [
             {
                 "id": "0",
                 "type": "input",
                 "label": "Daily Cost",
-                "ticket": {
-                    "recipient": "finance@example.com",
-                    "action": "read cost",
-                    "description": "Read daily cost"
-                }
+                "description": ""
             },
             {
                 "id": "1",
                 "type": "const",
                 "label": "200",
-                "ticket": {
-                    "recipient": "finance@example.com",
-                    "action": "const value",
-                    "description": "Cost threshold"
-                }
+                "data": { "value": 200 },
+                "description": ""
             },
             {
                 "id": "2",
-                "type": "decider",
+                "type": "gt",
                 "label": ">",
-                "ticket": {
-                    "recipient": "finance@example.com",
-                    "action": "compare",
-                    "description": "Compare cost with threshold"
-                }
+                "description": ""
             },
             {
                 "id": "3",
-                "type": "output",
+                "type": "ticket",
                 "label": "Notify Team",
-                "ticket": {
+                "data": {
                     "recipient": "finance@example.com",
                     "action": "Notify on high cost",
                     "description": "Send notification to finance team"
-                }
+                },
+                "description": ""
             }
+        ],
+        "Connections": [
+            ["0", "2"],
+            ["1", "2"],
+            ["2", "3"]
         ]
     },
     {
-        "id": "t-notify-high-usage",
-        "title": "Notify on high usage",
-        "description": "Send notification when usage > 80%",
-        "vplBlocks": [
+        "Policy Name": "Notify on high usage",
+        "Description": "Send notification when usage > 80%",
+        "Data Sources": [],
+        "Nodes": [
             {
                 "id": "0",
                 "type": "input",
-                "label": "Usage %"
+                "label": "Usage %",
+                "description": ""
             },
             {
                 "id": "1",
                 "type": "const",
-                "label": "80"
+                "label": "80",
+                "data": { "value": 80 },
+                "description": ""
             },
             {
                 "id": "2",
-                "type": "decider",
-                "label": ">"
+                "type": "gt",
+                "label": ">",
+                "description": ""
             },
             {
                 "id": "3",
-                "type": "output",
+                "type": "ticket",
                 "label": "Send Notification",
-                "ticket": {
+                "data": {
                     "recipient": "ops@example.com",
                     "action": "Notify on high usage",
                     "description": "Send notification when usage exceeds 80%"
-                }
+                },
+                "description": ""
             }
+        ],
+        "Connections": [
+            ["0", "2"],
+            ["1", "2"],
+            ["2", "3"]
         ]
     },
     {
-        "id": "t-log-custom-metric",
-        "title": "Log event on custom metric",
-        "description": "Log event when custom metric < 50",
-        "vplBlocks": [
+        "Policy Name": "Log event on custom metric",
+        "Description": "Log event when custom metric < 50",
+        "Data Sources": [],
+        "Nodes": [
             {
                 "id": "0",
                 "type": "input",
-                "label": "Custom Metric"
+                "label": "Custom Metric",
+                "description": ""
             },
             {
                 "id": "1",
                 "type": "const",
-                "label": "50"
+                "label": "50",
+                "data": { "value": 50 },
+                "description": ""
             },
             {
                 "id": "2",
-                "type": "decider",
-                "label": "<"
+                "type": "lt",
+                "label": "<",
+                "description": ""
             },
             {
                 "id": "3",
-                "type": "output",
+                "type": "ticket",
                 "label": "Log Event",
-                "ticket": {
+                "data": {
                     "recipient": "logs@example.com",
                     "action": "Log custom metric event",
                     "description": "Log event when custom metric is below 50"
-                }
+                },
+                "description": ""
             }
+        ],
+        "Connections": [
+            ["0", "2"],
+            ["1", "2"],
+            ["2", "3"]
         ]
     },
     {
-        "id": "t-auto-scale-up",
-        "title": "Auto-scale up on spike",
-        "description": "Scale up if usage > 90% and cost < 150",
-        "vplBlocks": [
+        "Policy Name": "Auto-scale up on spike",
+        "Description": "Scale up if usage > 90% and cost < 150",
+        "Data Sources": [],
+        "Nodes": [
             {
                 "id": "0",
                 "type": "input",
-                "label": "Usage %"
+                "label": "Usage %",
+                "description": ""
             },
             {
                 "id": "1",
                 "type": "input",
-                "label": "Daily Cost"
+                "label": "Daily Cost",
+                "description": ""
             },
             {
                 "id": "2",
                 "type": "const",
-                "label": "90"
+                "label": "90",
+                "data": { "value": 90 },
+                "description": ""
             },
             {
                 "id": "3",
                 "type": "const",
-                "label": "150"
+                "label": "150",
+                "data": { "value": 150 },
+                "description": ""
             },
             {
                 "id": "4",
-                "type": "decider",
+                "type": "gt",
                 "label": ">",
-                "inputs": ["usage", "const90"]
+                "inputs": ["usage", "const90"],
+                "description": ""
             },
             {
                 "id": "5",
-                "type": "decider",
+                "type": "lt",
                 "label": "<",
-                "inputs": ["cost", "const150"]
+                "inputs": ["cost", "const150"],
+                "description": ""
             },
             {
                 "id": "6",
-                "type": "and"
+                "type": "and",
+                "description": ""
             },
             {
                 "id": "7",
-                "type": "output",
+                "type": "ticket",
                 "label": "Create Ticket",
                 "inputs": ["and1"],
-                "ticket": {
+                "data": {
                     "recipient": "ops@example.com",
                     "action": "Scale up",
                     "description": "Scale up if usage > 90% and cost < 150"
-                }
+                },
+                "description": ""
             }
+        ],
+        "Connections": [
+            ["0", "4"],
+            ["2", "4"],
+            ["1", "5"],
+            ["3", "5"],
+            ["4", "6"],
+            ["5", "6"],
+            ["6", "7"]
         ]
     },
     {
-        "id": "t-alert-custom-metric",
-        "title": "Alert on custom metric",
-        "description": "Send alert if custom metric > 75",
-        "vplBlocks": [
+        "Policy Name": "Alert on custom metric",
+        "Description": "Send alert if custom metric > 75",
+        "Data Sources": [],
+        "Nodes": [
             {
                 "id": "0",
                 "type": "input",
-                "label": "Custom Metric"
+                "label": "Custom Metric",
+                "description": ""
             },
             {
                 "id": "1",
                 "type": "const",
-                "label": "75"
+                "label": "75",
+                "data": { "value": 75 },
+                "description": ""
             },
             {
                 "id": "2",
-                "type": "decider",
-                "label": ">"
+                "type": "gt",
+                "label": ">",
+                "description": ""
             },
             {
                 "id": "3",
-                "type": "output",
+                "type": "ticket",
                 "label": "Send Notification",
-                "ticket": {
+                "data": {
                     "recipient": "alerts@example.com",
                     "action": "Alert",
                     "description": "Alert if custom metric > 75"
-                }
+                },
+                "description": ""
             }
+        ],
+        "Connections": [
+            ["0", "2"],
+            ["1", "2"],
+            ["2", "3"]
         ]
     },
     {
-        "id": "t-log-low-usage",
-        "title": "Log low usage event",
-        "description": "Log event if usage < 10%",
-        "vplBlocks": [
+        "Policy Name": "Log low usage event",
+        "Description": "Log event if usage < 10%",
+        "Data Sources": [],
+        "Nodes": [
             {
                 "id": "0",
                 "type": "input",
-                "label": "Usage %"
+                "label": "Usage %",
+                "description": ""
             },
             {
                 "id": "1",
                 "type": "const",
-                "label": "10"
+                "label": "10",
+                "data": { "value": 10 },
+                "description": ""
             },
             {
                 "id": "2",
-                "type": "decider",
-                "label": "<"
+                "type": "lt",
+                "label": "<",
+                "description": ""
             },
             {
                 "id": "3",
-                "type": "output",
+                "type": "ticket",
                 "label": "Log Event",
-                "ticket": {
+                "data": {
                     "recipient": "logs@example.com",
                     "action": "Log low usage",
                     "description": "Log event if usage < 10%"
-                }
+                },
+                "description": ""
             }
+        ],
+        "Connections": [
+            ["0", "2"],
+            ["1", "2"],
+            ["2", "3"]
         ]
     },
     {
-        "id": "t-notify-cost-increase",
-        "title": "Notify on cost increase",
-        "description": "Notify if today's cost - yesterday's cost > 100",
-        "vplBlocks": [
+        "Policy Name": "Notify on cost increase",
+        "Description": "Notify if today's cost - yesterday's cost > 100",
+        "Data Sources": [],
+        "Nodes": [
             {
                 "id": "0",
                 "type": "input",
-                "label": "Daily Cost"
+                "label": "Daily Cost",
+                "description": ""
             },
             {
                 "id": "1",
                 "type": "input",
-                "label": "Yesterday Cost"
+                "label": "Yesterday Cost",
+                "description": ""
             },
             {
                 "id": "2",
                 "type": "const",
-                "label": "100"
+                "label": "100",
+                "data": { "value": 100 },
+                "description": ""
             },
             {
                 "id": "3",
-                "type": "subtract"
+                "type": "subtract",
+                "description": ""
             },
             {
                 "id": "4",
-                "type": "decider",
+                "type": "gt",
                 "label": ">",
-                "inputs": ["subtract", "const100"]
+                "inputs": ["subtract", "const100"],
+                "description": ""
             },
             {
                 "id": "5",
-                "type": "output",
+                "type": "ticket",
                 "label": "Send Notification",
                 "inputs": ["increase_gt"],
-                "ticket": {
+                "data": {
                     "recipient": "finance@example.com",
                     "action": "Notify cost increase",
                     "description": "Notify if cost increases by more than 100"
-                }
+                },
+                "description": ""
             }
+        ],
+        "Connections": [
+            ["0", "3"],
+            ["1", "3"],
+            ["3", "4"],
+            ["2", "4"],
+            ["4", "5"]
         ]
     },
     {
-        "id": "t-ticket-usage-custom",
-        "title": "Ticket if usage & custom metric high",
-        "description": "Create ticket if usage > 80% AND custom metric > 60",
-        "vplBlocks": [
+        "Policy Name": "Ticket if usage & custom metric high",
+        "Description": "Create ticket if usage > 80% AND custom metric > 60",
+        "Data Sources": [],
+        "Nodes": [
             {
                 "id": "0",
                 "type": "input",
-                "label": "Usage %"
+                "label": "Usage %",
+                "description": ""
             },
             {
                 "id": "1",
                 "type": "input",
-                "label": "Custom Metric"
+                "label": "Custom Metric",
+                "description": ""
             },
             {
                 "id": "2",
                 "type": "const",
-                "label": "80"
+                "label": "80",
+                "data": { "value": 80 },
+                "description": ""
             },
             {
                 "id": "3",
                 "type": "const",
-                "label": "60"
+                "label": "60",
+                "data": { "value": 60 },
+                "description": ""
             },
             {
                 "id": "4",
-                "type": "decider",
+                "type": "gt",
                 "label": ">",
-                "inputs": ["usage", "const80"]
+                "inputs": ["usage", "const80"],
+                "description": ""
             },
             {
                 "id": "5",
-                "type": "decider",
+                "type": "gt",
                 "label": ">",
-                "inputs": ["custom", "const60"]
+                "inputs": ["custom", "const60"],
+                "description": ""
             },
             {
                 "id": "6",
-                "type": "and"
+                "type": "and",
+                "description": ""
             },
             {
                 "id": "7",
-                "type": "output",
+                "type": "ticket",
                 "label": "Create Ticket",
                 "inputs": ["and1"],
-                "ticket": {
+                "data": {
                     "recipient": "ops@example.com",
                     "action": "Ticket high usage & custom metric",
                     "description": "Create ticket if usage > 80% AND custom metric > 60"
-                }
+                },
+                "description": ""
             }
+        ],
+        "Connections": [
+            ["0", "4"],
+            ["2", "4"],
+            ["1", "5"],
+            ["3", "5"],
+            ["4", "6"],
+            ["5", "6"],
+            ["6", "7"]
         ]
     }
 ]

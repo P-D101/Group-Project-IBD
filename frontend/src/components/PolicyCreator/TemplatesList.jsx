@@ -6,8 +6,8 @@ function TemplatesList({ templates, selectedTemplate, onTemplateSelect }) {
 
     const filteredTemplates = templates.filter(
         (t) =>
-            t.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            t.description.toLowerCase().includes(searchTerm.toLowerCase()),
+            t["Policy Name"].toLowerCase().includes(searchTerm.toLowerCase()) ||
+            t.Description.toLowerCase().includes(searchTerm.toLowerCase()),
     );
 
     const containerStyle = {
@@ -95,9 +95,13 @@ function TemplatesList({ templates, selectedTemplate, onTemplateSelect }) {
                 {filteredTemplates.length > 0 ? (
                     filteredTemplates.map((template) => (
                         <TemplateCard
-                            key={template.id}
+                            key={template["Policy Name"]}
                             template={template}
-                            isSelected={selectedTemplate?.id === template.id}
+                            isSelected={
+                                selectedTemplate &&
+                                selectedTemplate["Policy Name"] ===
+                                    template["Policy Name"]
+                            }
                             onSelect={onTemplateSelect}
                         />
                     ))
