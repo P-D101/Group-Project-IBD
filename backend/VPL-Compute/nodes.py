@@ -1,17 +1,23 @@
 ###### Used for testing
 import numpy as np
+import time
 
-Cloud_Serves_1_Usage = np.array([0.5, 0.1, 0.1, 0.99])
-Cloud_Serves_2_Usage = np.array([0.1, 0.1, 0.3, 0.99])
-Cloud_Serves_3_Usage = np.array([0, 0.1, 0.7, 0.97])
+def Cloud_Serves_1_Usage(t):
+    return np.array([max(min(0.1 * np.sin(0.1 * t) + 0.4 * np.sin(0.01 * t + 1) + 0.5, 1), 0)])
 
-def get_data(channel_name):
+def Cloud_Serves_2_Usage(t):
+    return np.array([max(min(0.4 * np.sin(0.1 * t) + 0.4 * np.sin(0.01 * t + 2) + 0.4, 1), 0)])
+
+def Cloud_Serves_3_Usage(t):
+    return np.array([max(min(0.6 * np.sin(0.1 * t) + 0.1 * np.sin(0.01 * t + 3) + 0.6, 1), 0)])
+
+def get_data(channel_name, t = time.time()):
     if channel_name == "Cloud_Serves_1:Usage":
-        return Cloud_Serves_1_Usage
+        return Cloud_Serves_1_Usage(t)
     if channel_name == "Cloud_Serves_2:Usage":
-        return Cloud_Serves_2_Usage
+        return Cloud_Serves_2_Usage(t)
     if channel_name == "Cloud_Serves_3:Usage":
-        return Cloud_Serves_3_Usage
+        return Cloud_Serves_3_Usage(t)
 
 ###### End section for testing
 
@@ -83,8 +89,8 @@ class INPUT(Node):
         self.provider = node_object["Input Provider"]
         self.channel = node_object["Input Channel"]
 
-    def compute(self, args):
-        return get_data(f'{self.provider}:{self.channel}')
+    def compute(self, args, t):
+        return get_data(f'{self.provider}:{self.channel}', t)
     
 class OUTPUT(Node):
     def __init__(self):
@@ -118,5 +124,4 @@ def assign_node(type, node):
 
 
 if __name__ == "__main__":
-    node = GREATER_THAN()
-    print(node.compute([Cloud_Serves_2_Usage, Cloud_Serves_3_Usage]))
+    print(get_data("Cloud_Serves_1:Usage"))
