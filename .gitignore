@@ -32,6 +32,8 @@ backend/VPL-Compute/fuzzer.py
 backend/query_tester.ipynb
 backend/venv
 backend/data/programs/
+backend/data/disable-programs/*.json
+
 
 # database
 backend/data/CloudExpenses.db

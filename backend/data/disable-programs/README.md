@@ -1,0 +1,2 @@
+Send program file names as file names to this folder to disable them them. To reEnable the program it must be removed from this folder. 
+The file name must match the file name of the program and the contents of the file must be the "Policy Name" of the program
