@@ -4,9 +4,9 @@
 
 let nodeIdCounter = 1;
 
-export function createNodeId(prefix = "node") {
+export function createNodeId() {
     nodeIdCounter += 1;
-    return `${prefix}-${nodeIdCounter}`;
+    return `${nodeIdCounter}`;
 }
 
 /**
@@ -14,7 +14,7 @@ export function createNodeId(prefix = "node") {
  * This is used both for template blocks and library blocks.
  */
 export function createNodeFromBlock(block, position) {
-    const id = createNodeId(block.id || block.type || "node");
+    const id = createNodeId();
 
     const baseTicket = block.ticket || {
         recipient: "",
@@ -28,7 +28,7 @@ export function createNodeFromBlock(block, position) {
         position: position || { x: 0, y: 0 },
         data: {
             // Block identity / label
-            blockId: block.id || id,
+            blockId: id,
             type: block.type || "default",
             label: block.label || "",
             value: block.value,
@@ -82,3 +82,48 @@ export function nodesToVplBlocks(nodes) {
     }));
 }
 
+export function verifyProgram(nodes, edges) {
+    if (!Array.isArray(nodes)) return false;
+    if (!Array.isArray(edges)) return false;
+    if (nodes.length === 0) return false;
+    if (edges.length === 0) return false;
+
+    // Map node ids (can be strings) to set of neighbors
+    const nodeIds = nodes.map((node) => String(node.id));
+    const edgeMap = {};
+    nodeIds.forEach((id) => {
+        edgeMap[id] = [];
+    });
+    edges.forEach((edge) => {
+        // Typical reactflow edges: {source, target}
+        if (edgeMap[edge.source]) {
+            edgeMap[edge.source].push(edge.target);
+        }
+    });
+
+    // Cycle detection using DFS with visited and recursion stack
+    const visited = {};
+    const recStack = {};
+
+    function hasCycle(nodeId) {
+        if (!visited[nodeId]) {
+            visited[nodeId] = true;
+            recStack[nodeId] = true;
+
+            for (const neighbor of edgeMap[nodeId]) {
+                if (!visited[neighbor] && hasCycle(neighbor)) {
+                    return true;
+                } else if (recStack[neighbor]) {
+                    return true;
+                }
+            }
+        }
+        recStack[nodeId] = false;
+        return false;
+    }
+
+    for (const nodeId of nodeIds) {
+        if (hasCycle(nodeId)) return false;
+    }
+    return true;
+}

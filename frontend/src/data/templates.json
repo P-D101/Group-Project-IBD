@@ -5,7 +5,7 @@
         "description": "Create ticket to scale down instances when usage < 20%",
         "vplBlocks": [
             {
-                "id": "b-usage",
+                "id": "0",
                 "type": "input",
                 "label": "Usage %",
                 "ticket": {
@@ -16,7 +16,7 @@
                 "value": "0"
             },
             {
-                "id": "b-const",
+                "id": "1",
                 "type": "const",
                 "label": "20",
                 "ticket": {
@@ -26,7 +26,7 @@
                 }
             },
             {
-                "id": "b-compare",
+                "id": "2",
                 "type": "decider",
                 "label": "<",
                 "ticket": {
@@ -36,7 +36,7 @@
                 }
             },
             {
-                "id": "b-ticket",
+                "id": "3",
                 "type": "output",
                 "label": "Create Ticket",
                 "ticket": {
@@ -53,7 +53,7 @@
         "description": "Notify when daily cost > $200",
         "vplBlocks": [
             {
-                "id": "b-cost",
+                "id": "0",
                 "type": "input",
                 "label": "Daily Cost",
                 "ticket": {
@@ -63,7 +63,7 @@
                 }
             },
             {
-                "id": "b-cconst",
+                "id": "1",
                 "type": "const",
                 "label": "200",
                 "ticket": {
@@ -73,7 +73,7 @@
                 }
             },
             {
-                "id": "b-ccompare",
+                "id": "2",
                 "type": "decider",
                 "label": ">",
                 "ticket": {
@@ -83,7 +83,7 @@
                 }
             },
             {
-                "id": "b-cticket",
+                "id": "3",
                 "type": "output",
                 "label": "Notify Team",
                 "ticket": {
@@ -100,22 +100,22 @@
         "description": "Send notification when usage > 80%",
         "vplBlocks": [
             {
-                "id": "b-usage",
+                "id": "0",
                 "type": "input",
                 "label": "Usage %"
             },
             {
-                "id": "b-const80",
+                "id": "1",
                 "type": "const",
                 "label": "80"
             },
             {
-                "id": "b-compare",
+                "id": "2",
                 "type": "decider",
                 "label": ">"
             },
             {
-                "id": "b-notify",
+                "id": "3",
                 "type": "output",
                 "label": "Send Notification",
                 "ticket": {
@@ -132,22 +132,22 @@
         "description": "Log event when custom metric < 50",
         "vplBlocks": [
             {
-                "id": "b-custom",
+                "id": "0",
                 "type": "input",
                 "label": "Custom Metric"
             },
             {
-                "id": "b-const50",
+                "id": "1",
                 "type": "const",
                 "label": "50"
             },
             {
-                "id": "b-compare",
+                "id": "2",
                 "type": "decider",
                 "label": "<"
             },
             {
-                "id": "b-log",
+                "id": "3",
                 "type": "output",
                 "label": "Log Event",
                 "ticket": {
@@ -164,44 +164,43 @@
         "description": "Scale up if usage > 90% and cost < 150",
         "vplBlocks": [
             {
-                "id": "usage",
+                "id": "0",
                 "type": "input",
                 "label": "Usage %"
             },
             {
-                "id": "cost",
+                "id": "1",
                 "type": "input",
                 "label": "Daily Cost"
             },
             {
-                "id": "const90",
+                "id": "2",
                 "type": "const",
                 "label": "90"
             },
             {
-                "id": "const150",
+                "id": "3",
                 "type": "const",
                 "label": "150"
             },
             {
-                "id": "usage_gt",
+                "id": "4",
                 "type": "decider",
                 "label": ">",
                 "inputs": ["usage", "const90"]
             },
             {
-                "id": "cost_lt",
+                "id": "5",
                 "type": "decider",
                 "label": "<",
                 "inputs": ["cost", "const150"]
             },
             {
-                "id": "and1",
-                "type": "and",
-                "inputs": ["usage_gt", "cost_lt"]
+                "id": "6",
+                "type": "and"
             },
             {
-                "id": "ticket",
+                "id": "7",
                 "type": "output",
                 "label": "Create Ticket",
                 "inputs": ["and1"],
@@ -219,22 +218,22 @@
         "description": "Send alert if custom metric > 75",
         "vplBlocks": [
             {
-                "id": "custom",
+                "id": "0",
                 "type": "input",
                 "label": "Custom Metric"
             },
             {
-                "id": "const75",
+                "id": "1",
                 "type": "const",
                 "label": "75"
             },
             {
-                "id": "custom_gt",
+                "id": "2",
                 "type": "decider",
                 "label": ">"
             },
             {
-                "id": "notify",
+                "id": "3",
                 "type": "output",
                 "label": "Send Notification",
                 "ticket": {
@@ -251,22 +250,22 @@
         "description": "Log event if usage < 10%",
         "vplBlocks": [
             {
-                "id": "usage",
+                "id": "0",
                 "type": "input",
                 "label": "Usage %"
             },
             {
-                "id": "const10",
+                "id": "1",
                 "type": "const",
                 "label": "10"
             },
             {
-                "id": "usage_lt",
+                "id": "2",
                 "type": "decider",
                 "label": "<"
             },
             {
-                "id": "log",
+                "id": "3",
                 "type": "output",
                 "label": "Log Event",
                 "ticket": {
@@ -283,33 +282,32 @@
         "description": "Notify if today's cost - yesterday's cost > 100",
         "vplBlocks": [
             {
-                "id": "cost_today",
+                "id": "0",
                 "type": "input",
                 "label": "Daily Cost"
             },
             {
-                "id": "cost_yesterday",
+                "id": "1",
                 "type": "input",
                 "label": "Yesterday Cost"
             },
             {
-                "id": "const100",
+                "id": "2",
                 "type": "const",
                 "label": "100"
             },
             {
-                "id": "subtract",
-                "type": "subtract",
-                "inputs": ["cost_today", "cost_yesterday"]
+                "id": "3",
+                "type": "subtract"
             },
             {
-                "id": "increase_gt",
+                "id": "4",
                 "type": "decider",
                 "label": ">",
                 "inputs": ["subtract", "const100"]
             },
             {
-                "id": "notify",
+                "id": "5",
                 "type": "output",
                 "label": "Send Notification",
                 "inputs": ["increase_gt"],
@@ -327,44 +325,43 @@
         "description": "Create ticket if usage > 80% AND custom metric > 60",
         "vplBlocks": [
             {
-                "id": "usage",
+                "id": "0",
                 "type": "input",
                 "label": "Usage %"
             },
             {
-                "id": "custom",
+                "id": "1",
                 "type": "input",
                 "label": "Custom Metric"
             },
             {
-                "id": "const80",
+                "id": "2",
                 "type": "const",
                 "label": "80"
             },
             {
-                "id": "const60",
+                "id": "3",
                 "type": "const",
                 "label": "60"
             },
             {
-                "id": "usage_gt",
+                "id": "4",
                 "type": "decider",
                 "label": ">",
                 "inputs": ["usage", "const80"]
             },
             {
-                "id": "custom_gt",
+                "id": "5",
                 "type": "decider",
                 "label": ">",
                 "inputs": ["custom", "const60"]
             },
             {
-                "id": "and1",
-                "type": "and",
-                "inputs": ["usage_gt", "custom_gt"]
+                "id": "6",
+                "type": "and"
             },
             {
-                "id": "ticket",
+                "id": "7",
                 "type": "output",
                 "label": "Create Ticket",
                 "inputs": ["and1"],

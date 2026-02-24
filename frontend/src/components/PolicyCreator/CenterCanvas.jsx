@@ -22,6 +22,7 @@ function FlowWrapper({
         if (onNodeSelect) {
             onNodeSelect(node.id);
         }
+        console.log("node clicked", node);
     };
 
     const handleSelectionChange = ({ nodes: selectedNodes }) => {

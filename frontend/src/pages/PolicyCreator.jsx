@@ -9,7 +9,8 @@ import Templates from "../data/templates.json";
 import {
     templateBlocksToNodes,
     createNodeFromBlock,
-} from "../components/PolicyCreator/vplTypes";
+    verifyProgram,
+} from "../components/PolicyCreator/vplUtils";
 
 function PolicyCreator() {
     // UI State
@@ -41,6 +42,7 @@ function PolicyCreator() {
             id: `e-${node.id}-${initialNodes[index + 1].id}`,
             source: node.id,
             target: initialNodes[index + 1].id,
+            type: "smoothstep",
         }));
 
         // Defer state updates to avoid cascading synchronous renders inside the effect.
@@ -111,32 +113,21 @@ function PolicyCreator() {
             : null;
 
     const handleSave = async () => {
-        if (!selectedTemplate) {
-            alert("No policy selected to save.");
+        if (!verifyProgram(nodes, edges)) {
+            alert("errors detected, couldn't save program.");
             return;
         }
-        // Export policy as JSON using the new schema
-        // Import transformVplToSchema from vplToJson.js
-        try {
-            const { transformVplToSchema } =
-                await import("../components/PolicyCreator/vplToJson");
-            const policyJson = transformVplToSchema(selectedTemplate);
-            // Send to backend
-            const response = await fetch("/api/policies", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(policyJson),
-            });
-            if (response.ok) {
-                alert("Policy saved and sent to backend!");
-            } else {
-                alert("Failed to save policy: " + (await response.text()));
-            }
-        } catch (err) {
-            alert("Error saving policy: " + err);
-        }
+        const policyObject = {
+            "Policy Name": "Example",
+            "Data Sources": [],
+            Nodes: nodes.map((node) => ({
+                Index: node.id,
+                Type: node.data.type,
+                Position: node.position,
+            })),
+            Connections: edges.map((edge) => [edge.source, edge.target]),
+        };
+        console.log(policyObject);
     };
 
     return (
