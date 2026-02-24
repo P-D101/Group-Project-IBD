@@ -186,21 +186,25 @@
             {
                 "id": "usage_gt",
                 "type": "decider",
-                "label": ">"
+                "label": ">",
+                "inputs": ["usage", "const90"]
             },
             {
                 "id": "cost_lt",
                 "type": "decider",
-                "label": "<"
+                "label": "<",
+                "inputs": ["cost", "const150"]
             },
             {
                 "id": "and1",
-                "type": "and"
+                "type": "and",
+                "inputs": ["usage_gt", "cost_lt"]
             },
             {
                 "id": "ticket",
                 "type": "output",
                 "label": "Create Ticket",
+                "inputs": ["and1"],
                 "ticket": {
                     "recipient": "ops@example.com",
                     "action": "Scale up",
@@ -295,17 +299,20 @@
             },
             {
                 "id": "subtract",
-                "type": "subtract"
+                "type": "subtract",
+                "inputs": ["cost_today", "cost_yesterday"]
             },
             {
                 "id": "increase_gt",
                 "type": "decider",
-                "label": ">"
+                "label": ">",
+                "inputs": ["subtract", "const100"]
             },
             {
                 "id": "notify",
                 "type": "output",
                 "label": "Send Notification",
+                "inputs": ["increase_gt"],
                 "ticket": {
                     "recipient": "finance@example.com",
                     "action": "Notify cost increase",
@@ -342,21 +349,25 @@
             {
                 "id": "usage_gt",
                 "type": "decider",
-                "label": ">"
+                "label": ">",
+                "inputs": ["usage", "const80"]
             },
             {
                 "id": "custom_gt",
                 "type": "decider",
-                "label": ">"
+                "label": ">",
+                "inputs": ["custom", "const60"]
             },
             {
                 "id": "and1",
-                "type": "and"
+                "type": "and",
+                "inputs": ["usage_gt", "custom_gt"]
             },
             {
                 "id": "ticket",
                 "type": "output",
                 "label": "Create Ticket",
+                "inputs": ["and1"],
                 "ticket": {
                     "recipient": "ops@example.com",
                     "action": "Ticket high usage & custom metric",

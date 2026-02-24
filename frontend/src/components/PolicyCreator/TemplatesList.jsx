@@ -78,7 +78,7 @@ function TemplatesList({ templates, selectedTemplate, onTemplateSelect }) {
     return (
         <div style={containerStyle}>
             <div style={headerStyle}>
-                <h3 style={headerTitleStyle}>Templates (Optional)</h3>
+                <h3 style={headerTitleStyle}>Template Policies</h3>
             </div>
             <div style={searchStyle}>
                 <input
