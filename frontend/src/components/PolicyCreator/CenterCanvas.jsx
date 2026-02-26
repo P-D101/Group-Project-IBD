@@ -6,6 +6,7 @@ import {
     useReactFlow,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
+import BinaryOperator from "../nodes/BinaryOperator";
 
 function FlowWrapper({
     nodes,
@@ -17,12 +18,12 @@ function FlowWrapper({
     onDropBlock,
 }) {
     const reactFlowInstance = useReactFlow();
+    const nodeTypes = { binaryOperator: BinaryOperator };
 
     const handleNodeClick = (_, node) => {
         if (onNodeSelect) {
             onNodeSelect(node.id);
         }
-        console.log("node clicked", node);
     };
 
     const handleSelectionChange = ({ nodes: selectedNodes }) => {
@@ -81,6 +82,7 @@ function FlowWrapper({
                 onSelectionChange={handleSelectionChange}
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
+                nodeTypes={nodeTypes}
                 fitView
             >
                 <Background />

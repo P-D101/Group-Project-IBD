@@ -1,4 +1,8 @@
-function Header({ onSave }) {
+import { useState } from "react";
+
+function Header({ onSave, policyName, setPolicyName }) {
+    const [isFocused, setIsFocused] = useState(false);
+
     const headerStyle = {
         display: "flex",
         justifyContent: "space-between",
@@ -9,11 +13,18 @@ function Header({ onSave }) {
         boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
     };
 
-    const titleStyle = {
+    const nameInputStyle = {
+        background: "none",
         fontSize: "1.25rem",
         fontWeight: "600",
-        color: "#000000",
-        margin: 0,
+        borderBottom: "none",
+        outline: "none",
+        ...(isFocused && {
+            color: "#000000",
+            borderBottom: "2.5px solid #1a4d2e",
+            padding: "0.1rem 0.25rem 0.25rem 0",
+            transition: "border-color 0.2s",
+        }),
     };
 
     const buttonStyle = {
@@ -40,7 +51,15 @@ function Header({ onSave }) {
 
     return (
         <header style={headerStyle}>
-            <h1 style={titleStyle}>Policy Editor</h1>
+            <input
+                style={nameInputStyle}
+                type="text"
+                placeholder="Enter Policy Name"
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                value={policyName}
+                onChange={(e) => setPolicyName(e.target.value)}
+            />
             <button
                 style={buttonStyle}
                 onClick={onSave}

@@ -17,6 +17,7 @@ function PolicyCreator() {
     // UI State
     const [selectedTemplate, setSelectedTemplate] = useState(null);
     const [bottomLibraryExpanded, setBottomLibraryExpanded] = useState(false);
+    const [policyName, setPolicyName] = useState("");
 
     // Flowchart state
     const [nodes, setNodes] = useState([]);
@@ -100,12 +101,8 @@ function PolicyCreator() {
             : null;
 
     const handleSave = async () => {
-        if (!verifyProgram(nodes, edges)) {
-            alert("errors detected, couldn't save program.");
-            return;
-        }
         const policyObject = {
-            "Policy Name": "Example",
+            "Policy Name": policyName,
             "Data Sources": [],
             Nodes: nodes.map((node) => ({
                 index: node.id,
@@ -115,6 +112,10 @@ function PolicyCreator() {
             })),
             Connections: edges.map((edge) => [edge.source, edge.target]),
         };
+        if (!verifyProgram(policyObject)) {
+            alert("errors detected, couldn't save program.");
+            return;
+        }
         console.log(policyObject);
     };
 
@@ -127,7 +128,11 @@ function PolicyCreator() {
                 backgroundColor: "#f5f5f5",
             }}
         >
-            <Header onSave={handleSave} />
+            <Header
+                onSave={handleSave}
+                policyName={policyName}
+                setPolicyName={setPolicyName}
+            />
 
             <div
                 style={{

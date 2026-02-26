@@ -1,3 +1,5 @@
+const reserved = ["payload"];
+
 function BlockPropertiesPanel({ block, onBlockUpdate }) {
     const panelStyle = {
         width: "320px",
@@ -145,8 +147,7 @@ function BlockPropertiesPanel({ block, onBlockUpdate }) {
         );
     }
 
-    const ticket = block.ticket || {};
-    const ticketFieldKeys = Object.keys(ticket).filter(
+    const blockFieldKeys = Object.keys(block).filter(
         (key) => key !== "description",
     );
 
@@ -161,23 +162,28 @@ function BlockPropertiesPanel({ block, onBlockUpdate }) {
                 <h4 style={headerTitleStyle}>Block Properties</h4>
             </div>
             <div style={bodyStyle}>
-                {ticketFieldKeys.map((key) => (
-                    <label style={labelStyle} key={key}>
-                        <span style={labelTextStyle}>{formatLabel(key)}</span>
-                        <input
-                            type="text"
-                            value={ticket[key]}
-                            disabled
-                            style={readOnlyInputStyle}
-                        />
-                    </label>
-                ))}
+                {blockFieldKeys.map(
+                    (key) =>
+                        reserved.includes(key) || (
+                            <label style={labelStyle} key={key}>
+                                <span style={labelTextStyle}>
+                                    {formatLabel(key)}
+                                </span>
+                                <input
+                                    type="text"
+                                    value={block[key]}
+                                    disabled
+                                    style={readOnlyInputStyle}
+                                />
+                            </label>
+                        ),
+                )}
 
                 <label style={labelStyle}>
                     <span style={labelTextStyle}>Description</span>
                     <textarea
                         placeholder="Describe what this block does..."
-                        value={ticket.description || ""}
+                        value={block.description || ""}
                         onChange={(e) =>
                             handleDescriptionChange(e.target.value)
                         }

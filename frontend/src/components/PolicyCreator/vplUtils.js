@@ -4,27 +4,28 @@
 
 import { MarkerType } from "@xyflow/system";
 
-let nodeIdCounter = 1;
+let nodeIdCounter = 0;
 
 export function createNodeId() {
-    nodeIdCounter += 1;
-    return `${nodeIdCounter}`;
+    return `${nodeIdCounter++}`;
 }
 
 function vplToFlowType(type) {
     // Map from flowType string to array of VPL block types
     const flowTypeToVplTypes = [
         {
-            flowType: "default",
+            flowType: "binaryOperator",
             vplTypes: ["add", "subtract", "multiply", "divide"],
         },
         { flowType: "input", vplTypes: ["input", "const"] },
         { flowType: "output", vplTypes: ["output", "ticket"] },
-        { flowType: "default", vplTypes: ["lt", "gt", "eq", "and", "or"] },
+        {
+            flowType: "binaryOperator",
+            vplTypes: ["lt", "gt", "eq", "and", "or"],
+        },
     ];
     for (const { flowType, vplTypes } of flowTypeToVplTypes) {
         if (vplTypes.includes(type)) {
-            console.log("found");
             return flowType;
         }
     }
@@ -36,6 +37,8 @@ export function createNodeFromBlock(block, position) {
         block && block.id !== undefined && block.id !== null
             ? String(block.id)
             : createNodeId();
+
+    console.log(id);
 
     const baseTicket = block.ticket || {
         recipient: "",
@@ -85,10 +88,14 @@ export function templateBlocksToNodes(
     });
 
     // Map id -> block for convenient lookup when creating nodes
+    // Also collect max node id for internal counter.
     const idToBlock = {};
+    let maxId = parseInt(nodeIdCounter);
     nodeIds.forEach((id, index) => {
         idToBlock[id] = templateBlocks[index];
+        if (parseInt(id) >= maxId) maxId = id + 1;
     });
+    nodeIdCounter = maxId;
 
     // Build adjacency lists for outgoing and incoming edges
     const outgoing = {};
@@ -171,7 +178,7 @@ export function templateBlocksToNodes(
     // Sort nodes within each layer by their topological index for a stable layout
     Object.keys(layers).forEach((layerKey) => {
         layers[layerKey].sort((a, b) => {
-            return (topoIndex[a] || 0) - (topoIndex[b] || 0);
+            return (topoIndex[b] || 0) - (topoIndex[a] || 0);
         });
     });
 
@@ -203,11 +210,11 @@ export function templateBlocksToNodes(
 export function templateEdgesToEdges(templateEdges) {
     if (!Array.isArray(templateEdges)) return [];
 
-    return templateEdges.map(([source, target]) => ({
+    return templateEdges.map(([source, target, targetHandle]) => ({
         id: `e-${source}-${target}`,
         source: String(source),
         target: String(target),
-        type: "bezier",
+        targetHandle,
         markerEnd: {
             type: MarkerType.ArrowClosed,
             width: 20,
@@ -230,21 +237,21 @@ export function VPLNodesToFlowBlocks(nodes) {
     });
 }
 
-export function verifyProgram(nodes, edges) {
-    if (!Array.isArray(nodes)) return false;
-    if (!Array.isArray(edges)) return false;
-    if (nodes.length === 0) return false;
-    if (edges.length === 0) return false;
+export function verifyProgram({ Nodes, Connections, ...rest }) {
+    if (rest["Policy Name"].length === 0) return false;
+
+    if (!Array.isArray(Nodes) || Nodes.length === 0) return false;
+    if (!Array.isArray(Connections) || Connections.length === 0) return false;
 
     // Map node ids (can be strings) to set of neighbors
-    const nodeIds = nodes.map((node) => String(node.id));
+    const nodeIds = Nodes.map((node) => String(node.index));
     const edgeMap = {};
     nodeIds.forEach((id) => {
         edgeMap[id] = [];
     });
-    edges.forEach((edge) => {
-        if (edgeMap[edge.source]) {
-            edgeMap[edge.source].push(edge.target);
+    Connections.forEach(([source, target]) => {
+        if (edgeMap[source]) {
+            edgeMap[source].push(target);
         }
     });
 
