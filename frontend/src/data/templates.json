@@ -8,31 +8,31 @@
                 "id": "0",
                 "type": "input",
                 "label": "Usage %",
-                "description": ""
+                "description": "Input value"
             },
             {
                 "id": "1",
                 "type": "const",
                 "label": "20",
                 "data": { "value": 20 },
-                "description": ""
+                "description": "Constant value"
             },
             {
                 "id": "2",
                 "type": "lt",
-                "label": "<",
-                "description": ""
+                "label": "Less Than (<)",
+                "description": "Less than (<)"
             },
             {
                 "id": "3",
-                "type": "ticket",
+                "type": "output",
                 "label": "Create Ticket",
                 "data": {
                     "recipient": "ops@example.com",
                     "action": "Scale down instances",
                     "description": "Scale down due to low usage"
                 },
-                "description": ""
+                "description": "Create Ticket"
             }
         ],
         "Connections": [
@@ -50,31 +50,31 @@
                 "id": "0",
                 "type": "input",
                 "label": "Daily Cost",
-                "description": ""
+                "description": "This block represents an input value for the policy."
             },
             {
                 "id": "1",
                 "type": "const",
                 "label": "200",
                 "data": { "value": 200 },
-                "description": ""
+                "description": "This block represents a constant value used in the policy."
             },
             {
                 "id": "2",
                 "type": "gt",
-                "label": ">",
-                "description": ""
+                    "label": "Greater Than (>)",
+                "description": "Greater than (>)"
             },
             {
                 "id": "3",
-                "type": "ticket",
-                "label": "Notify Team",
+                "type": "output",
+                "label": "Send Notification",
                 "data": {
                     "recipient": "finance@example.com",
                     "action": "Notify on high cost",
                     "description": "Send notification to finance team"
                 },
-                "description": ""
+                "description": "Create ticket/notification"
             }
         ],
         "Connections": [
@@ -92,31 +92,31 @@
                 "id": "0",
                 "type": "input",
                 "label": "Usage %",
-                "description": ""
+                "description": "Input value"
             },
             {
                 "id": "1",
                 "type": "const",
                 "label": "80",
                 "data": { "value": 80 },
-                "description": ""
+                "description": "Constant value"
             },
             {
                 "id": "2",
                 "type": "gt",
-                "label": ">",
-                "description": ""
+                    "label": "Greater Than (>)",
+                "description": "Greater than (>)"
             },
             {
                 "id": "3",
-                "type": "ticket",
+                "type": "output",
                 "label": "Send Notification",
                 "data": {
                     "recipient": "ops@example.com",
                     "action": "Notify on high usage",
                     "description": "Send notification when usage exceeds 80%"
                 },
-                "description": ""
+                "description": "Send Notification"
             }
         ],
         "Connections": [
@@ -134,31 +134,31 @@
                 "id": "0",
                 "type": "input",
                 "label": "Custom Metric",
-                "description": ""
+                "description": "Input value"
             },
             {
                 "id": "1",
                 "type": "const",
                 "label": "50",
                 "data": { "value": 50 },
-                "description": ""
+                "description": "Constant value"
             },
             {
                 "id": "2",
                 "type": "lt",
-                "label": "<",
-                "description": ""
+                "label": "Less Than (<)",
+                "description": "Less than (<)"
             },
             {
                 "id": "3",
-                "type": "ticket",
+                "type": "output",
                 "label": "Log Event",
                 "data": {
                     "recipient": "logs@example.com",
                     "action": "Log custom metric event",
                     "description": "Log event when custom metric is below 50"
                 },
-                "description": ""
+                "description": "Log Event"
             }
         ],
         "Connections": [
@@ -176,56 +176,56 @@
                 "id": "0",
                 "type": "input",
                 "label": "Usage %",
-                "description": ""
+                "description": "Input value"
             },
             {
                 "id": "1",
                 "type": "input",
                 "label": "Daily Cost",
-                "description": ""
+                "description": "Input value"
             },
             {
                 "id": "2",
                 "type": "const",
                 "label": "90",
                 "data": { "value": 90 },
-                "description": ""
+                "description": "Constant value"
             },
             {
                 "id": "3",
                 "type": "const",
                 "label": "150",
                 "data": { "value": 150 },
-                "description": ""
+                "description": "Constant value"
             },
             {
                 "id": "4",
                 "type": "gt",
-                "label": ">",
-                "description": ""
+                "label": "Greater Than (>)",
+                "description": "Greater than (>)"
             },
             {
                 "id": "5",
                 "type": "lt",
-                "label": "<",
-                "description": ""
+                "label": "Less Than (<)",
+                "description": "Less than (<)"
             },
             {
                 "id": "6",
                 "type": "and",
                 "label": "AND",
-                "description": ""
+                "description": "AND"
             },
             {
                 "id": "7",
-                "type": "ticket",
+                "type": "output",
                 "label": "Create Ticket",
                 "data": {
                     "recipient": "ops@example.com",
                     "action": "Scale up",
                     "description": "Scale up if usage > 90% and cost < 150"
                 },
-                "description": ""
+                "description": "Create Ticket"
             }
         ],
         "Connections": [
@@ -247,31 +247,31 @@
                 "id": "0",
                 "type": "input",
                 "label": "Custom Metric",
-                "description": ""
+                "description": "Input value"
             },
             {
                 "id": "1",
                 "type": "const",
                 "label": "75",
                 "data": { "value": 75 },
-                "description": ""
+                "description": "Constant value"
             },
             {
                 "id": "2",
                 "type": "gt",
-                "label": ">",
-                "description": ""
+                "label": "Greater Than (>)",
+                "description": "Greater than (>)"
             },
             {
                 "id": "3",
-                "type": "ticket",
+                "type": "output",
                 "label": "Send Notification",
                 "data": {
                     "recipient": "alerts@example.com",
                     "action": "Alert",
                     "description": "Alert if custom metric > 75"
                 },
-                "description": ""
+                "description": "Send Notification"
             }
         ],
         "Connections": [
@@ -289,31 +289,31 @@
                 "id": "0",
                 "type": "input",
                 "label": "Usage %",
-                "description": ""
+                "description": "Input value"
             },
             {
                 "id": "1",
                 "type": "const",
                 "label": "10",
                 "data": { "value": 10 },
-                "description": ""
+                "description": "Constant value"
             },
             {
                 "id": "2",
                 "type": "lt",
-                "label": "<",
-                "description": ""
+                "label": "Less Than (<)",
+                "description": "Less than (<)"
             },
             {
                 "id": "3",
-                "type": "ticket",
+                "type": "output",
                 "label": "Log Event",
                 "data": {
                     "recipient": "logs@example.com",
                     "action": "Log low usage",
                     "description": "Log event if usage < 10%"
                 },
-                "description": ""
+                "description": "Log Event"
             }
         ],
         "Connections": [
@@ -331,36 +331,36 @@
                 "id": "0",
                 "type": "input",
                 "label": "Daily Cost",
-                "description": ""
+                "description": "Input value"
             },
             {
                 "id": "1",
                 "type": "input",
                 "label": "Yesterday Cost",
-                "description": ""
+                "description": "Input value"
             },
             {
                 "id": "2",
                 "type": "const",
                 "label": "100",
                 "data": { "value": 100 },
-                "description": ""
+                "description": "Constant value"
             },
             {
                 "id": "3",
                 "type": "subtract",
-                "description": ""
+                "description": "Subtract two values"
             },
             {
                 "id": "4",
                 "type": "gt",
-                "label": ">",
+                "label": "Greater Than (>)",
                 "inputs": ["subtract", "const100"],
-                "description": ""
+                "description": "Greater than (>)"
             },
             {
                 "id": "5",
-                "type": "ticket",
+                "type": "output",
                 "label": "Send Notification",
                 "inputs": ["increase_gt"],
                 "data": {
@@ -368,7 +368,7 @@
                     "action": "Notify cost increase",
                     "description": "Notify if cost increases by more than 100"
                 },
-                "description": ""
+                "description": "Send Notification"
             }
         ],
         "Connections": [
@@ -388,51 +388,51 @@
                 "id": "0",
                 "type": "input",
                 "label": "Usage %",
-                "description": ""
+                "description": "Input value"
             },
             {
                 "id": "1",
                 "type": "input",
                 "label": "Custom Metric",
-                "description": ""
+                "description": "Input value"
             },
             {
                 "id": "2",
                 "type": "const",
                 "label": "80",
                 "data": { "value": 80 },
-                "description": ""
+                "description": "Constant value"
             },
             {
                 "id": "3",
                 "type": "const",
                 "label": "60",
                 "data": { "value": 60 },
-                "description": ""
+                "description": "Constant value"
             },
             {
                 "id": "4",
                 "type": "gt",
-                "label": ">",
+                "label": "Greater Than (>)",
                 "inputs": ["usage", "const80"],
-                "description": ""
+                "description": "Greater than (>)"
             },
             {
                 "id": "5",
                 "type": "gt",
-                "label": ">",
+                "label": "Greater Than (>)",
                 "inputs": ["custom", "const60"],
-                "description": ""
+                "description": "Greater than (>)"
             },
             {
                 "id": "6",
                 "type": "and",
-                "label": "and",
-                "description": ""
+                "label": "AND",
+                "description": "AND"
             },
             {
                 "id": "7",
-                "type": "ticket",
+                "type": "output",
                 "label": "Create Ticket",
                 "inputs": ["and1"],
                 "data": {
@@ -440,7 +440,7 @@
                     "action": "Ticket high usage & custom metric",
                     "description": "Create ticket if usage > 80% AND custom metric > 60"
                 },
-                "description": ""
+                "description": "Create Ticket"
             }
         ],
         "Connections": [

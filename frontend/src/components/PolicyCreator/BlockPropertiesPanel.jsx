@@ -182,7 +182,7 @@ function BlockPropertiesPanel({ block, onBlockUpdate }) {
                 <label style={labelStyle}>
                     <span style={labelTextStyle}>Description</span>
                     <textarea
-                        placeholder="Describe what this block does..."
+                        placeholder={block.description && block.description.trim() !== "" ? block.description : "Describe what this block does..."}
                         value={block.description || ""}
                         onChange={(e) =>
                             handleDescriptionChange(e.target.value)
