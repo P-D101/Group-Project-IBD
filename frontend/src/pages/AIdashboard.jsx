@@ -4,9 +4,11 @@ import { useState } from "react";
 import { Chart } from "chart.js/auto";
 import "chartjs-adapter-date-fns";
 import Table from "../components/Table";
+import AIquery from "../components/AIquery";
 import BaseLayout from "../components/BaseLayout";
 import { useNavigate } from "react-router-dom";
-
+import React from "react";
+import { set } from "date-fns";
 
 const tickets = [
     "example ticket 1 policy text",
@@ -109,6 +111,8 @@ function AIdashboard() {
             });
         }
     }, []);
+
+
     return (
 
         <div className="bg-[#e8ebed]">
@@ -132,12 +136,11 @@ function AIdashboard() {
                     </button>
                 </div>
 
-                {/* AI Query Input */}
-                <input
-                    style={styles.inputBox}
-                    placeholder="Enter AI query here"
-                ></input>
-                {/* need to add finish python script for AI recommendations - see ai_suggestions.py in backend*/}
+<div>
+                {/* AI Query Section */}
+                <AIquery/>         
+            
+</div>
 
                 {/*scrollable ticket suggestions with dummy tickets for now*/}
                 <h3 className="text-lg font-semibold pt-4">
@@ -198,7 +201,7 @@ function AIdashboard() {
                     Cloud Usage Data Per Server
                 </h3>
 
-                <Table></Table>
+               {/* <Table></Table>*/}
             </div>
         </div>
     );

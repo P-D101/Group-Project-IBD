@@ -30,9 +30,9 @@ data['anomaly'] = forest_model.predict(features) #classify as anomlay or not
 '''
 
 #data = get_db().execute("SELECT * FROM hundred_k") ##test code
-
 ##llm - works as expected but not tested on database data 
-client = genai.Client(api_key="")
+apistr = "" #add api key here for testing
+client = genai.Client(api_key=apistr)
 
 class JsonTicket(BaseModel):
     title: str = Field(..., description="The title of the ticket")
