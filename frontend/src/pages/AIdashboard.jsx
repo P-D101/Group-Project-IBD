@@ -5,6 +5,7 @@ import { Chart } from "chart.js/auto";
 import "chartjs-adapter-date-fns";
 import Table from "../components/Table";
 import AIquery from "../components/AIquery";
+import StatsCards from "../components/StatsCards";
 import BaseLayout from "../components/BaseLayout";
 import { useNavigate } from "react-router-dom";
 import React from "react";
@@ -122,7 +123,7 @@ function AIdashboard() {
 
                 {/* Navigation Tabs */}
                 <div style={styles.navRow} className="">
-                    <button className=" gap-4 px-2 py-1 bg-[#1b6a5e] text-indigo-600 rounded-lg hover:bg-[#1b6a5e] text-white">
+                    <button className=" gap-4 px-2 py-1 bg-[#1b6a5e] text-indigo-600 rounded-lg hover:bg-[#1b6a5e]/80 text-white">
                         Insights{" "}
                     </button>
                     <button
@@ -175,16 +176,14 @@ function AIdashboard() {
                 <h3 className="text-lg font-semibold pt-4">
                     Data Analytics Overview
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-white p-4 rounded shadow-sm">
-                        <h3 className="">Improved Usage</h3>
-                        <p>View key metrics and insights here.</p>
-                    </div>
-                    <div className="bg-white p-4 rounded shadow-sm">
-                        <h3 className="">Wasted Resources</h3>
-                        <p>Track performance over time.</p>
-                    </div>
-                </div>
+
+<div>
+    {/* Stats Cards Section */}
+                <StatsCards/>
+
+</div>
+
+
                 {/*Server Graphs using dummy data for now*/}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="p-6 pb-20 relative w-full h-64 bg-white rounded shadow-sm">
