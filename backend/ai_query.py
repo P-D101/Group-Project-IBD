@@ -31,19 +31,6 @@ apistr = "" #add api key here for testing
 client = genai.Client(api_key=apistr)
 
 ##debug test
-'''try:
-    client = genai.Client(api_key=apistr)
-    print(f"Client initialized! Key length: {len(apistr)}")
-    
-    # Try a tiny test call
-    response = client.models.generate_content(
-        model="gemini-3-flash-preview", 
-        contents="Hello"
-    )
-    print("Success! Gemini responded.")
-except Exception as e:
-    print(f"Caught Error: {e}")'''
-
 
 
 def process_query(user_query):

@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { useState } from "react";
-// import { Line } from "react-chartjs-2";
 import { Chart } from "chart.js/auto";
 import "chartjs-adapter-date-fns";
 import Table from "../components/Table";
 import AIquery from "../components/AIquery";
+import AIsuggestions from "../components/AIsuggestions";
 import StatsCards from "../components/StatsCards";
 import BaseLayout from "../components/BaseLayout";
 import { useNavigate } from "react-router-dom";
@@ -137,51 +137,29 @@ function AIdashboard() {
                     </button>
                 </div>
 
-<div>
+            <div>
                 {/* AI Query Section */}
                 <AIquery/>         
             
-</div>
+            </div>
 
-                {/*scrollable ticket suggestions with dummy tickets for now*/}
-                <h3 className="text-lg font-semibold pt-4">
-                    AI Ticket Recommendations
-                </h3>
-                <div className="gap-6 flex overflow-x-auto scrollbar-hide  ">
-                    {tickets.map((ticket, index) => (
-                        <div
-                            key={index}
-                            className={` bg-white relative p-4 rounded shadow-sm flex-shrink-0 w-50 h-50`}
-                        >
-                            <h3 className="text-lg font-semibold">
-                                Ticket {index + 1}
-                            </h3>
-                            <p className="text-xs">{ticket}.</p>
-                            <p className=" text-xs pt-2">Suggested Action</p>
-                            <p className="text-xs pb-4">Reasoning...</p>
+                {/* AI Ticket Suggestions Section */}
+            <div>
 
-                            <div className=" h-1/5 md:absolute bottom-5 grid grid-cols-1 md:grid-cols-2 gap-2">
-                                <button className=" gap-4 px-2 py-1 bg-[#1b6a5e] text-white rounded-lg hover:bg-[#84a49f] hover:shadow-md ">
-                                    Approve{" "}
-                                </button>
-                                <button className=" gap-4 px-2 py-1 bg-[#163158] text-white rounded-lg hover:bg-indigo-100 hover:shadow-md ">
-                                    Reject{" "}
-                                </button>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                   <AIsuggestions/> 
+
+            </div>
 
                 {/* Analytics Section - Summary */}
                 <h3 className="text-lg font-semibold pt-4">
                     Data Analytics Overview
                 </h3>
 
-<div>
-    {/* Stats Cards Section */}
+            <div>
+                {/* Stats Cards Section */}
                 <StatsCards/>
 
-</div>
+            </div>
 
 
                 {/*Server Graphs using dummy data for now*/}
