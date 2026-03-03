@@ -58,6 +58,10 @@ function PolicyCreator() {
     };
 
     const handleConnect = (connection) => {
+        // Prevent self-feeding loops (no edge from a node to itself)
+        if (connection.source === connection.target) {
+            return;
+        }
         setEdges((eds) => {
             // Only allow one edge per target/handle (input point)
             const filtered = eds.filter(
