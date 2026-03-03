@@ -58,7 +58,15 @@ function PolicyCreator() {
     };
 
     const handleConnect = (connection) => {
-        setEdges((eds) => addEdge(connection, eds));
+        setEdges((eds) => {
+            // Only allow one edge per target/handle (input point)
+            const filtered = eds.filter(
+                (e) =>
+                    !(e.target === connection.target &&
+                      (!connection.targetHandle || e.targetHandle === connection.targetHandle))
+            );
+            return addEdge(connection, filtered);
+        });
     };
 
     const handleDropBlock = (blockInfo, position) => {
