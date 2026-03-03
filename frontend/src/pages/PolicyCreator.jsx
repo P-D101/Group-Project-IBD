@@ -39,7 +39,7 @@ function PolicyCreator() {
             selectedTemplate.Nodes,
             selectedTemplate.Connections,
         );
-        const initialEdges = templateEdgesToEdges(selectedTemplate.Connections);
+        const initialEdges = templateEdgesToEdges(selectedTemplate.Connections, selectedTemplate.Nodes);
 
         // Defer state updates to avoid cascading synchronous renders inside the effect.
         queueMicrotask(() => {
@@ -62,6 +62,40 @@ function PolicyCreator() {
         if (connection.source === connection.target) {
             return;
         }
+        // Edge color logic (match template logic)
+        const sourceNode = nodes.find((n) => n.id === connection.source);
+        let edgeColor = '#888';
+        function isInputsOrComponents(type) {
+            return (
+                type === 'input' ||
+                type === 'const' ||
+                type === 'number' ||
+                type === 'op' ||
+                type === 'component'
+            );
+        }
+        function isDecisions(type) {
+            return (
+                type === 'lt' ||
+                type === 'gt' ||
+                type === 'eq' ||
+                type === 'and' ||
+                type === 'or' ||
+                type === 'not' ||
+                type === 'decision' ||
+                type === 'greaterThan' ||
+                type === 'lessThan' ||
+                type === 'equal'
+            );
+        }
+        if (sourceNode) {
+            const t = sourceNode.data.type;
+            if (isInputsOrComponents(t)) {
+                edgeColor = '#1976d2';
+            } else if (isDecisions(t)) {
+                edgeColor = '#d32f2f';
+            }
+        }
         setEdges((eds) => {
             // Only allow one edge per target/handle (input point)
             const filtered = eds.filter(
@@ -69,7 +103,7 @@ function PolicyCreator() {
                     !(e.target === connection.target &&
                       (!connection.targetHandle || e.targetHandle === connection.targetHandle))
             );
-            return addEdge(connection, filtered);
+            return addEdge({ ...connection, type: 'colored', style: { stroke: edgeColor, strokeWidth: 4 } }, filtered);
         });
     };
 
