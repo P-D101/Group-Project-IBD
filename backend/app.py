@@ -1,3 +1,4 @@
+import shutil
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -43,6 +44,16 @@ def overview_provider(provider): # TODO
 @app.route("/api/data/<field>")
 def get_data_enumeration(field):
     return get_data(field)
+
+@app.route("/api/input_fields")
+def get_input_fields():
+    return {
+        "Billed Cost": "billed_cost",
+        "Effective Cost": "effective_cost",
+        "List Cost": "list_cost",
+        "Usage Quantity": "usage_quantity", # note must be restricted to a usage unit.
+        # TODO
+    }
 
 ## USAGE
 @app.route("/api/usage/<timestep>") # Basic ungrouped usage (indexed) - quick
@@ -192,6 +203,14 @@ def top_services(provider,timestep):
 ############################################
 #                VPL Policy API            #
 ############################################
+import VPL_Compute.nodes as nodes
+
+@app.route("/api/vpl/node_types", methods=["GET"])
+def get_node_types():
+    nodesTypes = nodes.get_all_node_types()
+    print(nodesTypes)
+    return nodesTypes
+
 
 import os
 import uuid
@@ -228,15 +247,16 @@ def get_vpls():
     
     vpl_ids = {}
     get_id = lambda f: f.split("policy_")[1].split(".json")[0]
-    if os.path.exists(enabled_dir):
-        vpl_files = os.listdir(enabled_dir)
-        vpl_ids["enabled"] = [get_id(f) for f in vpl_files if f.startswith("policy_") and f.endswith(".json")]
     if os.path.exists(disabled_dir):
-        vpl_files = os.listdir(disabled_dir)
-        vpl_ids["disabled"] = [get_id(f) for f in vpl_files if f.startswith("policy_") and f.endswith(".json")]
+        disabled_files = set(os.listdir(disabled_dir))
+        vpl_ids["disabled"] = [get_id(f) for f in disabled_files if f.startswith("policy_") and f.endswith(".json")]
+    if os.path.exists(enabled_dir):
+        enabled_files = set(os.listdir(enabled_dir)).difference(disabled_files)
+        vpl_ids["enabled"] = [get_id(f) for f in enabled_files if f.startswith("policy_") and f.endswith(".json")]
     if os.path.exists(processing_dir):
-        vpl_files = os.listdir(processing_dir)
-        vpl_ids["processing"] = [get_id(f) for f in vpl_files if f.startswith("policy_") and f.endswith(".json")]
+        processing_files = os.listdir(processing_dir)
+        vpl_ids["processing"] = [get_id(f) for f in processing_files if f.startswith("policy_") and f.endswith(".json")]
+
 
     return {"vpl_ids": vpl_ids}
 
@@ -289,7 +309,8 @@ def disable_vpl(vplID):
         # move the file to a deleted folder instead of deleting it permanently, in case of accidental deletion
         deleted_dir = os.path.join(os.path.dirname(__file__), "data", "disable-programs")
         os.makedirs(deleted_dir, exist_ok=True)
-        os.rename(file_path, os.path.join(deleted_dir, filename))
+        # copy instead of move
+        shutil.copy(file_path, os.path.join(deleted_dir, filename))
     except Exception as e:
         return {"error": f"Failed to disable VPL: {e}"}, 500
     return {"message": "VPL disabled", "vpl_id": vplID}, 200
@@ -303,10 +324,12 @@ def enable_vpl(vplID):
         return {"error": "VPL not found"}, 404
 
     try:
-        # move the file to a deleted folder instead of deleting it permanently, in case of accidental deletion
-        programs_dir = os.path.join(os.path.dirname(__file__), "data", "programs")
-        os.makedirs(programs_dir, exist_ok=True)
-        os.rename(file_path, os.path.join(programs_dir, filename))
+        # delte the file in the disabled folder
+        # check if it is in programs, if not copy it
+        enabled_file_path = os.path.join(os.path.dirname(__file__), "data", "programs", filename)
+        if not os.path.exists(enabled_file_path):
+            shutil.copy(file_path, enabled_file_path)
+        os.remove(file_path)
     except Exception as e:
         return {"error": f"Failed to enable VPL: {e}"}, 500
     return {"message": "VPL enabled", "vpl_id": vplID}, 200
