@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function Header({ onSave, policyName, setPolicyName }) {
+function Header({ onSave, policyName, setPolicyName, onClear }) {
     const [isFocused, setIsFocused] = useState(false);
 
     const headerStyle = {
@@ -38,6 +38,10 @@ function Header({ onSave, policyName, setPolicyName }) {
         cursor: "pointer",
         transition: "background-color 0.2s, box-shadow 0.2s",
     };
+    const clearButtonStyle = {
+        ...buttonStyle,
+        backgroundColor: "#d32f2f",
+    };
 
     const handleMouseEnter = (e) => {
         e.target.style.backgroundColor = "#0f3620";
@@ -60,14 +64,24 @@ function Header({ onSave, policyName, setPolicyName }) {
                 value={policyName}
                 onChange={(e) => setPolicyName(e.target.value)}
             />
-            <button
-                style={buttonStyle}
-                onClick={onSave}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-            >
-                Save Policy
-            </button>
+            <div style={{ display: 'flex', gap: '0.75rem' }}>
+                <button
+                    style={clearButtonStyle}
+                    onClick={onClear}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                >
+                    Clear Policy
+                </button>
+                <button
+                    style={buttonStyle}
+                    onClick={onSave}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                >
+                    Save Policy
+                </button>
+            </div>
         </header>
     );
 }

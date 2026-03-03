@@ -215,6 +215,7 @@ export function templateEdgesToEdges(templateEdges) {
         source: String(source),
         target: String(target),
         targetHandle,
+        updatable: true,
         markerEnd: {
             type: MarkerType.ArrowClosed,
             width: 20,

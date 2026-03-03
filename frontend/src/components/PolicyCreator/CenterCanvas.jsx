@@ -1,3 +1,15 @@
+    // Handler for edge updates (arrow dragging)
+    const handleEdgeUpdate = (oldEdge, newConnection) => {
+        if (oldEdge.source === newConnection.target) return; // Prevent self-loop
+        if (oldEdge.target === newConnection.target && oldEdge.targetHandle === newConnection.targetHandle) return;
+        if (onEdgesChange) {
+            // Remove the old edge and add the new one
+            onEdgesChange([
+                { id: oldEdge.id, type: 'remove' },
+                { ...newConnection, type: 'add' }
+            ]);
+        }
+    };
 import {
     ReactFlow,
     Background,
@@ -78,12 +90,14 @@ function FlowWrapper({
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
                 onConnect={onConnect}
+                onEdgeUpdate={handleEdgeUpdate}
                 onNodeClick={handleNodeClick}
                 onSelectionChange={handleSelectionChange}
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
                 nodeTypes={nodeTypes}
                 fitView
+                edgesUpdatable={true}
             >
                 <Background />
                 <Controls />

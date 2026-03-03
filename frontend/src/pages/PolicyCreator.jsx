@@ -131,6 +131,12 @@ function PolicyCreator() {
         console.log(policyObject);
     };
 
+    const handleClearPolicy = () => {
+        setNodes([]);
+        setEdges([]);
+        setSelectedNodeId(null);
+    };
+
     return (
         <div
             style={{
@@ -144,6 +150,7 @@ function PolicyCreator() {
                 onSave={handleSave}
                 policyName={policyName}
                 setPolicyName={setPolicyName}
+                onClear={handleClearPolicy}
             />
 
             <div
