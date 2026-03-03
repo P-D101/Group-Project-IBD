@@ -46,11 +46,11 @@ def get_data_enumeration(field):
     return get_data(field)
 
 @app.route("/api/time_fields")
-def get_input_fields():
+def get_time_fields():
     return TIMESPAN.to_list()
 
 @app.route("/api/group_fields")
-def get_input_fields():
+def get_group_fields():
     return GROUPBY.to_list()
 
 @app.route("/api/input_fields")
@@ -58,7 +58,7 @@ def get_input_fields():
     return SELECTS.to_list()
 
 @app.route("/api/filter_fields")
-def get_input_fields():
+def get_filter_fields():
     return FILTERS.to_list()
 
 
