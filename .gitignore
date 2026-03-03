@@ -33,6 +33,8 @@ backend/query_tester.ipynb
 backend/venv
 backend/data/programs/
 backend/data/disable-programs/*.json
+backend/data/new-programs/*.json
+backend/data/remove-programs/*.json
 
 
 # database
