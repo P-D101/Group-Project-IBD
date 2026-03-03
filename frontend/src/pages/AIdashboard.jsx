@@ -136,6 +136,15 @@ function AIdashboard() {
                     >
                         Policy Creation{" "}
                     </button>
+                    <button
+                        onClick={() => {
+                            setCurrPage("policy-viewer");
+                            navigate("/policy-viewer");
+                        }}
+                        className="text-white gap-4 px-2 py-1 bg-[#84a49f]  rounded-lg hover:bg-[#1b6a5e] hover:shadow-md"
+                    >
+                        Policy Viewer{" "}
+                    </button>
                 </div>
 
             <div>

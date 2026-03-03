@@ -1,3 +1,4 @@
+import shutil
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -44,6 +45,23 @@ def overview_provider(provider): # TODO
 def get_data_enumeration(field):
     return get_data(field)
 
+@app.route("/api/time_fields")
+def get_time_fields():
+    return TIMESPAN.to_list()
+
+@app.route("/api/group_fields")
+def get_group_fields():
+    return GROUPBY.to_list()
+
+@app.route("/api/input_fields")
+def get_input_fields():
+    return SELECTS.to_list()
+
+@app.route("/api/filter_fields")
+def get_filter_fields():
+    return FILTERS.to_list()
+
+
 ## USAGE
 @app.route("/api/usage/<timestep>") # Basic ungrouped usage (indexed) - quick
 def usage(timestep):
@@ -57,13 +75,13 @@ def usage(timestep):
         return {"error": f"Bad Request: {provider} not in acceptible providers: {get_data('provider')}"}, 400
     
     
-    selected_table, selected_usage_field = TIMESPAN(timestep).map()
+    selected_usage_field = TIMESPAN(timestep).map()
 
     query = f"""
     SELECT    
         {selected_usage_field},
         SUM(total_usage_cost) AS usage_cost
-    FROM {selected_table}{f'\
+    FROM gold_standard_usage {f'\
     WHERE provider_name = "{provider}"' if provider else ""}
     GROUP BY {selected_usage_field}
     ORDER BY {selected_usage_field};
@@ -77,7 +95,7 @@ def grouped_usage(timestep):
     if timestep not in TIMESPAN:
         return {"error": f"Bad Request: {timestep} not in acceptible timesteps: {TIMESPAN.to_list()}"}, 400
 
-    selected_table, selected_usage_field = TIMESPAN(timestep).map()
+    selected_usage_field = TIMESPAN(timestep).map()
 
     # groupby: comma seperated list
     groupby = request.args.get('groupby', default=None)
@@ -85,9 +103,10 @@ def grouped_usage(timestep):
     # split by , unless not provided
     groupby = groupby.split(',') if groupby else []
 
-    for field in groupby: # check valid grouping
+    for i,field in enumerate(groupby): # check valid grouping
         if field not in GROUPBY:
             return {"error": f"Bad Request: selection parameter: {field} not in acceptible group selections: {GROUPBY.to_list()}"}, 400
+        groupby[i] = GROUPBY(field).map()
     
     # fields to select: comma seperated list
     selects = request.args.get('selects', default=None)
@@ -137,7 +156,7 @@ def grouped_usage(timestep):
     query = f"""
     SELECT
         {','.join(selects)}
-    FROM {selected_table}
+    FROM gold_standard_usage
     {where_clause}
     GROUP BY {','.join(groupby)}
     ORDER BY {selected_usage_field}
@@ -158,7 +177,7 @@ def top_services(provider,timestep):
     if provider not in get_data('provider'):
         return {"error": f"Bad Request: {provider} not in acceptible providers: {get_data('provider')}"}, 400
 
-    selected_table, selected_usage_field = TIMESPAN(timestep).map()
+    selected_usage_field = TIMESPAN(timestep).map()
 
     # How many services to give information for and how many to
     N_top_services = int(request.args.get("N", 5))
@@ -167,7 +186,7 @@ def top_services(provider,timestep):
     SELECT    
         {selected_usage_field}, service_name,
         SUM(total_usage_cost) AS usage_cost
-    FROM {selected_table}
+    FROM gold_standard_usage
     WHERE provider_name = "{provider}"
     GROUP BY {selected_usage_field}, service_name
     ORDER BY {selected_usage_field};
@@ -192,6 +211,14 @@ def top_services(provider,timestep):
 ############################################
 #                VPL Policy API            #
 ############################################
+import VPL_Compute.nodes as nodes
+
+@app.route("/api/vpl/node_types", methods=["GET"])
+def get_node_types():
+    nodesTypes = nodes.get_all_node_types()
+    print(nodesTypes)
+    return nodesTypes
+
 
 import os
 import uuid
@@ -228,15 +255,16 @@ def get_vpls():
     
     vpl_ids = {}
     get_id = lambda f: f.split("policy_")[1].split(".json")[0]
-    if os.path.exists(enabled_dir):
-        vpl_files = os.listdir(enabled_dir)
-        vpl_ids["enabled"] = [get_id(f) for f in vpl_files if f.startswith("policy_") and f.endswith(".json")]
     if os.path.exists(disabled_dir):
-        vpl_files = os.listdir(disabled_dir)
-        vpl_ids["disabled"] = [get_id(f) for f in vpl_files if f.startswith("policy_") and f.endswith(".json")]
+        disabled_files = set(os.listdir(disabled_dir))
+        vpl_ids["disabled"] = [get_id(f) for f in disabled_files if f.startswith("policy_") and f.endswith(".json")]
+    if os.path.exists(enabled_dir):
+        enabled_files = set(os.listdir(enabled_dir)).difference(disabled_files)
+        vpl_ids["enabled"] = [get_id(f) for f in enabled_files if f.startswith("policy_") and f.endswith(".json")]
     if os.path.exists(processing_dir):
-        vpl_files = os.listdir(processing_dir)
-        vpl_ids["processing"] = [get_id(f) for f in vpl_files if f.startswith("policy_") and f.endswith(".json")]
+        processing_files = os.listdir(processing_dir)
+        vpl_ids["processing"] = [get_id(f) for f in processing_files if f.startswith("policy_") and f.endswith(".json")]
+
 
     return {"vpl_ids": vpl_ids}
 
@@ -289,7 +317,8 @@ def disable_vpl(vplID):
         # move the file to a deleted folder instead of deleting it permanently, in case of accidental deletion
         deleted_dir = os.path.join(os.path.dirname(__file__), "data", "disable-programs")
         os.makedirs(deleted_dir, exist_ok=True)
-        os.rename(file_path, os.path.join(deleted_dir, filename))
+        # copy instead of move
+        shutil.copy(file_path, os.path.join(deleted_dir, filename))
     except Exception as e:
         return {"error": f"Failed to disable VPL: {e}"}, 500
     return {"message": "VPL disabled", "vpl_id": vplID}, 200
@@ -303,10 +332,12 @@ def enable_vpl(vplID):
         return {"error": "VPL not found"}, 404
 
     try:
-        # move the file to a deleted folder instead of deleting it permanently, in case of accidental deletion
-        programs_dir = os.path.join(os.path.dirname(__file__), "data", "programs")
-        os.makedirs(programs_dir, exist_ok=True)
-        os.rename(file_path, os.path.join(programs_dir, filename))
+        # delte the file in the disabled folder
+        # check if it is in programs, if not copy it
+        enabled_file_path = os.path.join(os.path.dirname(__file__), "data", "programs", filename)
+        if not os.path.exists(enabled_file_path):
+            shutil.copy(file_path, enabled_file_path)
+        os.remove(file_path)
     except Exception as e:
         return {"error": f"Failed to enable VPL: {e}"}, 500
     return {"message": "VPL enabled", "vpl_id": vplID}, 200

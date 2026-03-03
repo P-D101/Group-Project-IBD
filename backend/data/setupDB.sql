@@ -1046,8 +1046,6 @@ GROUP BY
     ChargeDescription,
     ListUnitPrice;
 
-
-
 -- CREATE GOLD STANDARD NORMALISATION TABLE
 DROP TABLE IF EXISTS gold_standard_usage;
 CREATE TABLE gold_standard_usage AS
@@ -1075,7 +1073,6 @@ SELECT
     SUM(CASE WHEN f.effective_cost < 0 THEN f.effective_cost ELSE 0 END) AS total_credits,
     SUM(CASE WHEN f.effective_cost >= 0 THEN f.effective_cost ELSE 0 END) AS total_usage_cost,
     SUM(f.effective_cost) AS net_cost,
-
     -- Usage
     SUM(f.usage_quantity) AS usage_quantity,
     f.usage_unit,
@@ -1116,3 +1113,41 @@ GROUP BY
 --=============================--
 --        UPLOAD POINT         --
 --=============================--
+
+DROP INDEX IF EXISTS idx_gsu_usage_date;
+CREATE INDEX idx_gsu_usage_date
+ON gold_standard_usage (usage_date);
+
+DROP INDEX IF EXISTS idx_gsu_billing_date;
+CREATE INDEX idx_gsu_billing_date
+ON gold_standard_usage (billing_account_id, usage_date);
+
+DROP INDEX IF EXISTS idx_gsu_service_date;
+CREATE INDEX idx_gsu_service_date
+ON gold_standard_usage (
+    service_category,
+    service_name,
+    usage_date
+);
+
+DROP INDEX IF EXISTS idx_gsu_sku_date;
+CREATE INDEX idx_gsu_sku_date
+ON gold_standard_usage (
+    sku_id,
+    usage_date
+);
+
+DROP INDEX IF EXISTS idx_gsu_region_date;
+CREATE INDEX idx_gsu_region_date
+ON gold_standard_usage (
+    region_name,
+    usage_date
+);
+
+DROP INDEX IF EXISTS idx_gsu_org_date;
+CREATE INDEX idx_gsu_org_date
+ON gold_standard_usage (
+    business_unit,
+    application,
+    usage_date
+);
