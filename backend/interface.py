@@ -15,15 +15,8 @@ class MyEnum(Enum):
     def map(self):
         return self.value
 
-class AGGREGATE_TABLE(MyEnum):
-    HOURLY = 'focus_usage_cost_hourly'
-    DAILY = 'focus_usage_cost_daily'
-    WEEKLY = 'focus_usage_cost_weekly'
-    MONTHLY = 'focus_usage_cost_monthly'
-
 
 class USAGE_TIME_FIELD(MyEnum):
-    HOURLY = 'usage_hour'
     DAILY = 'usage_date'
     WEEKLY = 'usage_week'
     MONTHLY = 'usage_month'
@@ -43,16 +36,14 @@ def get_data(field):
 #############
 
 class TIMESPAN(MyEnum):
-    HOURLY = 'hourly'
     DAILY = 'daily'
     WEEKLY = 'weekly'
     MONTHLY = 'monthly'
     def map(self):
         match self:
-            case TIMESPAN.HOURLY: return [AGGREGATE_TABLE.HOURLY.value,USAGE_TIME_FIELD.HOURLY.value]
-            case TIMESPAN.DAILY: return [AGGREGATE_TABLE.DAILY.value,USAGE_TIME_FIELD.DAILY.value]
-            case TIMESPAN.WEEKLY: return [AGGREGATE_TABLE.WEEKLY.value,USAGE_TIME_FIELD.WEEKLY.value]
-            case TIMESPAN.MONTHLY: return [AGGREGATE_TABLE.MONTHLY.value,USAGE_TIME_FIELD.MONTHLY.value]
+            case TIMESPAN.DAILY: return USAGE_TIME_FIELD.DAILY.value
+            case TIMESPAN.WEEKLY: return USAGE_TIME_FIELD.WEEKLY.value
+            case TIMESPAN.MONTHLY: return USAGE_TIME_FIELD.MONTHLY.value
 # /api/usage/
 class SELECTS(MyEnum): 
     BILLED_COST = 'billed_cost'         # cost without deductions, credit or any other savings

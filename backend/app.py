@@ -45,15 +45,22 @@ def overview_provider(provider): # TODO
 def get_data_enumeration(field):
     return get_data(field)
 
+@app.route("/api/time_fields")
+def get_input_fields():
+    return TIMESPAN.to_list()
+
+@app.route("/api/group_fields")
+def get_input_fields():
+    return GROUPBY.to_list()
+
 @app.route("/api/input_fields")
 def get_input_fields():
-    return {
-        "Billed Cost": "billed_cost",
-        "Effective Cost": "effective_cost",
-        "List Cost": "list_cost",
-        "Usage Quantity": "usage_quantity", # note must be restricted to a usage unit.
-        # TODO
-    }
+    return SELECTS.to_list()
+
+@app.route("/api/filter_fields")
+def get_input_fields():
+    return FILTERS.to_list()
+
 
 ## USAGE
 @app.route("/api/usage/<timestep>") # Basic ungrouped usage (indexed) - quick
@@ -68,13 +75,13 @@ def usage(timestep):
         return {"error": f"Bad Request: {provider} not in acceptible providers: {get_data('provider')}"}, 400
     
     
-    selected_table, selected_usage_field = TIMESPAN(timestep).map()
+    selected_usage_field = TIMESPAN(timestep).map()
 
     query = f"""
     SELECT    
         {selected_usage_field},
         SUM(total_usage_cost) AS usage_cost
-    FROM {selected_table}{f'\
+    FROM gold_standard_usage {f'\
     WHERE provider_name = "{provider}"' if provider else ""}
     GROUP BY {selected_usage_field}
     ORDER BY {selected_usage_field};
@@ -88,7 +95,7 @@ def grouped_usage(timestep):
     if timestep not in TIMESPAN:
         return {"error": f"Bad Request: {timestep} not in acceptible timesteps: {TIMESPAN.to_list()}"}, 400
 
-    selected_table, selected_usage_field = TIMESPAN(timestep).map()
+    selected_usage_field = TIMESPAN(timestep).map()
 
     # groupby: comma seperated list
     groupby = request.args.get('groupby', default=None)
@@ -96,9 +103,10 @@ def grouped_usage(timestep):
     # split by , unless not provided
     groupby = groupby.split(',') if groupby else []
 
-    for field in groupby: # check valid grouping
+    for i,field in enumerate(groupby): # check valid grouping
         if field not in GROUPBY:
             return {"error": f"Bad Request: selection parameter: {field} not in acceptible group selections: {GROUPBY.to_list()}"}, 400
+        groupby[i] = GROUPBY(field).map()
     
     # fields to select: comma seperated list
     selects = request.args.get('selects', default=None)
@@ -148,7 +156,7 @@ def grouped_usage(timestep):
     query = f"""
     SELECT
         {','.join(selects)}
-    FROM {selected_table}
+    FROM gold_standard_usage
     {where_clause}
     GROUP BY {','.join(groupby)}
     ORDER BY {selected_usage_field}
@@ -169,7 +177,7 @@ def top_services(provider,timestep):
     if provider not in get_data('provider'):
         return {"error": f"Bad Request: {provider} not in acceptible providers: {get_data('provider')}"}, 400
 
-    selected_table, selected_usage_field = TIMESPAN(timestep).map()
+    selected_usage_field = TIMESPAN(timestep).map()
 
     # How many services to give information for and how many to
     N_top_services = int(request.args.get("N", 5))
@@ -178,7 +186,7 @@ def top_services(provider,timestep):
     SELECT    
         {selected_usage_field}, service_name,
         SUM(total_usage_cost) AS usage_cost
-    FROM {selected_table}
+    FROM gold_standard_usage
     WHERE provider_name = "{provider}"
     GROUP BY {selected_usage_field}, service_name
     ORDER BY {selected_usage_field};
