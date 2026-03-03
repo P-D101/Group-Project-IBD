@@ -29,6 +29,7 @@ backend/__pycache__/
 backend/venv/
 backend/VPL-Compute/__pycache__/
 backend/VPL-Compute/fuzzer.py
+backend/VPL-Compute/graph.py
 backend/query_tester.ipynb
 backend/venv
 backend/data/programs/
