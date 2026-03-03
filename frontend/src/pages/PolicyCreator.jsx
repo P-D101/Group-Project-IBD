@@ -125,7 +125,6 @@ function PolicyCreator() {
             Connections: edges.map((edge) => [edge.source, edge.target]),
         };
         if (!verifyProgram(policyObject)) {
-            alert("errors detected, couldn't save program.");
             return;
         }
         console.log(policyObject);

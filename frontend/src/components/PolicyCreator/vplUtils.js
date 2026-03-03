@@ -241,8 +241,14 @@ export function VPLNodesToFlowBlocks(nodes) {
 export function verifyProgram({ Nodes, Connections, ...rest }) {
     if (rest["Policy Name"].length === 0) return false;
 
-    if (!Array.isArray(Nodes) || Nodes.length === 0) return false;
-    if (!Array.isArray(Connections) || Connections.length === 0) return false;
+    if (!Array.isArray(Nodes) || Nodes.length === 0) {
+        alert("Errors Detected, couldn't save program: There is no nodes in the program.");
+        return false;
+    }
+    if (!Array.isArray(Connections) || Connections.length === 0) {
+        alert("Errors Detected, couldn't save program: There is no connections in the program.");
+        return false;
+    }
 
     // Map node ids (can be strings) to set of neighbors
     const nodeIds = Nodes.map((node) => String(node.index));
@@ -278,7 +284,10 @@ export function verifyProgram({ Nodes, Connections, ...rest }) {
     }
 
     for (const nodeId of nodeIds) {
-        if (hasCycle(nodeId)) return false;
+        if (hasCycle(nodeId)) {
+            alert(`Errors Detected, couldn't save program: There is a cycle in the program.`);
+            return false;
+        }
     }
     return true;
 }
