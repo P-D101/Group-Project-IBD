@@ -119,7 +119,7 @@ function PolicyCreator() {
             Nodes: nodes.map((node) => ({
                 index: node.id,
                 position: node.position,
-                type: node.data.vpLType,
+                type: node.data.type,
                 payload: node.data.payload,
             })),
             Connections: edges.map((edge) => [edge.source, edge.target]),

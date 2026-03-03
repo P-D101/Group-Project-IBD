@@ -40,6 +40,27 @@ class ADD(Node):
     def compute(self, args):
         return sum(args)
 
+class SUBTRACT(Node):
+    def __init__(self):
+        super().__init__()
+
+    def compute(self, args):
+        return args[0] - sum(args[1:])
+    
+class MULTIPLY(Node):
+    def __init__(self):
+        super().__init__()
+
+    def compute(self, args):
+        return np.multiply(*args)
+    
+class DIVIDE(Node):
+    def __init__(self):
+        super().__init__()
+
+    def compute(self, args):
+        return np.divide(*args)
+
 class GREATER_THAN(Node):
     def __init__(self):
         super().__init__()
@@ -69,6 +90,18 @@ class EQUALS(Node):
         for arg in args[1:]:
             equal = np.logical_and(equal, arg - args[0] == 0)
         return equal
+    
+class AND(Node):
+    def __init__(self):
+        super().__init__()
+    def compute(self, args):
+        return np.logical_and(*args)
+    
+class OR(Node):
+    def __init__(self):
+        super().__init__()
+    def compute(self, args):
+        return np.logical_or(*args)
 
 class TICKET(Node):
     def __init__(self, node_object):
@@ -91,6 +124,14 @@ class INPUT(Node):
 
     def compute(self, args, t):
         return get_data(f'{self.provider}:{self.channel}', t)
+
+class CONSTANT(Node):
+    def __init__(self, node_object):
+        self.value = node_object["Value"]
+        super().__init__()
+
+    def compute(self, args):
+        return self.value
     
 class OUTPUT(Node):
     def __init__(self):
@@ -107,19 +148,31 @@ class OUTPUT(Node):
 
 def assign_node(type, node):
     
-    if type == "Add":
+    if type == "add":
         return ADD()
-    if type == "Greater Than":
+    elif type == "subtract":
+        return SUBTRACT()
+    elif type == "multiply":
+        return MULTIPLY()
+    elif type == "divide":
+        return DIVIDE()
+    elif type == "gt":
         return GREATER_THAN()
-    if type == "Less Than":
+    elif type == "lt":
         return LESS_THAN()
-    if type == "Equals":
+    elif type == "eq":
         return EQUALS()
-    if type == "Ticket":
+    elif type == "and":
+        return AND()
+    elif type == "or":
+        return OR()
+    elif type == "ticket":
         return TICKET(node)
-    if type == "Input":
+    elif type == "input":
         return INPUT(node)
-    if type == "Output":
+    elif type == "const":
+        return CONSTANT(node)
+    elif type == "output":
         return OUTPUT()
 
 
