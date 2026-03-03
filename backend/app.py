@@ -218,15 +218,26 @@ def home_page(vplID):
 @app.route("/api/policies", methods=["GET"])
 def get_vpls():
     # list all files in ./programs/ and return the names without the policy_ prefix and .json suffix
-    save_dir = os.path.join(os.path.dirname(__file__), "data", "programs")
-    print(save_dir)
+    enabled_dir = os.path.join(os.path.dirname(__file__), "data", "programs")
+    disabled_dir = os.path.join(os.path.dirname(__file__), "data", "disable-programs")
+    processing_dir = os.path.join(os.path.dirname(__file__), "data", "new-programs")
+
     # check dir exists
-    if not os.path.exists(save_dir):
+    if not os.path.exists(enabled_dir) and not os.path.exists(disabled_dir):
         return {"vpl_ids": []} # if not return empty list
     
-    vpl_files = os.listdir(save_dir)
-   
-    vpl_ids = [f.split("policy_")[1].split(".json")[0] for f in vpl_files if f.startswith("policy_") and f.endswith(".json")]
+    vpl_ids = {}
+    get_id = lambda f: f.split("policy_")[1].split(".json")[0]
+    if os.path.exists(enabled_dir):
+        vpl_files = os.listdir(enabled_dir)
+        vpl_ids["enabled"] = [get_id(f) for f in vpl_files if f.startswith("policy_") and f.endswith(".json")]
+    if os.path.exists(disabled_dir):
+        vpl_files = os.listdir(disabled_dir)
+        vpl_ids["disabled"] = [get_id(f) for f in vpl_files if f.startswith("policy_") and f.endswith(".json")]
+    if os.path.exists(processing_dir):
+        vpl_files = os.listdir(processing_dir)
+        vpl_ids["processing"] = [get_id(f) for f in vpl_files if f.startswith("policy_") and f.endswith(".json")]
+
     return {"vpl_ids": vpl_ids}
 
 
@@ -241,7 +252,7 @@ def save_policy():
     # Generate a unique filename
     policy_id = str(uuid.uuid4())
     filename = f"policy_{policy_id}.json"
-    save_dir = os.path.join(os.path.dirname(__file__), "data", "programs")
+    save_dir = os.path.join(os.path.dirname(__file__), "data", "new-programs")
     os.makedirs(save_dir, exist_ok=True)
     save_path = os.path.join(save_dir, filename)
     try:
@@ -267,6 +278,41 @@ def delete_vpl(vplID):
         return {"error": f"Failed to delete VPL: {e}"}, 500
     return {"message": "VPL deleted", "vpl_id": vplID}, 200
 
+@app.route("/api/policies/<vplID>/disable", methods=["POST"])
+def disable_vpl(vplID):
+    # delete the file ./programs/policy_{vplID}.json
+    filename = f"policy_{vplID}.json"
+    file_path = os.path.join(os.path.dirname(__file__), "data", "programs", filename)
+    if not os.path.exists(file_path):
+        return {"error": "VPL not found"}, 404
+    try:
+        # move the file to a deleted folder instead of deleting it permanently, in case of accidental deletion
+        deleted_dir = os.path.join(os.path.dirname(__file__), "data", "disable-programs")
+        os.makedirs(deleted_dir, exist_ok=True)
+        os.rename(file_path, os.path.join(deleted_dir, filename))
+    except Exception as e:
+        return {"error": f"Failed to disable VPL: {e}"}, 500
+    return {"message": "VPL disabled", "vpl_id": vplID}, 200
+
+@app.route("/api/policies/<vplID>/enable", methods=["POST"])
+def enable_vpl(vplID):
+    # move the file from ./disable-programs/policy_{vplID}.json back to ./programs/policy_{vplID}.json
+    filename = f"policy_{vplID}.json"
+    file_path = os.path.join(os.path.dirname(__file__), "data", "disable-programs", filename)
+    if not os.path.exists(file_path):
+        return {"error": "VPL not found"}, 404
+
+    try:
+        # move the file to a deleted folder instead of deleting it permanently, in case of accidental deletion
+        programs_dir = os.path.join(os.path.dirname(__file__), "data", "programs")
+        os.makedirs(programs_dir, exist_ok=True)
+        os.rename(file_path, os.path.join(programs_dir, filename))
+    except Exception as e:
+        return {"error": f"Failed to enable VPL: {e}"}, 500
+    return {"message": "VPL enabled", "vpl_id": vplID}, 200
+
+
+
 @app.route("/api/policies/<vplID>", methods=["PUT"])
 def update_vpl(vplID):
     # update the file ./programs/policy_{vplID}.json with the new data from the request body
@@ -284,18 +330,19 @@ def update_vpl(vplID):
         return {"error": f"Failed to update VPL: {e}"}, 500
     return {"message": "VPL updated", "vpl_id": vplID}, 200
 
-@app.route("/api/policies/<vplID>/execute", methods=["POST"])
-def execute_vpl(vplID):
-    # execute the VPL with the given ID, for now just return a success message
-    filename = f"policy_{vplID}.json"
-    file_path = os.path.join(os.path.dirname(__file__), "data", "programs", filename)
-    if not os.path.exists(file_path):
-        return {"error": "VPL not found"}, 404
 
-    compute_program(convert_program(json.load(open(file_path))))
+# @app.route("/api/policies/<vplID>/execute", methods=["POST"])
+# def execute_vpl(vplID):
+#     # execute the VPL with the given ID, for now just return a success message
+#     filename = f"policy_{vplID}.json"
+#     file_path = os.path.join(os.path.dirname(__file__), "data", "programs", filename)
+#     if not os.path.exists(file_path):
+#         return {"error": "VPL not found"}, 404
+
+#     compute_program(convert_program(json.load(open(file_path))))
 
 
-    return {"message": "VPL executed", "vpl_id": vplID}, 200
+#     return {"message": "VPL executed", "vpl_id": vplID}, 200
 
 
 ############################################
