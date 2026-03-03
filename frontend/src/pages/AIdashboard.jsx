@@ -10,6 +10,7 @@ import BaseLayout from "../components/BaseLayout";
 import { useNavigate } from "react-router-dom";
 import React from "react";
 import { set } from "date-fns";
+import ServiceViewer from "./ServiceViewer";
 
 const tickets = [
     "example ticket 1 policy text",
@@ -178,7 +179,7 @@ function AIdashboard() {
                     Cloud Usage Data Per Server
                 </h3>
 
-                {/* <Table></Table> */}
+                <ServiceViewer></ServiceViewer>
             </div>
         </div>
     );
