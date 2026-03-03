@@ -39,7 +39,7 @@ function PolicyCreator() {
             selectedTemplate.Nodes,
             selectedTemplate.Connections,
         );
-        const initialEdges = templateEdgesToEdges(selectedTemplate.Connections);
+        const initialEdges = templateEdgesToEdges(selectedTemplate.Connections, selectedTemplate.Nodes);
 
         // Defer state updates to avoid cascading synchronous renders inside the effect.
         queueMicrotask(() => {
@@ -62,6 +62,40 @@ function PolicyCreator() {
         if (connection.source === connection.target) {
             return;
         }
+        // Edge color logic (match template logic)
+        const sourceNode = nodes.find((n) => n.id === connection.source);
+        let edgeColor = '#888';
+        function isInputsOrComponents(type) {
+            return (
+                type === 'input' ||
+                type === 'const' ||
+                type === 'number' ||
+                type === 'op' ||
+                type === 'component'
+            );
+        }
+        function isDecisions(type) {
+            return (
+                type === 'lt' ||
+                type === 'gt' ||
+                type === 'eq' ||
+                type === 'and' ||
+                type === 'or' ||
+                type === 'not' ||
+                type === 'decision' ||
+                type === 'greaterThan' ||
+                type === 'lessThan' ||
+                type === 'equal'
+            );
+        }
+        if (sourceNode) {
+            const t = sourceNode.data.type;
+            if (isInputsOrComponents(t)) {
+                edgeColor = '#1976d2';
+            } else if (isDecisions(t)) {
+                edgeColor = '#d32f2f';
+            }
+        }
         setEdges((eds) => {
             // Only allow one edge per target/handle (input point)
             const filtered = eds.filter(
@@ -69,7 +103,7 @@ function PolicyCreator() {
                     !(e.target === connection.target &&
                       (!connection.targetHandle || e.targetHandle === connection.targetHandle))
             );
-            return addEdge(connection, filtered);
+            return addEdge({ ...connection, type: 'colored', style: { stroke: edgeColor, strokeWidth: 4 } }, filtered);
         });
     };
 
@@ -84,17 +118,52 @@ function PolicyCreator() {
 
     const handleNodeSelect = (nodeId) => {
         setSelectedNodeId(nodeId || null);
+        if (nodeId) {
+            const node = nodes.find((n) => n.id === nodeId);
+            console.log('Selected block:', node);
+        }
     };
 
     const handleBlockUpdate = (updatedNode) => {
+        console.log('Block update:', updatedNode);
         setNodes((prevNodes) =>
             prevNodes.map((node) => {
                 if (node.id !== selectedNodeId) return node;
+                // For constant blocks, update value and label in node.data
+                if (node.data.type === "const") {
+                    return {
+                        ...node,
+                        data: {
+                            ...node.data,
+                            value: updatedNode.value,
+                            label: updatedNode.label,
+                            description: updatedNode.description ?? node.data.description,
+                            payload: updatedNode.payload ?? node.data.payload,
+                        },
+                    };
+                }
+                // For input blocks, update inputConfig
+                if (node.data.type === "input") {
+                    return {
+                        ...node,
+                        data: {
+                            ...node.data,
+                            inputConfig: updatedNode.inputConfig ?? node.data.inputConfig,
+                            description: updatedNode.description ?? node.data.description,
+                            payload: updatedNode.payload ?? node.data.payload,
+                        },
+                    };
+                }
+                // For other blocks, update description and payload if present
                 return {
                     ...node,
-                    ...updatedNode,
+                    data: {
+                        ...node.data,
+                        description: updatedNode.description ?? node.data.description,
+                        payload: updatedNode.payload ?? node.data.payload,
+                    },
                 };
-            }),
+            })
         );
     };
 
@@ -108,6 +177,7 @@ function PolicyCreator() {
                       type: node.data.type,
                       payload: node.data.payload,
                       description: node.data.description,
+                      inputConfig: node.data.inputConfig,
                   };
               })()
             : null;

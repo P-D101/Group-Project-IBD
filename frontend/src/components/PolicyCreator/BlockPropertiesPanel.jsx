@@ -1,3 +1,30 @@
+import React from "react";
+import InputBlock from "./InputBlock";
+
+class ErrorBoundary extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { hasError: false, error: null };
+    }
+    static getDerivedStateFromError(error) {
+        return { hasError: true, error };
+    }
+    componentDidCatch(error, errorInfo) {
+        // You can log errorInfo here if needed
+        console.error("BlockPropertiesPanel error:", error, errorInfo);
+    }
+    render() {
+        if (this.state.hasError) {
+            return (
+                <div style={{ padding: "2rem", color: "#d32f2f" }}>
+                    <h3>Block Properties Error</h3>
+                    <pre>{String(this.state.error)}</pre>
+                </div>
+            );
+        }
+        return this.props.children;
+    }
+}
 const reserved = ["payload"];
 
 function BlockPropertiesPanel({ block, onBlockUpdate }) {
@@ -134,27 +161,48 @@ function BlockPropertiesPanel({ block, onBlockUpdate }) {
         onBlockUpdate(updatedBlock);
     };
 
-    if (!block) {
+    if (!block || typeof block !== 'object') {
         return (
             <div style={panelStyle}>
                 <div style={headerStyle}>
                     <h4 style={headerTitleStyle}>Block Properties</h4>
                 </div>
                 <div style={bodyStyle}>
-                    <div style={emptyStateStyle}>Select a block to edit</div>
+                    <div style={emptyStateStyle}>Select a block to edit or block data is missing.</div>
                 </div>
             </div>
         );
     }
 
-    const blockFieldKeys = Object.keys(block).filter(
-        (key) => key !== "description",
-    );
-
+    const blockFieldKeys = Object.keys(block).filter((key) => key !== "description");
     const formatLabel = (key) =>
-        key
-            .replace(/_/g, " ")
-            .replace(/\w\S*/g, (txt) => txt[0].toUpperCase() + txt.slice(1));
+        key.replace(/_/g, " ").replace(/\w\S*/g, (txt) => txt[0].toUpperCase() + txt.slice(1));
+
+    // State for constant value editing and error
+    const [constValue, setConstValue] = React.useState(
+        block.type === "const" ? (block.value !== undefined ? block.value : block.label) : ""
+    );
+    const [constError, setConstError] = React.useState("");
+
+    const handleConstChange = (e) => {
+        const val = e.target.value;
+        setConstValue(val);
+        // Validate float
+        if (val.trim() === "" || isNaN(parseFloat(val))) {
+            setConstError("Constant value must be a valid float.");
+        } else {
+            setConstError("");
+        }
+    };
+
+    const handleSaveConst = () => {
+        if (constValue.trim() === "" || isNaN(parseFloat(constValue))) {
+            setConstError("Constant value must be a valid float.");
+            return;
+        }
+        setConstError("");
+        onBlockUpdate({ ...block, value: parseFloat(constValue), label: constValue });
+    };
 
     return (
         <div style={panelStyle}>
@@ -162,21 +210,41 @@ function BlockPropertiesPanel({ block, onBlockUpdate }) {
                 <h4 style={headerTitleStyle}>Block Properties</h4>
             </div>
             <div style={bodyStyle}>
-                {blockFieldKeys.map(
-                    (key) =>
-                        reserved.includes(key) || (
-                            <label style={labelStyle} key={key}>
-                                <span style={labelTextStyle}>
-                                    {formatLabel(key)}
-                                </span>
-                                <input
-                                    type="text"
-                                    value={block[key]}
-                                    disabled
-                                    style={readOnlyInputStyle}
-                                />
-                            </label>
-                        ),
+                {block.type === "const" ? (
+                    <label style={labelStyle}>
+                        <span style={labelTextStyle}>Constant Value</span>
+                        <input
+                            type="text"
+                            value={constValue}
+                            onChange={handleConstChange}
+                            style={constError ? { ...inputStyle, borderColor: "#d32f2f" } : inputStyle}
+                            onFocus={handleFocus}
+                            onBlur={handleBlur}
+                        />
+                        {constError && (
+                            <span style={{ color: "#d32f2f", fontSize: "0.8em" }}>{constError}</span>
+                        )}
+                    </label>
+                ) : block.type === "input" ? (
+                    <InputBlock
+                        value={block.inputConfig || {}}
+                        onChange={cfg => onBlockUpdate({ ...block, inputConfig: cfg })}
+                    />
+                ) : (
+                    blockFieldKeys.map(
+                        (key) =>
+                            reserved.includes(key) || (
+                                <label style={labelStyle} key={key}>
+                                    <span style={labelTextStyle}>{formatLabel(key)}</span>
+                                    <input
+                                        type="text"
+                                        value={block[key]}
+                                        disabled
+                                        style={readOnlyInputStyle}
+                                    />
+                                </label>
+                            ),
+                    )
                 )}
 
                 <label style={labelStyle}>
@@ -184,9 +252,7 @@ function BlockPropertiesPanel({ block, onBlockUpdate }) {
                     <textarea
                         placeholder={block.description && block.description.trim() !== "" ? block.description : "Describe what this block does..."}
                         value={block.description || ""}
-                        onChange={(e) =>
-                            handleDescriptionChange(e.target.value)
-                        }
+                        onChange={(e) => handleDescriptionChange(e.target.value)}
                         style={textareaStyle}
                         onFocus={handleFocus}
                         onBlur={handleBlur}
@@ -196,7 +262,7 @@ function BlockPropertiesPanel({ block, onBlockUpdate }) {
                 <div style={actionBoxStyle}>
                     <button
                         style={saveButtonStyle}
-                        onClick={() => console.log("Block saved:", block)}
+                        onClick={block.type === "const" ? handleSaveConst : () => console.log("Block saved:", block)}
                         onMouseEnter={handleButtonHover}
                         onMouseLeave={handleButtonLeave}
                     >
@@ -208,4 +274,10 @@ function BlockPropertiesPanel({ block, onBlockUpdate }) {
     );
 }
 
-export default BlockPropertiesPanel;
+export default function BlockPropertiesPanelWithBoundary(props) {
+    return (
+        <ErrorBoundary>
+            <BlockPropertiesPanel {...props} />
+        </ErrorBoundary>
+    );
+}
