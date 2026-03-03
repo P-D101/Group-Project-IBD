@@ -7,6 +7,7 @@
     } from "@xyflow/react";
     import "@xyflow/react/dist/style.css";
     import BinaryOperator from "../nodes/BinaryOperator";
+    import VPLNode from "./VPLNode";
     import { BaseEdge } from "@xyflow/react";
 
 
@@ -121,7 +122,7 @@
         onDropBlock,
     }) {
         const reactFlowInstance = useReactFlow();
-        const nodeTypes = { binaryOperator: BinaryOperator };
+    const nodeTypes = { binaryOperator: BinaryOperator, const: VPLNode };
         const edgeTypes = { colored: ColoredEdge };
 
     const handleNodeClick = (_, node) => {

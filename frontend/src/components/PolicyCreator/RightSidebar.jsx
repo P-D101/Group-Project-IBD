@@ -1,4 +1,4 @@
-import BlockPropertiesPanel from "./BlockPropertiesPanel";
+import BlockPropertiesPanelWithBoundary from "./BlockPropertiesPanel";
 
 function RightSidebar({ selectedBlock, onBlockUpdate }) {
     const sidebarStyle = {
@@ -9,7 +9,7 @@ function RightSidebar({ selectedBlock, onBlockUpdate }) {
 
     return (
         <aside style={sidebarStyle}>
-            <BlockPropertiesPanel
+            <BlockPropertiesPanelWithBoundary
                 block={selectedBlock}
                 onBlockUpdate={onBlockUpdate}
             />

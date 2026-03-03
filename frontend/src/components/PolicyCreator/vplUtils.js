@@ -45,6 +45,16 @@ export function createNodeFromBlock(block, position) {
         action: "",
     };
 
+    let constValue = 0;
+    if (block.type === "const") {
+        // Try to use label as value if it's a valid float
+        if (block.label && !isNaN(parseFloat(block.label))) {
+            constValue = parseFloat(block.label);
+        }
+        if (block.value !== undefined && !isNaN(parseFloat(block.value))) {
+            constValue = parseFloat(block.value);
+        }
+    }
     return {
         id,
         type: vplToFlowType(block.type),
@@ -55,11 +65,12 @@ export function createNodeFromBlock(block, position) {
             type: block.type,
             label: block.label,
             description: block.description,
+            value: block.type === "const" ? constValue : undefined,
             payload:
                 block.type == "ticket"
                     ? baseTicket
                     : block.type == "const"
-                      ? { value: 0 }
+                      ? { value: constValue }
                       : {},
         },
     };

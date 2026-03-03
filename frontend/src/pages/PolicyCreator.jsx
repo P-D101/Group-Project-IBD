@@ -118,17 +118,40 @@ function PolicyCreator() {
 
     const handleNodeSelect = (nodeId) => {
         setSelectedNodeId(nodeId || null);
+        if (nodeId) {
+            const node = nodes.find((n) => n.id === nodeId);
+            console.log('Selected block:', node);
+        }
     };
 
     const handleBlockUpdate = (updatedNode) => {
+        console.log('Block update:', updatedNode);
         setNodes((prevNodes) =>
             prevNodes.map((node) => {
                 if (node.id !== selectedNodeId) return node;
+                // For constant blocks, update value and label in node.data
+                if (node.data.type === "const") {
+                    return {
+                        ...node,
+                        data: {
+                            ...node.data,
+                            value: updatedNode.value,
+                            label: updatedNode.label,
+                            description: updatedNode.description ?? node.data.description,
+                            payload: updatedNode.payload ?? node.data.payload,
+                        },
+                    };
+                }
+                // For other blocks, update description and payload if present
                 return {
                     ...node,
-                    ...updatedNode,
+                    data: {
+                        ...node.data,
+                        description: updatedNode.description ?? node.data.description,
+                        payload: updatedNode.payload ?? node.data.payload,
+                    },
                 };
-            }),
+            })
         );
     };
 
