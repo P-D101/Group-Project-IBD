@@ -142,6 +142,18 @@ function PolicyCreator() {
                         },
                     };
                 }
+                // For input blocks, update inputConfig
+                if (node.data.type === "input") {
+                    return {
+                        ...node,
+                        data: {
+                            ...node.data,
+                            inputConfig: updatedNode.inputConfig ?? node.data.inputConfig,
+                            description: updatedNode.description ?? node.data.description,
+                            payload: updatedNode.payload ?? node.data.payload,
+                        },
+                    };
+                }
                 // For other blocks, update description and payload if present
                 return {
                     ...node,
@@ -165,6 +177,7 @@ function PolicyCreator() {
                       type: node.data.type,
                       payload: node.data.payload,
                       description: node.data.description,
+                      inputConfig: node.data.inputConfig,
                   };
               })()
             : null;

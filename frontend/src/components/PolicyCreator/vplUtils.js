@@ -66,6 +66,7 @@ export function createNodeFromBlock(block, position) {
             label: block.label,
             description: block.description,
             value: block.type === "const" ? constValue : undefined,
+            inputConfig: block.type === "input" ? (block.inputConfig || {}) : undefined,
             payload:
                 block.type == "ticket"
                     ? baseTicket

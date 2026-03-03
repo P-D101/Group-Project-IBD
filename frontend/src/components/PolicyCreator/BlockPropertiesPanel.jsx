@@ -1,4 +1,5 @@
 import React from "react";
+import InputBlock from "./InputBlock";
 
 class ErrorBoundary extends React.Component {
     constructor(props) {
@@ -224,6 +225,11 @@ function BlockPropertiesPanel({ block, onBlockUpdate }) {
                             <span style={{ color: "#d32f2f", fontSize: "0.8em" }}>{constError}</span>
                         )}
                     </label>
+                ) : block.type === "input" ? (
+                    <InputBlock
+                        value={block.inputConfig || {}}
+                        onChange={cfg => onBlockUpdate({ ...block, inputConfig: cfg })}
+                    />
                 ) : (
                     blockFieldKeys.map(
                         (key) =>
