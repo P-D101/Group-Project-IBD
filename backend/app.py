@@ -1,3 +1,9 @@
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from VPL_Compute.pass_program import convert_program
+from VPL_Compute.compute_program import compute_program
 from flask import Flask, request
 from flask_cors import CORS
 from interface import TIMESPAN,SELECTS,GROUPBY,FILTERS, get_data
