@@ -53,6 +53,7 @@ function Header({ onSave, policyName, setPolicyName, onClear }) {
         e.target.style.boxShadow = "none";
     };
 
+
     return (
         <header style={headerStyle}>
             <input
@@ -64,12 +65,11 @@ function Header({ onSave, policyName, setPolicyName, onClear }) {
                 value={policyName}
                 onChange={(e) => setPolicyName(e.target.value)}
             />
-            <div style={{ display: 'flex', gap: '0.75rem' }}>
+            <div style={{ display: "flex", gap: "0.75rem" }}>
                 <button
+                    className="clear-policy-btn"
                     style={clearButtonStyle}
                     onClick={onClear}
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
                 >
                     Clear Policy
                 </button>
