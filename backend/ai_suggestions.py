@@ -1,3 +1,4 @@
+#to do: needs updating to work with db
 import sys
 import subprocess
 import pandas as pd

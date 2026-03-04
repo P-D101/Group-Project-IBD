@@ -8,6 +8,7 @@ from VPL_Compute.compute_program import compute_program
 from flask import Flask, request, make_response
 from flask_cors import CORS
 from interface import TIMESPAN,SELECTS,GROUPBY,FILTERS, get_data
+from dashboard_data import get_dashboard_data
 import database
 import pandas as pd
 
@@ -50,6 +51,10 @@ def overview(): # TODO
 @app.route("/api/overview/<provider>") 
 def overview_provider(provider): # TODO
     return "TODO"
+
+@app.route('/api/dashboard-data', methods=['GET'])
+def dashboard_overview():
+    return get_dashboard_data()
 
 ## Data fields enumerations
 @app.route("/api/data/<field>")
