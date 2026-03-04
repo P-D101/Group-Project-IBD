@@ -9,6 +9,7 @@ from flask import Flask, request
 from flask_cors import CORS
 from interface import TIMESPAN,SELECTS,GROUPBY,FILTERS, get_data
 from dashboard_data import get_dashboard_data
+from ai_suggestions import get_user_query
 import database
 import pandas as pd
 
@@ -44,6 +45,10 @@ def overview_provider(provider): # TODO
 @app.route('/api/dashboard-data', methods=['GET'])
 def dashboard_overview():
     return get_dashboard_data()
+
+@app.route('/api/suggestions', methods=['GET'])
+def ticket_suggestions():
+    return get_user_query()
 
 ## Data fields enumerations
 @app.route("/api/data/<field>")

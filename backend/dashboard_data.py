@@ -1,4 +1,3 @@
-#to do: needs updating to work with db
 import pandas as pd
 from flask import Flask, jsonify
 from flask_cors import CORS 

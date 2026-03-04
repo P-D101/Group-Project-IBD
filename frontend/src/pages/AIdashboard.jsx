@@ -156,7 +156,7 @@ function AIdashboard() {
                 {/* AI Ticket Suggestions Section */}
             <div>
 
-                   {/*<AIsuggestions/>*/} 
+                   <AIsuggestions/>
 
             </div>
 
