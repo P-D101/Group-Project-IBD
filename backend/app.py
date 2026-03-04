@@ -5,21 +5,32 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from VPL_Compute.pass_program import convert_program
 from VPL_Compute.compute_program import compute_program
-from flask import Flask, request
+from flask import Flask, request, make_response
 from flask_cors import CORS
 from interface import TIMESPAN,SELECTS,GROUPBY,FILTERS, get_data
 import database
 import pandas as pd
 
 app = Flask(__name__)
-CORS(app, resources = {
-    r"/*": { # restrict origins of all routes
-        "origins": [
-            "http://localhost:5173",
-            "http://127.0.0.1:5173"
-        ]
-    }
-})
+CORS(
+    app,
+    resources={
+        r"/api/*": {
+            "origins": "*",
+            "methods": ["GET", "POST", "DELETE", "OPTIONS"],
+            "allow_headers": ["Content-Type", "Authorization"],
+        }
+    },
+)
+
+
+@app.after_request
+def add_cors_headers(response):
+    # Explicit CORS headers to avoid 403 from preflight
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    return response
 
 @app.route("/")
 def index():
@@ -269,13 +280,24 @@ def get_vpls():
     return {"vpl_ids": vpl_ids}
 
 
-@app.route("/api/policies", methods=["POST"])
+@app.route("/api/policies", methods=["POST", "OPTIONS"])
 def save_policy():
     """
     Receives a VPL policy JSON and stores it as a file in backend/data/programs/.
     """
-    policy = request.get_json()
+    if request.method == "OPTIONS":
+        resp = make_response("", 200)
+        resp.headers["Access-Control-Allow-Origin"] = "*"
+        resp.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE, OPTIONS"
+        resp.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return resp
+    try:
+        policy = request.get_json()
+    except Exception as e:
+        print(f"[save_policy] JSON parse error: {e}")
+        return {"error": f"Invalid JSON: {e}"}, 400
     if not policy or 'Nodes' not in policy:
+        print("[save_policy] Missing Nodes in payload")
         return  {"error": "Invalid JSON, requires 'Nodes'"}, 400
     # Generate a unique filename
     policy_id = str(uuid.uuid4())
@@ -287,6 +309,7 @@ def save_policy():
         with open(save_path, "w") as f:
             json.dump(policy, f, indent=2)
     except Exception as e:
+        print(f"[save_policy] Failed to save policy: {e}")
         return {"error": f"Failed to save policy: {e}"}, 500
     return {"message": "Policy saved", "policy_id": policy_id, "filename": filename}, 200
 
@@ -391,6 +414,10 @@ def add_headers(response):
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
     return response
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5001, debug=True)
 
 
 
