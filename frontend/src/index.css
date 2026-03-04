@@ -1,1 +1,18 @@
 @import "tailwindcss";
+
+/* Force Clear Policy button to always be red */
+button.clear-policy-btn,
+.clear-policy-btn,
+.clear-policy-btn:hover,
+.clear-policy-btn:active,
+.clear-policy-btn:focus,
+.clear-policy-btn:focus-visible,
+.clear-policy-btn:focus-within {
+	background-color: #d32f2f !important;
+	color: #fff !important;
+}
+
+/* Keep hover slightly darker without allowing green */
+button.clear-policy-btn:hover {
+	background-color: #b71c1c !important;
+}
