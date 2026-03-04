@@ -147,7 +147,7 @@ function AIdashboard() {
                 {/* AI Ticket Suggestions Section */}
             <div>
 
-                   <AIsuggestions/> 
+                   {/*<AIsuggestions/>*/} 
 
             </div>
 
@@ -162,7 +162,7 @@ function AIdashboard() {
 
             </div>
 
-
+            {/*to do: add 2 charts from databse data*/}
                 {/*Server Graphs using dummy data for now*/}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="p-6 pb-20 relative w-full h-64 bg-white rounded shadow-sm">
@@ -179,7 +179,7 @@ function AIdashboard() {
                     Cloud Usage Data Per Server
                 </h3>
 
-                <ServiceViewer></ServiceViewer>
+                {/*<ServiceViewer></ServiceViewer>*/}
             </div>
         </div>
     );

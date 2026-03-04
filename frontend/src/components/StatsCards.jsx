@@ -10,7 +10,7 @@ import React from "react";
 import { set } from "date-fns";
 
 function StatsCards(){
-    let [stats, setStats] = useState({ monthly_variance: 0, savings_discounts: 0 });
+    let [stats, setStats] = useState({weekly_variance: 0, top_service: 'Not Found', top_spend: 0});
     let [loading, setLoading] = useState(true);
     async function getStats() {
         console.log("getStats is running...");
@@ -28,11 +28,8 @@ function StatsCards(){
         }
         catch (e){
             console.error("Error getting stats ", e)
-            setLoading = false;
-        }
-
-        
-        
+            setLoading(false);
+        }    
 
     }
 
@@ -45,12 +42,13 @@ function StatsCards(){
     return (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="bg-white p-4 rounded shadow-sm">
-                        <h3 className="">Monthly Variance</h3>
-                        <p>{(stats.monthly_variance * 100).toFixed(2)}%</p>
+                        <h3 className="">Weekly Variance</h3>
+                        <p>{(stats.weekly_variance * 100).toFixed(1)}%</p>
                     </div>
                     <div className="bg-white p-4 rounded shadow-sm">
-                        <h3 className="">Savings due to discounts</h3>
-                        <p>${stats.savings_discounts.toLocaleString()}</p>
+                        <h3 className="">Top Service and Spending</h3>
+                        <p>{stats.top_service.toLocaleString()}</p>
+                        <p>${(stats.top_spend).toFixed(1)}</p>
                     </div>
                 </div>
     )
