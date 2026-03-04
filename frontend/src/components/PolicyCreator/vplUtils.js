@@ -45,6 +45,16 @@ export function createNodeFromBlock(block, position) {
         action: "",
     };
 
+    let constValue = 0;
+    if (block.type === "const") {
+        // Try to use label as value if it's a valid float
+        if (block.label && !isNaN(parseFloat(block.label))) {
+            constValue = parseFloat(block.label);
+        }
+        if (block.value !== undefined && !isNaN(parseFloat(block.value))) {
+            constValue = parseFloat(block.value);
+        }
+    }
     return {
         id,
         type: vplToFlowType(block.type),
@@ -55,11 +65,13 @@ export function createNodeFromBlock(block, position) {
             type: block.type,
             label: block.label,
             description: block.description,
+            value: block.type === "const" ? constValue : undefined,
+            inputConfig: block.type === "input" ? (block.inputConfig || {}) : undefined,
             payload:
                 block.type == "ticket"
                     ? baseTicket
                     : block.type == "const"
-                      ? { value: 0 }
+                      ? { value: constValue }
                       : {},
         },
     };
@@ -207,21 +219,64 @@ export function templateBlocksToNodes(
     return nodes;
 }
 
-export function templateEdgesToEdges(templateEdges) {
+export function templateEdgesToEdges(templateEdges, templateBlocks = []) {
     if (!Array.isArray(templateEdges)) return [];
 
-    return templateEdges.map(([source, target, targetHandle]) => ({
-        id: `e-${source}-${target}`,
-        source: String(source),
-        target: String(target),
-        targetHandle,
-        updatable: true,
-        markerEnd: {
-            type: MarkerType.ArrowClosed,
-            width: 20,
-            height: 20,
-        },
-    }));
+    // Build a lookup for block type and label by id
+    const blockTypeById = {};
+    const blockLabelById = {};
+    if (Array.isArray(templateBlocks)) {
+        templateBlocks.forEach((block) => {
+            if (block && block.id !== undefined) {
+                blockTypeById[String(block.id)] = block.type;
+                blockLabelById[String(block.id)] = block.label;
+            }
+        });
+    }
+
+    // Type-based coloring: blue for ints, red for booleans
+    // Color by block category: blue for INPUTS/COMPONENTS, red for DECISIONS
+    function isInputsOrComponents(type) {
+        return (
+            type === 'input' ||
+            type === 'const' ||
+            type === 'number' ||
+            type === 'op' ||
+            type === 'component'
+        );
+    }
+    function isDecisions(type) {
+        return (
+            type === 'lt' ||
+            type === 'gt' ||
+            type === 'eq' ||
+            type === 'and' ||
+            type === 'or' ||
+            type === 'not' ||
+            type === 'decision' ||
+            type === 'greaterThan' ||
+            type === 'lessThan' ||
+            type === 'equal'
+        );
+    }
+    return templateEdges.map(([source, target, targetHandle]) => {
+        let edgeColor = '#888';
+        const sourceType = blockTypeById[String(source)];
+        if (isInputsOrComponents(sourceType)) {
+            edgeColor = '#1976d2'; // blue
+        } else if (isDecisions(sourceType)) {
+            edgeColor = '#d32f2f'; // red
+        }
+        return {
+            id: `e-${source}-${target}`,
+            source: String(source),
+            target: String(target),
+            targetHandle,
+            updatable: true,
+            type: 'colored',
+            data: { style: { stroke: edgeColor, strokeWidth: 4 } },
+        };
+    });
 }
 
 export function VPLNodesToFlowBlocks(nodes) {
