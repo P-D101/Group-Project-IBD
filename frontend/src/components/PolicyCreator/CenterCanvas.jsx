@@ -6,111 +6,11 @@
         useReactFlow,
     } from "@xyflow/react";
     import "@xyflow/react/dist/style.css";
-    import BinaryOperator from "../nodes/BinaryOperator";
-    import VPLNode from "./VPLNode";
-    import { BaseEdge } from "@xyflow/react";
-
-
+    import BinaryOperatorNode from "../nodes/BinaryOperatorNode";
+    import InputNode from "../nodes/InputNode";
+    import OutputNode from "../nodes/OutputNode";
+    import ConstantNode from "../nodes/ConstantNode";
     import React from "react";
-    import { getBezierPath } from "@xyflow/react";
-    function ColoredEdge({ id, sourceX, sourceY, targetX, targetY, style, data }) {
-        try {
-            const [edgePath] = getBezierPath({ sourceX, sourceY, targetX, targetY });
-            // Robust color extraction
-            let stroke = '#888';
-            let strokeWidth = 2;
-            if (data && typeof data === 'object' && data.style) {
-                if (data.style.stroke) stroke = data.style.stroke;
-                else if (data.style.color) stroke = data.style.color;
-                if (data.style.strokeWidth) strokeWidth = data.style.strokeWidth;
-            } else if (style && typeof style === 'object') {
-                if (style.stroke) stroke = style.stroke;
-                else if (style.color) stroke = style.color;
-                if (style.strokeWidth) strokeWidth = style.strokeWidth;
-            }
-            // Debug: log style and data
-            if (typeof window !== 'undefined') {
-                console.log('Edge style:', style, 'Edge data:', data);
-            }
-            // Arrowhead SVG: simple triangle at end of edge
-            const arrowSize = 12;
-            // Calculate direction
-            const dx = Number(targetX) - Number(sourceX);
-        const dy = Number(targetY) - Number(sourceY);
-            const len = Math.sqrt(dx * dx + dy * dy);
-            if (!isFinite(dx) || !isFinite(dy) || !isFinite(len) || len < 1) {
-                // If edge is too short or coordinates are invalid, skip arrowhead
-                return (
-                    <g>
-                        <path
-                            id={id}
-                            d={edgePath}
-                            fill="none"
-                            stroke={stroke}
-                            strokeWidth={strokeWidth}
-                        />
-                    </g>
-                );
-            }
-            const normX = dx / len;
-            const normY = dy / len;
-            // Arrow tip
-            const tipX = Number(targetX);
-            const tipY = Number(targetY);
-            // Base of arrow
-            const baseX = tipX - normX * arrowSize;
-            const baseY = tipY - normY * arrowSize;
-            // Perpendicular for arrow width
-            const perpX = -normY;
-            const perpY = normX;
-            const leftX = baseX + perpX * (arrowSize / 2);
-            const leftY = baseY + perpY * (arrowSize / 2);
-            const rightX = baseX - perpX * (arrowSize / 2);
-            const rightY = baseY - perpY * (arrowSize / 2);
-            if ([tipX, tipY, leftX, leftY, rightX, rightY].some((v) => !isFinite(v))) {
-                // If any coordinate is invalid, skip arrowhead
-                return (
-                    <g>
-                        <path
-                            id={id}
-                            d={edgePath}
-                            fill="none"
-                            stroke={stroke}
-                            strokeWidth={strokeWidth}
-                        />
-                    </g>
-                );
-            }
-            return (
-                <g>
-                    <path
-                        id={id}
-                        d={edgePath}
-                        fill="none"
-                        stroke={stroke}
-                        strokeWidth={strokeWidth}
-                    />
-                    <polygon
-                        points={`
-                            ${tipX},${tipY}
-                            ${leftX},${leftY}
-                            ${rightX},${rightY}
-                        `}
-                        fill={stroke}
-                    />
-                </g>
-            );
-        } catch (err) {
-            // Fallback: render a simple bezier if anything goes wrong
-            console.error('ColoredEdge render error:', err);
-            const [edgePath] = getBezierPath({ sourceX, sourceY, targetX, targetY });
-            return (
-                <g>
-                    <path id={id} d={edgePath} fill="none" stroke="#888" strokeWidth={2} />
-                </g>
-            );
-        }
-    }
 
     function FlowWrapper({
         nodes,
@@ -122,8 +22,13 @@
         onDropBlock,
     }) {
         const reactFlowInstance = useReactFlow();
-    const nodeTypes = { binaryOperator: BinaryOperator, const: VPLNode };
-        const edgeTypes = { colored: ColoredEdge };
+    
+    const nodeTypes = {
+        binaryOperatorN: BinaryOperatorNode,
+        inputN: InputNode,
+        outputN: OutputNode,
+        constantN: ConstantNode,
+    };
 
     const handleNodeClick = (_, node) => {
         if (onNodeSelect) {
@@ -147,6 +52,16 @@
 
         const blockType = event.dataTransfer?.getData("application/vpl-block");
         const label = event.dataTransfer?.getData("application/vpl-label");
+        const blockJson = event.dataTransfer?.getData("application/vpl-block-json");
+
+        let droppedBlock = null;
+        if (blockJson) {
+            try {
+                droppedBlock = JSON.parse(blockJson);
+            } catch {
+                droppedBlock = null;
+            }
+        }
 
         if (!blockType || !label) {
             return;
@@ -159,7 +74,7 @@
         });
 
         onDropBlock(
-            {
+            droppedBlock || {
                 type: blockType,
                 label,
             },
@@ -189,7 +104,6 @@
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
                 nodeTypes={nodeTypes}
-                edgeTypes={edgeTypes}
                 fitView
                 edgesUpdatable={true}
             >

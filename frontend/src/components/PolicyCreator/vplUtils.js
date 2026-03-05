@@ -14,15 +14,22 @@ function vplToFlowType(type) {
     // Map from flowType string to array of VPL block types
     const flowTypeToVplTypes = [
         {
-            flowType: "binaryOperator",
-            vplTypes: ["add", "subtract", "multiply", "divide"],
+            flowType: "binaryOperatorN",
+            vplTypes: [
+                "add",
+                "subtract",
+                "multiply",
+                "divide",
+                "lt",
+                "gt",
+                "eq",
+                "and",
+                "or",
+            ],
         },
-        { flowType: "input", vplTypes: ["input", "const"] },
-        { flowType: "output", vplTypes: ["output", "ticket"] },
-        {
-            flowType: "binaryOperator",
-            vplTypes: ["lt", "gt", "eq", "and", "or"],
-        },
+        { flowType: "inputN", vplTypes: ["input"] },
+        { flowType: "constantN", vplTypes: ["const"] },
+        { flowType: "outputN", vplTypes: ["output", "ticket"] },
     ];
     for (const { flowType, vplTypes } of flowTypeToVplTypes) {
         if (vplTypes.includes(type)) {
@@ -66,13 +73,16 @@ export function createNodeFromBlock(block, position) {
             label: block.label,
             description: block.description,
             value: block.type === "const" ? constValue : undefined,
-            inputConfig: block.type === "input" ? (block.inputConfig || {}) : undefined,
+            inputConfig:
+                block.type === "input" ? block.inputConfig || {} : undefined,
             payload:
                 block.type == "ticket"
                     ? baseTicket
-                    : block.type == "const"
-                      ? { value: constValue }
-                      : {},
+                    : block.type == "input"
+                      ? block.payload || block.inputConfig || {}
+                      : block.type == "const"
+                        ? { value: constValue }
+                        : {},
         },
     };
 }
@@ -85,9 +95,9 @@ export function templateBlocksToNodes(
     if (!Array.isArray(templateBlocks)) return [];
 
     // Horizontal spacing between nodes in the same layer
-    const spacingX = 220;
+    const spacingX = 300;
     // Vertical spacing between dependency layers (data flows downwards)
-    const spacingY = 140;
+    const spacingY = 200;
 
     // Build a stable list of node ids (as strings) from the blocks
     const nodeIds = templateBlocks.map((block, index) => {
@@ -238,34 +248,34 @@ export function templateEdgesToEdges(templateEdges, templateBlocks = []) {
     // Color by block category: blue for INPUTS/COMPONENTS, red for DECISIONS
     function isInputsOrComponents(type) {
         return (
-            type === 'input' ||
-            type === 'const' ||
-            type === 'number' ||
-            type === 'op' ||
-            type === 'component'
+            type === "input" ||
+            type === "const" ||
+            type === "number" ||
+            type === "op" ||
+            type === "component"
         );
     }
     function isDecisions(type) {
         return (
-            type === 'lt' ||
-            type === 'gt' ||
-            type === 'eq' ||
-            type === 'and' ||
-            type === 'or' ||
-            type === 'not' ||
-            type === 'decision' ||
-            type === 'greaterThan' ||
-            type === 'lessThan' ||
-            type === 'equal'
+            type === "lt" ||
+            type === "gt" ||
+            type === "eq" ||
+            type === "and" ||
+            type === "or" ||
+            type === "not" ||
+            type === "decision" ||
+            type === "greaterThan" ||
+            type === "lessThan" ||
+            type === "equal"
         );
     }
     return templateEdges.map(([source, target, targetHandle]) => {
-        let edgeColor = '#888';
+        let edgeColor = "#888";
         const sourceType = blockTypeById[String(source)];
         if (isInputsOrComponents(sourceType)) {
-            edgeColor = '#1976d2'; // blue
+            edgeColor = "#1976d2"; // blue
         } else if (isDecisions(sourceType)) {
-            edgeColor = '#d32f2f'; // red
+            edgeColor = "#d32f2f"; // red
         }
         return {
             id: `e-${source}-${target}`,
@@ -273,8 +283,12 @@ export function templateEdgesToEdges(templateEdges, templateBlocks = []) {
             target: String(target),
             targetHandle,
             updatable: true,
-            type: 'colored',
-            data: { style: { stroke: edgeColor, strokeWidth: 4 } },
+            type: "default",
+            style: { stroke: edgeColor, strokeWidth: 4 },
+            markerEnd: {
+                type: MarkerType.ArrowClosed,
+                color: edgeColor,
+            },
         };
     });
 }
@@ -297,11 +311,15 @@ export function verifyProgram({ Nodes, Connections, ...rest }) {
     if (rest["Policy Name"].length === 0) return false;
 
     if (!Array.isArray(Nodes) || Nodes.length === 0) {
-        alert("Errors Detected, couldn't save program: There is no nodes in the program.");
+        alert(
+            "Errors Detected, couldn't save program: There is no nodes in the program.",
+        );
         return false;
     }
     if (!Array.isArray(Connections) || Connections.length === 0) {
-        alert("Errors Detected, couldn't save program: There is no connections in the program.");
+        alert(
+            "Errors Detected, couldn't save program: There is no connections in the program.",
+        );
         return false;
     }
 
@@ -340,7 +358,9 @@ export function verifyProgram({ Nodes, Connections, ...rest }) {
 
     for (const nodeId of nodeIds) {
         if (hasCycle(nodeId)) {
-            alert(`Errors Detected, couldn't save program: There is a cycle in the program.`);
+            alert(
+                `Errors Detected, couldn't save program: There is a cycle in the program.`,
+            );
             return false;
         }
     }

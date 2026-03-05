@@ -20,20 +20,24 @@ from pydantic import BaseModel, Field
 from typing import Optional
 from google.genai.types import Tool, GenerateContentConfig, UrlContext
 
-app = Flask(__name__)
-CORS(app)
 
 class QueryResponse(BaseModel):
     response: str = Field(..., description="The response to the user's query")
     url: Optional[str] = Field(None, description="A URL to a relevant page or resource requested (optional)")
 
-apistr = "" #add api key here for testing 
-client = genai.Client(api_key=apistr)
+apistr = "" #add api key here for testing
+if apistr != "":
+    client = genai.Client(api_key=apistr)
+else:
+    client = None
+    print("No API key found. Please set the 'apistr' variable with your Google GenAI API key to enable Gemini client functionality.")
 
 ##debug test
 
 
 def process_query(user_query):
+    if client is None:
+        return QueryResponse(response="I'm sorry, I don't have that information. Please set up the API key to enable query processing.")
     prompt = """
     You are a helpful assistant for a cost management platform.
     Answer the user's query in a clear and concise manner.
@@ -46,7 +50,7 @@ def process_query(user_query):
     - The platform provides cost optimization suggestions based on resource usage and cost data.
     - Users can view detailed cost breakdowns and trends on the dashboard.
     - The platform allows users to set up alerts for cost anomalies and budget thresholds.
-    - Users can view all of their created policies on the policies page
+    - Users can view all of their created policies on the policies page (policy viewer)
     - they can also create new policies per service for cost optimization/efficiency on the policy editor page.
 
     Below are some paths to relevant pages on the platform that you can link to in your responses:
@@ -55,6 +59,7 @@ def process_query(user_query):
     - Dashboard: /ai-dashboard
     - Policy Editor: /policy-editor
     - Service Viewer: /service-viewer
+    - Policy Viewer: /policy-viewer
     """ + "User's query: " + user_query
 
 
@@ -78,7 +83,7 @@ def process_query(user_query):
     print(result) ##Gemini suggestions which can be displayed on main page
     return result
 
-@app.route('/query', methods=['POST', 'OPTIONS'])
+
 def get_user_query():
     user_query = "Tell me what the site does" #example query for now
     if request.method == 'OPTIONS':

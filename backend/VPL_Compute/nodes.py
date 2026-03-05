@@ -124,6 +124,13 @@ class INPUT(Node):
         super().__init__()
         self.provider = node_object["Input Provider"]
         self.channel = node_object["Input Channel"]
+        
+        self.field = node_object["Field"]
+        self.aggregate = node_object["Aggregate"]
+        self.type = node_object["Type"]
+        self.date_after = node_object["Date After"]
+        self.date_before = node_object["Date Before"] or None
+    
 
     def compute(self, args, t):
         return get_data(f'{self.provider}:{self.channel}', t)

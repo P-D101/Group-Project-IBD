@@ -6,6 +6,7 @@ import Table from "../components/Table";
 import AIquery from "../components/AIquery";
 import AIsuggestions from "../components/AIsuggestions";
 import StatsCards from "../components/StatsCards";
+import DashboardGraphs from "../components/DashboardGraphs";
 import BaseLayout from "../components/BaseLayout";
 import { useNavigate } from "react-router-dom";
 import React from "react";
@@ -37,83 +38,7 @@ function AIdashboard() {
     const navigate = useNavigate();
     console.log("AIdashboard component rendered"); // Debugging log
 
-    useEffect(() => {
-        console.log("AIdashboard useEffect called"); // Debugging log
-
-        var ctx = document.getElementById("serverGraph");
-        var ctx2 = document.getElementById("serverGraph2");
-        var currentGraph = Chart.getChart(ctx); // <canvas> id
-        var currentGraph2 = Chart.getChart(ctx2); // <canvas> id
-        if (currentGraph2) {
-            currentGraph.destroy();
-        }
-        if (currentGraph) {
-            currentGraph2.destroy();
-        }
-        if (ctx) {
-            ctx.getContext("2d"); //make sure only 2d
-            var serverGraph = new Chart(ctx, {
-                type: "line",
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                },
-                data: {
-                    //dummy data
-                    labels: [
-                        "January",
-                        "February",
-                        "March",
-                        "April",
-                        "May",
-                        "June",
-                    ],
-                    datasets: [
-                        {
-                            label: "Server Usage",
-                            data: [65, 59, 80, 81, 56, 55],
-                            borderColor: "rgba(75, 192, 192, 1)",
-                            size: 2,
-                            fill: false,
-                            tension: 0.1,
-                        },
-                    ],
-                },
-            });
-        }
-
-        //same for graph 2
-        if (ctx2) {
-            ctx2.getContext("2d");
-            var serverGraph2 = new Chart(ctx2, {
-                type: "bar",
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                },
-                data: {
-                    labels: [
-                        "January",
-                        "February",
-                        "March",
-                        "April",
-                        "May",
-                        "June",
-                    ],
-                    datasets: [
-                        {
-                            label: "Server Usage",
-                            data: [65, 59, 80, 81, 56, 55],
-                            backgroundColor: "#163158",
-                            borderColor: "#8d94a9",
-                            borderWidth: 1,
-                        },
-                    ],
-                },
-            });
-        }
-    }, []);
-
+   
 
     return (
 
@@ -155,8 +80,11 @@ function AIdashboard() {
 
                 {/* AI Ticket Suggestions Section */}
             <div>
-
-                   <AIsuggestions/> 
+                {/*scrollable ticket suggestions*/}
+                <h3 className="text-lg font-semibold pt-4">
+                    AI Ticket Recommendations
+                </h3>
+                   <AIsuggestions/>
 
             </div>
 
@@ -172,17 +100,11 @@ function AIdashboard() {
             </div>
 
 
-                {/*Server Graphs using dummy data for now*/}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="p-6 pb-20 relative w-full h-64 bg-white rounded shadow-sm">
-                        <h3 className="text-center mt-4">Server Usage Graph</h3>
-                        <canvas id="serverGraph"></canvas>
-                    </div>
-                    <div className="p-6 pb-20 relative w-full h-64 bg-white rounded shadow-sm">
-                        <h3 className="text-center mt-4">Server Usage Graph</h3>
-                        <canvas id="serverGraph2"></canvas>
-                    </div>
-                </div>
+<div>
+        <DashboardGraphs></DashboardGraphs>
+</div>
+
+
                 {/* Server Data Table from components*/}
                 <h3 className="text-lg font-semibold pt-4">
                     Cloud Usage Data Per Server

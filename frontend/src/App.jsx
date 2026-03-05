@@ -20,6 +20,7 @@ function App() {
             <Route path="/ai-dashboard" element={<AIdashboard />} />
             <Route path="/service-viewer" element={<ServiceViewer />} />
             <Route path="/policy-editor" element={<PolicyCreator />} />
+            <Route path="/policy-editor/:id" element={<PolicyCreator  />} />
             <Route path="/policy-viewer" element={<PolicyViewer />} />
             <Route path="/db-test" element={<TempPage />} />
             </Route>    

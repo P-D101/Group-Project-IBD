@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useState } from "react";
 // import { Line } from "react-chartjs-2";
 import { Chart } from "chart.js/auto";
@@ -12,11 +12,12 @@ import { set } from "date-fns";
 function AIsuggestions(){
     let [suggested_tickets, setSuggTickets]= useState([]);
     let [loading, setLoading] = useState(true);
+    const hasFetched = useRef(false)
     async function getSuggestions() {
         console.log("getSuggestions is running...");
 
         try {
-            const response = await fetch("http://127.0.0.1:5001/suggestions");
+            const response = await fetch("http://127.0.0.1:5000/api/suggestions");
             if (!response.ok) {
                 throw new Error("Failed to fetch response");
             }
@@ -34,7 +35,10 @@ function AIsuggestions(){
     }
 
     useEffect(() => {
-        getSuggestions();}, []);
+        if (!hasFetched.current){
+            hasFetched.current = true; //don't reload suggestions again
+            getSuggestions();}
+    }, []);
     
     if (loading) return <p>Loading ticket recommendations...</p>; 
 
@@ -47,16 +51,13 @@ function AIsuggestions(){
 
     function handleApprove(approveIndex){
         //nothing here yet as this service is not integrated
-        alert('SUggested ticket sent to HR to confirm!')
+        alert('Suggested ticket sent to HR to confirm!')
     }
 
     return (
 
             <div>
-                {/*scrollable ticket suggestions with dummy tickets for now*/}
-                <h3 className="text-lg font-semibold pt-4">
-                    AI Ticket Recommendations
-                </h3>
+
                 <div className="gap-6 flex overflow-x-auto scrollbar-hide  ">
                     {suggested_tickets.map((ticket, index) => (
                         <div

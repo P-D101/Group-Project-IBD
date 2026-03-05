@@ -5,34 +5,26 @@ function PolicyViewer() {
 
     const groups = ["enabled","disabled","processing"]
     const [policies, setPolicies] = useState(Object.fromEntries(groups.map(group => [group,[]])));
-    
+    const [reload, setReload] = useState(false);
+
+
     useEffect(() => {
         async function load() {
             try {
-                const id_results = await fetch(`http://localhost:5000/api/policies`).then(r=>r.json());
-
-                const results = await Promise.all(
-                    groups.map(group =>
-                        Promise.all(
-                            id_results.vpl_ids[group].map(id =>
-                                fetch(`http://localhost:5000/api/policies/${id}`)
-                                .then(r => r.json()))))
-                );
-
+                const results = await fetch(`http://localhost:5000/api/policies/all`).then(r=>r.json());
+                
                 const policiesObject = Object.fromEntries(groups.map(group => [group,[]]));
                 for (let i = 0; i < groups.length; i++) {
-                    policiesObject[groups[i]] = results[i];
+                    policiesObject[groups[i]] = results[groups[i]];
                 }
                 setPolicies(policiesObject);
-                console.log(policiesObject);
             } catch (err) {
                 console.error(err);
             }
         }
 
         load();
-    }, []);
-
+    }, [reload]);
     return (
         <div className="flex flex-col h-[80vh] bg-gray-50">
 
@@ -42,9 +34,9 @@ function PolicyViewer() {
                         {groups.map(group => (
                             <div key={group} className="flex-1 bg-gray-100 p-5 rounded-lg overflow-auto">
                                 <h2 className="text-xl font-semibold capitalize mb-2">{group} policies</h2>
-                                <ul className="space-y-4">
+                                <ul className="space-y-4 overflow-auto">
                                     {policies[group].map(policy => (
-                                        <PolicyListItem policy={policy} group={group}/>
+                                        <PolicyListItem policy={policy} group={group} key={policy.id} triggerReload={() => setReload(r => !r)}/>
                                     ))}
                                 </ul>
                             </div>
