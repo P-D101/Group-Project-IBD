@@ -184,6 +184,16 @@ function BlockPropertiesPanel({ block, onBlockUpdate }) {
     );
     const [constError, setConstError] = React.useState("");
 
+    React.useEffect(() => {
+        if (block.type === "const") {
+            setConstValue(block.value !== undefined ? block.value : block.label || "");
+            setConstError("");
+            return;
+        }
+        setConstValue("");
+        setConstError("");
+    }, [block.id, block.type, block.value, block.label]);
+
     const handleConstChange = (e) => {
         const val = e.target.value;
         setConstValue(val);
@@ -196,7 +206,8 @@ function BlockPropertiesPanel({ block, onBlockUpdate }) {
     };
 
     const handleSaveConst = () => {
-        if (constValue.trim() === "" || isNaN(parseFloat(constValue))) {
+
+        if (`${constValue}`.trim() === "" || isNaN(parseFloat(constValue))) {
             setConstError("Constant value must be a valid float.");
             return;
         }

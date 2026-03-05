@@ -1,14 +1,11 @@
 import BlockCategory from "./BlockCategory";
+import { buildInputLibraryBlocks } from "./inputPresets";
 
 function BlocksLibraryPanel() {
     const BLOCK_CATEGORIES = [
         {
             title: "Inputs",
-            blocks: [
-                { type: "input", label: "Usage %" },
-                { type: "input", label: "Daily Cost" },
-                { type: "input", label: "Custom Metric" },
-            ],
+            blocks: buildInputLibraryBlocks(),
         },
         {
             title: "Components",

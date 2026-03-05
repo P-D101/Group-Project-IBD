@@ -6,11 +6,10 @@
         useReactFlow,
     } from "@xyflow/react";
     import "@xyflow/react/dist/style.css";
-    import BinaryOperator from "../nodes/BinaryOperator";
-    import VPLNode from "./VPLNode";
-    import { BaseEdge } from "@xyflow/react";
-
-
+    import BinaryOperatorNode from "../nodes/BinaryOperatorNode";
+    import InputNode from "../nodes/InputNode";
+    import OutputNode from "../nodes/OutputNode";
+    import ConstantNode from "../nodes/ConstantNode";
     import React from "react";
     import { getBezierPath } from "@xyflow/react";
     function ColoredEdge({ id, sourceX, sourceY, targetX, targetY, style, data }) {
@@ -122,8 +121,13 @@
         onDropBlock,
     }) {
         const reactFlowInstance = useReactFlow();
-    const nodeTypes = { binaryOperator: BinaryOperator, const: VPLNode };
-        const edgeTypes = { colored: ColoredEdge };
+    
+    const nodeTypes = {
+        binaryOperatorN: BinaryOperatorNode,
+        inputN: InputNode,
+        outputN: OutputNode,
+        constantN: ConstantNode,
+    };
 
     const handleNodeClick = (_, node) => {
         if (onNodeSelect) {

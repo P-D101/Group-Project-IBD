@@ -14,15 +14,12 @@ function vplToFlowType(type) {
     // Map from flowType string to array of VPL block types
     const flowTypeToVplTypes = [
         {
-            flowType: "binaryOperator",
-            vplTypes: ["add", "subtract", "multiply", "divide"],
+            flowType: "binaryOperatorN",
+            vplTypes: ["add", "subtract", "multiply", "divide","lt", "gt", "eq", "and", "or"],
         },
-        { flowType: "input", vplTypes: ["input", "const"] },
-        { flowType: "output", vplTypes: ["output", "ticket"] },
-        {
-            flowType: "binaryOperator",
-            vplTypes: ["lt", "gt", "eq", "and", "or"],
-        },
+        { flowType: "inputN", vplTypes: ["input"] },
+        { flowType: "constantN", vplTypes: ["const"] },
+        { flowType: "outputN", vplTypes: ["output", "ticket"] },
     ];
     for (const { flowType, vplTypes } of flowTypeToVplTypes) {
         if (vplTypes.includes(type)) {
@@ -70,6 +67,8 @@ export function createNodeFromBlock(block, position) {
             payload:
                 block.type == "ticket"
                     ? baseTicket
+                                        : block.type == "input"
+                                            ? (block.payload || block.inputConfig || {})
                     : block.type == "const"
                       ? { value: constValue }
                       : {},
