@@ -1,5 +1,4 @@
-#to do: needs updating to work with db
-import sys
+import sys, traceback #debugging
 import subprocess
 import pandas as pd
 from database import get_db
@@ -8,7 +7,9 @@ import numpy as np
 from sklearn.ensemble import IsolationForest
 from google import genai
 from pydantic import BaseModel, Field
-
+from google import genai
+from typing import Optional
+from google.genai.types import Tool, GenerateContentConfig, UrlContext
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import database
@@ -16,17 +17,23 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
  
-import subprocess
-import pandas as pd
-from database import get_db
-from google import genai
-import os
-from pydantic import BaseModel, Field
-from typing import Optional
-from google.genai.types import Tool, GenerateContentConfig, UrlContext
+
+class JsonTicket(BaseModel):
+    title: str = Field(..., description="The title of the ticket")
+    description: str = Field(..., description="A detailed description of the issue or request")
+    action: str = Field(..., description="Suggested actions to resolve the issue or fulfill the request")
+    reasoning: str = Field(..., description="The reasoning behind the suggested actions")
+    priority: str = Field(..., description="The priority level of the ticket (e.g., High, Medium, Low)")
+
+class TicketList(BaseModel):
+    suggested_tickets: list[JsonTicket]
+
+
 
 def get_user_query():
-
+    apistr = "" #add api key here for testing
+    client = genai.Client(api_key=apistr)
+    
     #ml model using isolation forest to detect anomalies
     query = """
     SELECT 
@@ -40,10 +47,10 @@ def get_user_query():
     
     df = pd.read_sql_query(query, database.get_db())
 
-    print('read csv :)')
+    print('got data from db :)')
 
     data = df.copy()
-    print('copied csv :)')
+    print('copied :)')
 
     #experimenting with features
     data['UnitCost'] = data['billed_cost'] / data['normalized_usage'].clip(lower=1)
@@ -93,19 +100,6 @@ def get_user_query():
     print(llm_dataset)
     data_str = llm_dataset.to_csv(index=False)
 
-
-    class JsonTicket(BaseModel):
-        title: str = Field(..., description="The title of the ticket")
-        description: str = Field(..., description="A detailed description of the issue or request")
-        action: str = Field(..., description="Suggested actions to resolve the issue or fulfill the request")
-        reasoning: str = Field(..., description="The reasoning behind the suggested actions")
-        priority: str = Field(..., description="The priority level of the ticket (e.g., High, Medium, Low)")
-
-    class TicketList(BaseModel):
-        suggested_tickets: list[JsonTicket]
-    
-    apistr = "" #add api key here for testing
-    client = genai.Client(api_key=apistr)
     
     prompt = """
     Analyse the following dataset, which represents the top 0.1% most severe cost anomalies, and provide suggestion tickets for cost optimisation. 
@@ -138,15 +132,16 @@ def get_user_query():
 
     These suggestion ticket policies can sugest actions such as reallocation of resources, deleting certain underutilised services, buying reservations etc.
     
-    CRITICAL INSTRUCTION - NO DATABASE JARGON:
-    You are writing for business users and FinOps managers. You are STRICTLY FORBIDDEN from using raw database column names or underscores in your JSON output. 
-    - DO NOT use: "billed_cost". Instead use "Cost".
-    - DO NOT use: "MeanService". Instead use "Average per service".
-    - DO NOT use: "usage_quantity" or "usage_unit". Instead use "Utilization" or "Usage Levels".
-    - DO NOT use: "UnitCost". Instead use "Cost per Unit".
-    - DO NOT use raw IDs like "res_722" alone. ALWAYS pair it with the service name (e.g., "the AWS Lambda function (ID: res_722)").
+    CRITICAL FORMATTING AND STYLE RULES:
+    1. NO DATABASE JARGON: You are writing for business users. You are STRICTLY FORBIDDEN from using raw column names (like billed_cost, usage_quantity, UnitCost, MeanService, compute_model) in your output. Translate them into plain English (e.g., "weekly spend", "usage amount", "cost per unit", "historical average", "pricing tier"). Do not use underscores in your text.
+    2. NATURAL CASING: When injecting data values from the dataset into your sentences (such as pricing tiers, compute models, or unit types), convert them to lowercase so they read naturally in the middle of a sentence. 
+        - BAD: "...because it is in the Standard tier and unit is Request."
+        - GOOD: "...because it is in the standard tier and the unit is measured in requests."
+        - BAD: "...if the cost per unit is On-Demand."
+        - GOOD: "...if running on an on-demand pricing model."
+    3. READABLE RESOURCES: Never just say "res_555". Always pair it with the service name (e.g., "the AWS Lambda function (res_555)").
 
-    Give your response in JSON format as a list of tickets with fields: title, description, suggested_actions, reasoning and priority. All of these are compulsory fields.
+    Give your response in JSON format as a list of tickets with fields: title, description, action, reasoning and priority. All of these are compulsory fields.
     
     DATASET:
     {data_str}
@@ -170,3 +165,6 @@ def get_user_query():
         return jsonify(result.model_dump())
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+if __name__ ==  "__main__":
+    pass

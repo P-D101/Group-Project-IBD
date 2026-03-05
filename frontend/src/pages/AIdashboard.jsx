@@ -155,7 +155,10 @@ function AIdashboard() {
 
                 {/* AI Ticket Suggestions Section */}
             <div>
-
+                {/*scrollable ticket suggestions*/}
+                <h3 className="text-lg font-semibold pt-4">
+                    AI Ticket Recommendations
+                </h3>
                    <AIsuggestions/>
 
             </div>

@@ -20,8 +20,6 @@ from pydantic import BaseModel, Field
 from typing import Optional
 from google.genai.types import Tool, GenerateContentConfig, UrlContext
 
-app = Flask(__name__)
-CORS(app)
 
 class QueryResponse(BaseModel):
     response: str = Field(..., description="The response to the user's query")
@@ -46,7 +44,7 @@ def process_query(user_query):
     - The platform provides cost optimization suggestions based on resource usage and cost data.
     - Users can view detailed cost breakdowns and trends on the dashboard.
     - The platform allows users to set up alerts for cost anomalies and budget thresholds.
-    - Users can view all of their created policies on the policies page
+    - Users can view all of their created policies on the policies page (policy viewer)
     - they can also create new policies per service for cost optimization/efficiency on the policy editor page.
 
     Below are some paths to relevant pages on the platform that you can link to in your responses:
@@ -55,6 +53,7 @@ def process_query(user_query):
     - Dashboard: /ai-dashboard
     - Policy Editor: /policy-editor
     - Service Viewer: /service-viewer
+    - Policy Viewer: /policy-viewer
     """ + "User's query: " + user_query
 
 
@@ -78,7 +77,7 @@ def process_query(user_query):
     print(result) ##Gemini suggestions which can be displayed on main page
     return result
 
-@app.route('/query', methods=['POST', 'OPTIONS'])
+
 def get_user_query():
     user_query = "Tell me what the site does" #example query for now
     if request.method == 'OPTIONS':
