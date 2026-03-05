@@ -20,16 +20,17 @@ export const INPUT_BLOCK_PRESETS = [
         label: "Daily Cost",
         inputConfig: {
             field: "net_cost",
-            aggregate: "AVG",
-            type: "ALL",
+            aggregate: "Average",
+            type: "All",
+            after: daysAgo(1)
         },
     },
     {
         label: "Average Daily Cost (last month)",
         inputConfig: {
             field: "net_cost",
-            aggregate: "AVG",
-            type: "ALL",
+            aggregate: "Average",
+            type: "All",
             ...lastMonthRange(),
         },
     },
@@ -37,8 +38,8 @@ export const INPUT_BLOCK_PRESETS = [
         label: "Total Cost (last month)",
         inputConfig: {
             field: "billed_cost",
-            aggregate: "MAX",
-            type: "ALL",
+            aggregate: "Sum",
+            type: "All",
             ...lastMonthRange(),
         },
     },
@@ -46,16 +47,16 @@ export const INPUT_BLOCK_PRESETS = [
         label: "Daily Usage",
         inputConfig: {
             field: "usage_quantity",
-            aggregate: "AVG",
-            type: "ALL",
+            aggregate: "Average",
+            type: "All",
         },
     },
     {
         label: "Average Daily Usage (last month)",
         inputConfig: {
             field: "usage_quantity",
-            aggregate: "AVG",
-            type: "ALL",
+            aggregate: "Average",
+            type: "All",
             ...lastMonthRange(),
         },
     },
@@ -63,8 +64,8 @@ export const INPUT_BLOCK_PRESETS = [
         label: "Total Usage (last month)",
         inputConfig: {
             field: "usage_quantity",
-            aggregate: "MAX",
-            type: "ALL",
+            aggregate: "Sum",
+            type: "All",
             ...lastMonthRange(),
         },
     },
