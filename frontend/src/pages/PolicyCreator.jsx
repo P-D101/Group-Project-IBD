@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { addEdge, applyEdgeChanges, applyNodeChanges } from "@xyflow/react";
+import { addEdge, applyEdgeChanges, applyNodeChanges, MarkerType } from "@xyflow/react";
 import Header from "../components/PolicyCreator/Header";
 import LeftSidebar from "../components/PolicyCreator/LeftSidebar";
 import CenterCanvas from "../components/PolicyCreator/CenterCanvas";
@@ -104,12 +104,24 @@ function PolicyCreator() {
                     !(e.target === connection.target &&
                       (!connection.targetHandle || e.targetHandle === connection.targetHandle))
             );
-            return addEdge({ ...connection, type: 'colored', style: { stroke: edgeColor, strokeWidth: 4 } }, filtered);
+            return addEdge(
+                {
+                    ...connection,
+                    type: 'default',
+                    style: { stroke: edgeColor, strokeWidth: 4 },
+                    markerEnd: {
+                        type: MarkerType.ArrowClosed,
+                        color: edgeColor,
+                    },
+                },
+                filtered
+            );
         });
     };
 
     const handleDropBlock = (blockInfo, position) => {
         const block = {
+            ...blockInfo,
             type: blockInfo.type,
             label: blockInfo.label,
         };
@@ -132,26 +144,33 @@ function PolicyCreator() {
                 if (node.id !== selectedNodeId) return node;
                 // For constant blocks, update value and label in node.data
                 if (node.data.type === "const") {
+                    const nextConstValue =
+                        updatedNode.value !== undefined ? updatedNode.value : node.data.value;
                     return {
                         ...node,
                         data: {
                             ...node.data,
-                            value: updatedNode.value,
-                            label: updatedNode.label,
+                            value: nextConstValue,
+                            label: updatedNode.label ?? node.data.label,
                             description: updatedNode.description ?? node.data.description,
-                            payload: updatedNode.payload ?? node.data.payload,
+                            payload: {
+                                ...(node.data.payload || {}),
+                                ...(updatedNode.payload || {}),
+                                value: nextConstValue,
+                            },
                         },
                     };
                 }
                 // For input blocks, update inputConfig
                 if (node.data.type === "input") {
+                    const nextInputConfig = updatedNode.inputConfig ?? node.data.inputConfig;
                     return {
                         ...node,
                         data: {
                             ...node.data,
-                            inputConfig: updatedNode.inputConfig ?? node.data.inputConfig,
+                            inputConfig: nextInputConfig,
                             description: updatedNode.description ?? node.data.description,
-                            payload: updatedNode.payload ?? node.data.payload,
+                            payload: nextInputConfig,
                         },
                     };
                 }
@@ -176,6 +195,8 @@ function PolicyCreator() {
                   return {
                       id: node.data.id,
                       type: node.data.type,
+                      label: node.data.label,
+                      value: node.data.value,
                       payload: node.data.payload,
                       description: node.data.description,
                       inputConfig: node.data.inputConfig,
@@ -327,9 +348,9 @@ function PolicyCreator() {
                 return response;
             };
 
-            let response = await doSave("/api/policies");
+            let response = await doSave("http://localhost:5000/api/policies");
             if (!response.ok && response.status === 403) {
-                response = await doSave("http://localhost:5001/api/policies");
+                response = await doSave("http://localhost:5000/api/policies");
             }
 
             if (!response.ok) {

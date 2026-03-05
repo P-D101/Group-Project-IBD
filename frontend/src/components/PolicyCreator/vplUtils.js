@@ -272,8 +272,12 @@ export function templateEdgesToEdges(templateEdges, templateBlocks = []) {
             target: String(target),
             targetHandle,
             updatable: true,
-            type: 'colored',
-            data: { style: { stroke: edgeColor, strokeWidth: 4 } },
+            type: 'default',
+            style: { stroke: edgeColor, strokeWidth: 4 },
+            markerEnd: {
+                type: MarkerType.ArrowClosed,
+                color: edgeColor,
+            },
         };
     });
 }

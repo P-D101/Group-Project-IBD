@@ -48,6 +48,7 @@ function BlockCategory({ title, blocks }) {
         e.dataTransfer.effectAllowed = "copy";
         e.dataTransfer.setData("application/vpl-block", block.type || "");
         e.dataTransfer.setData("application/vpl-label", block.label);
+        e.dataTransfer.setData("application/vpl-block-json", JSON.stringify(block));
         e.target.style.cursor = "grabbing";
     };
 

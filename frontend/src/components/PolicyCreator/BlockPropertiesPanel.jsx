@@ -161,6 +161,16 @@ function BlockPropertiesPanel({ block, onBlockUpdate }) {
         onBlockUpdate(updatedBlock);
     };
 
+    const handleOutputMessageChange = (value) => {
+        if (!block) return;
+        const nextPayload = {
+            ...(block.payload || {}),
+            message: value,
+            action: value,
+        };
+        onBlockUpdate({ ...block, payload: nextPayload });
+    };
+
     if (!block || typeof block !== 'object') {
         return (
             <div style={panelStyle}>
@@ -241,6 +251,18 @@ function BlockPropertiesPanel({ block, onBlockUpdate }) {
                         value={block.inputConfig || {}}
                         onChange={cfg => onBlockUpdate({ ...block, inputConfig: cfg })}
                     />
+                ) : block.type === "output" ? (
+                    <label style={labelStyle}>
+                        <span style={labelTextStyle}>Message</span>
+                        <textarea
+                            value={block?.payload?.message ?? block?.payload?.action ?? ""}
+                            placeholder="Enter output message..."
+                            onChange={(e) => handleOutputMessageChange(e.target.value)}
+                            style={textareaStyle}
+                            onFocus={handleFocus}
+                            onBlur={handleBlur}
+                        />
+                    </label>
                 ) : (
                     blockFieldKeys.map(
                         (key) =>
