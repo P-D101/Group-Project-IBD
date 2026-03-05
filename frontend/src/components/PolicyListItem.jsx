@@ -16,6 +16,7 @@ function PolicyListItem({ policy, group, triggerReload }) {
     };
 
     const deletePolicy = async () => {
+        if (!window.confirm(`Are you sure you want to delete ${policy["Policy Name"]}?`)) return;
         await fetch(`http://localhost:5000/api/policies/${policy.id}`,{method:"DELETE"});
         triggerReload();
     };
@@ -24,31 +25,42 @@ function PolicyListItem({ policy, group, triggerReload }) {
     return (
         <li key={policy["id"]} className={"w-fit p-5 "+groupToColour[group]+" rounded-lg shadow-sm"}>
             <h3 className="text-l font-semibold mb-2">{policy["Policy Name"]}</h3>
-            <button
-                onClick={navigateToPolicy}
-                className="text-white gap-4 px-2 py-1 mr-2 bg-[#84a49f]  rounded-lg hover:bg-[#1b6a5e] hover:shadow-md"
-            >
-                Edit
-            </button>
 
-            <button
-                onClick={() => {
-                    toggleStatus();
-                }}
-                className="text-white gap-4 px-2 py-1 mr-2 bg-[#84a49f]  rounded-lg hover:bg-[#1b6a5e] hover:shadow-md"
-            >
-                {group=="enabled" ? "Disable" : "Enable"}
-            </button>
+            {group != "processing"
+            ? (
+                <div>
+                    <button
+                        onClick={navigateToPolicy}
+                        className="text-white gap-4 px-2 py-1 mr-2 bg-[#84a49f]  rounded-lg hover:bg-[#1b6a5e] hover:shadow-md"
+                    >
+                        Edit
+                    </button>
+                    <button
+                        onClick={() => {
+                            toggleStatus();
+                        }}
+                        className="text-white gap-4 px-2 py-1 mr-2 bg-[#84a49f]  rounded-lg hover:bg-[#1b6a5e] hover:shadow-md"
+                    >
+                        {group == "enabled" ? "Disable" : "Enable"}
+                    </button>
+                    <button
+                        onClick={() => {
+                            deletePolicy();
+                        }}
+                        className="text-white gap-4 px-2 py-1 mr-2 bg-[#84a49f]  rounded-lg hover:bg-[#1b6a5e] hover:shadow-md"
+                    >
+                        Delete
+                    </button>
+                </div>
+            )
+            : (<div>(note: can't edit whilst processing)</div>)}
+            
 
-            <button
-                onClick={() => {
-                    deletePolicy();
-                }}
-                className="text-white gap-4 px-2 py-1 mr-2 bg-[#84a49f]  rounded-lg hover:bg-[#1b6a5e] hover:shadow-md"
-            >
-                Delete
-            </button>
-            <div className="mt-2"><b>Sources:</b> {policy["Data Sources"].map(name => <div className="bg-blue-200 p-1 rounded-lg mt-2 w-fit">{name}</div>)}</div>
+            <div className="mt-2"><b>Sources:</b> {
+                policy["Data Sources"].length == 0
+                    ? "No data sources"
+                    : policy["Data Sources"].map(name => <div className="bg-blue-200 p-1 rounded-lg mt-2 w-fit">{name}</div>)
+            }</div>
         </li>
     );
 }
