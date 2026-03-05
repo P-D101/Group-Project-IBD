@@ -14,7 +14,7 @@ function ServiceViewer() {
                         fetch(`http://localhost:5000/api/usage/monthly?provider=${encodeURIComponent(provider)}`)
                             .then(r => {console.log(r); return r})
                             .then(r => r.json())
-                            .then(data => [provider, data[0][1]] )
+                            .then(data => [provider, data[0][1], data[0][2], data[0][2] - data[0][1]] )
                     )
                 );
 
@@ -33,7 +33,7 @@ function ServiceViewer() {
             {/* Main Content Area */}
             <div className="flex gap-4 p-4 overflow-hidden flex-1">
                 {/* Center Services Table */}
-                <Table headers={[{txt:"Provider",width:1},{txt:"Monthly Usage",width:1}]} rows={rows}></Table>
+                <Table headers={[{txt:"Provider",width:1},{txt:"Monthly Usage (USD)",width:1},{txt:"Monthly Billed (USD)",width:1},{txt:"Monthly Difference (USD)",width:1}]} rows={rows}></Table>
             </div>
         </div>
     );

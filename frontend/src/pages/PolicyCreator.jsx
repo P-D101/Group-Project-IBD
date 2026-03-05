@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useParams } from "react-router";
 import { addEdge, applyEdgeChanges, applyNodeChanges, MarkerType } from "@xyflow/react";
 import Header from "../components/PolicyCreator/Header";
 import LeftSidebar from "../components/PolicyCreator/LeftSidebar";
@@ -14,6 +15,8 @@ import {
 } from "../components/PolicyCreator/vplUtils";
 
 function PolicyCreator() {
+    const { VPL_id } = useParams();
+
     const [saveError, setSaveError] = useState("");
     // UI State
     const [selectedTemplate, setSelectedTemplate] = useState(null);

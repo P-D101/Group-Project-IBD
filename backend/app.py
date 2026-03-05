@@ -84,8 +84,13 @@ def get_input_fields():
 def get_filter_fields():
     return FILTERS.to_list()
 
+"""
+Example Query: https://localhost:5000/api/usage/weekly?provider=AWS
+timestep: daily, weekly or monthly
+provider: filter by provider, must be in list of providers returned by /api/data/provider
 
-## USAGE
+Returns: daily 
+"""
 @app.route("/api/usage/<timestep>") # Basic ungrouped usage (indexed) - quick
 def usage(timestep):
     # check parameters
@@ -103,7 +108,8 @@ def usage(timestep):
     query = f"""
     SELECT    
         {selected_usage_field},
-        SUM(total_usage_cost) AS usage_cost
+        SUM(net_cost) AS usage_cost,
+        SUM(billed_cost) AS billed_cost
     FROM gold_standard_usage {f'\
     WHERE provider_name = "{provider}"' if provider else ""}
     GROUP BY {selected_usage_field}
@@ -112,6 +118,21 @@ def usage(timestep):
     # TODO: pandas so it is formated nicely
     return database.query(query)
 
+
+
+
+"""
+Example Query: https://localhost:5000/api/usage/breakdown/daily?groupby=service_name,provider&selects=net_cost,usage_quantity
+selects: comma seperated list of fields to select, must be in SELECTS enum
+groupby: comma seperated list of fields to group by, must be in GROUPBY enum
+
+JSON body: key,value where key must be in FILTERS
+{
+    "service_name": "Amazon Elastic Compute Cloud Compute",
+    "before": "2024-01-01",
+    "region": "us-east-1"
+}
+"""
 @app.route('/api/usage/breakdown/<timestep>') # slower as not fully indexed
 def grouped_usage(timestep):
     # check parameter
@@ -191,6 +212,12 @@ def grouped_usage(timestep):
 
     return database.query(query)
 
+
+"""
+Example Query: https://localhost:5000/api/usage/top_services/AWS/daily
+
+Returns the daily cost of the top 5 most expensive services for AWS, with all other services grouped into "Other"
+"""
 @app.route("/api/usage/top_services/<provider>/<timestep>")
 def top_services(provider,timestep):
     # check parameters
@@ -249,7 +276,7 @@ import json
 
 
 @app.route("/api/policies/<vplID>", methods=["GET"])
-def home_page(vplID):
+def get_vpl_from_id(vplID):
     # load input file ./programs/policy_{vplID}.json then respond with this file
     file_path = os.path.join(os.path.dirname(__file__), "data", "programs", f"policy_{vplID}.json")
 
@@ -264,6 +291,42 @@ def home_page(vplID):
         return {"error": f"An error occurred while reading the VPL file: {e}"}, 500
 
     return vpl_data # get vpl file
+
+@app.route("/api/policies/<vplID>/disabled", methods=["GET"])
+def get_vpl_from_id_disabled(vplID):
+    # load input file ./programs/policy_{vplID}.json then respond with this file
+    file_path = os.path.join(os.path.dirname(__file__), "data", "disable-programs", f"policy_{vplID}.json")
+
+    try:
+        with open(file_path, "r") as f:
+            vpl_data = json.load(f)
+    except FileNotFoundError:
+        return {"error": "VPL not found"}, 404
+    except json.JSONDecodeError:
+        return {"error": "Invalid JSON in VPL file"}, 400
+    except Exception as e:
+        return {"error": f"An error occurred while reading the VPL file: {e}"}, 500
+
+    return vpl_data # get vpl file
+
+@app.route("/api/policies/<vplID>/processing", methods=["GET"])
+def get_vpl_from_id_processing(vplID):
+    # load input file ./programs/policy_{vplID}.json then respond with this file
+    file_path = os.path.join(os.path.dirname(__file__), "data", "new-programs", f"policy_{vplID}.json")
+
+    try:
+        with open(file_path, "r") as f:
+            vpl_data = json.load(f)
+    except FileNotFoundError:
+        return {"error": "VPL not found"}, 404
+    except json.JSONDecodeError:
+        return {"error": "Invalid JSON in VPL file"}, 400
+    except Exception as e:
+        return {"error": f"An error occurred while reading the VPL file: {e}"}, 500
+
+    return vpl_data # get vpl file
+
+
 
 @app.route("/api/policies", methods=["GET"])
 def get_vpls():
@@ -290,6 +353,21 @@ def get_vpls():
 
 
     return {"vpl_ids": vpl_ids}
+
+@app.route("/api/policies/all", methods=["GET"])
+def get_all_vpls():
+    # list all VPL files across all directories
+    ids = get_vpls()['vpl_ids']
+    data = {}
+    for status in ids:
+        if status == "enabled":
+            data[status] = [{**get_vpl_from_id(id), **{"id": id}} for id in ids[status]]
+        elif status == "disabled":
+            data[status] = [{**get_vpl_from_id_disabled(id), **{"id": id}} for id in ids[status]]
+        elif status == "processing":
+            data[status] = [{**get_vpl_from_id_processing(id), **{"id": id}} for id in ids[status]]
+    
+    return data
 
 
 @app.route("/api/policies", methods=["POST", "OPTIONS"])
