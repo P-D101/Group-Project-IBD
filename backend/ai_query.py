@@ -25,13 +25,19 @@ class QueryResponse(BaseModel):
     response: str = Field(..., description="The response to the user's query")
     url: Optional[str] = Field(None, description="A URL to a relevant page or resource requested (optional)")
 
-apistr = "" #add api key here for testing 
-client = genai.Client(api_key=apistr)
+apistr = "" #add api key here for testing
+if apistr != "":
+    client = genai.Client(api_key=apistr)
+else:
+    client = None
+    print("No API key found. Please set the 'apistr' variable with your Google GenAI API key to enable Gemini client functionality.")
 
 ##debug test
 
 
 def process_query(user_query):
+    if client is None:
+        return QueryResponse(response="I'm sorry, I don't have that information. Please set up the API key to enable query processing.")
     prompt = """
     You are a helpful assistant for a cost management platform.
     Answer the user's query in a clear and concise manner.
