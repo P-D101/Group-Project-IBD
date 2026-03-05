@@ -5,6 +5,7 @@ function PolicyViewer() {
 
     const groups = ["enabled","disabled","processing"]
     const [policies, setPolicies] = useState(Object.fromEntries(groups.map(group => [group,[]])));
+    const [reload, setReload] = useState(false);
     
     useEffect(() => {
         async function load() {
@@ -22,7 +23,7 @@ function PolicyViewer() {
         }
 
         load();
-    }, []);
+    }, [reload]);
     return (
         <div className="flex flex-col h-[80vh] bg-gray-50">
 
@@ -32,9 +33,9 @@ function PolicyViewer() {
                         {groups.map(group => (
                             <div key={group} className="flex-1 bg-gray-100 p-5 rounded-lg overflow-auto">
                                 <h2 className="text-xl font-semibold capitalize mb-2">{group} policies</h2>
-                                <ul className="space-y-4">
+                                <ul className="space-y-4 overflow-auto">
                                     {policies[group].map(policy => (
-                                        <PolicyListItem policy={policy} group={group} key={policy.id}/>
+                                        <PolicyListItem policy={policy} group={group} key={policy.id} triggerReload={() => setReload(r => !r)}/>
                                     ))}
                                 </ul>
                             </div>
