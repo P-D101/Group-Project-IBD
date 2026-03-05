@@ -15,7 +15,7 @@ import {
 } from "../components/PolicyCreator/vplUtils";
 
 function PolicyCreator() {
-    const { VPL_id } = useParams();
+    const VPL_id = useParams().id;
 
     const [saveError, setSaveError] = useState("");
     // UI State
@@ -32,6 +32,20 @@ function PolicyCreator() {
     const handleTemplateSelect = (template) => {
         setSelectedTemplate(template);
     };
+
+    // Load policy from API if an ID was given in the page parameters
+    useEffect(() => {
+        async function fetchPolicy() {
+            const response = await fetch(`http://localhost:5000/api/policies/${VPL_id}`);
+            if (!response.ok) {
+                window.alert(`Policy ID ${VPL_id} could not be found`)
+                return;
+            }
+            const policy = await response.json();
+            setSelectedTemplate(policy);
+        };
+        fetchPolicy();
+    },[])
 
     // When template changes, pre-populate nodes from its vplBlocks
     useEffect(() => {
