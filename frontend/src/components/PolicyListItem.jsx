@@ -7,7 +7,19 @@ function PolicyListItem({ policy, group, triggerReload }) {
         let path = `/policy-editor/${policy.id}`; 
         navigate(path);
         console.log(policy)
-    }
+    };
+
+        
+    const toggleStatus = async () => {
+        await fetch(`http://localhost:5000/api/policies/${policy.id}/${group=="enabled"?"disable":"enable"}`,{method:"POST"});
+        triggerReload();
+    };
+
+    const deletePolicy = async () => {
+        await fetch(`http://localhost:5000/api/policies/${policy.id}`,{method:"DELETE"});
+        triggerReload();
+    };
+
     const groupToColour = {"enabled":"bg-green-100","disabled":"bg-red-200","processing":"bg-yellow-100"}
     return (
         <li key={policy["id"]} className={"w-fit p-5 "+groupToColour[group]+" rounded-lg shadow-sm"}>
@@ -21,8 +33,7 @@ function PolicyListItem({ policy, group, triggerReload }) {
 
             <button
                 onClick={() => {
-                    fetch(`http://localhost:5000/api/policies/${policy.id}/${group=="enabled"?"disable":"enable"}`,{method:"POST"});
-                    triggerReload();
+                    toggleStatus();
                 }}
                 className="text-white gap-4 px-2 py-1 mr-2 bg-[#84a49f]  rounded-lg hover:bg-[#1b6a5e] hover:shadow-md"
             >
@@ -31,6 +42,7 @@ function PolicyListItem({ policy, group, triggerReload }) {
 
             <button
                 onClick={() => {
+                    deletePolicy();
                 }}
                 className="text-white gap-4 px-2 py-1 mr-2 bg-[#84a49f]  rounded-lg hover:bg-[#1b6a5e] hover:shadow-md"
             >

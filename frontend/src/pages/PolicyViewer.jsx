@@ -6,7 +6,8 @@ function PolicyViewer() {
     const groups = ["enabled","disabled","processing"]
     const [policies, setPolicies] = useState(Object.fromEntries(groups.map(group => [group,[]])));
     const [reload, setReload] = useState(false);
-    
+
+
     useEffect(() => {
         async function load() {
             try {
