@@ -52,6 +52,14 @@ export const INPUT_BLOCK_PRESETS = [
         },
     },
     {
+        label: "Usage %",
+        inputConfig: {
+            field: "usage_percent",
+            aggregate: "Average",
+            type: "All",
+        },
+    },
+    {
         label: "Average Daily Usage (last month)",
         inputConfig: {
             field: "usage_quantity",

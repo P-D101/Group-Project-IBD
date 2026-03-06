@@ -72,7 +72,31 @@ function PolicyCreator() {
     };
 
     const handleEdgesChange = (changes) => {
-        setEdges((eds) => applyEdgeChanges(changes, eds));
+        setEdges((eds) => {
+            const next = applyEdgeChanges(changes, eds);
+            const isOperations = (type) =>
+                type === "add" ||
+                type === "subtract" ||
+                type === "multiply" ||
+                type === "divide";
+
+            return next.filter((edge) => {
+                const sourceNode = nodes.find((n) => n.id === edge.source);
+                const targetNode = nodes.find((n) => n.id === edge.target);
+                if (!sourceNode || !targetNode) return true;
+
+                const isBlueEdge = edge.style?.stroke === "#1976d2";
+                const isRedEdge = edge.style?.stroke === "#d32f2f";
+
+                if (isOperations(targetNode.data.type) && !isBlueEdge) {
+                    return false;
+                }
+                if (targetNode.data.type === "output" && !isRedEdge) {
+                    return false;
+                }
+                return true;
+            });
+        });
     };
 
     const handleConnect = (connection) => {
@@ -82,6 +106,7 @@ function PolicyCreator() {
         }
         // Edge color logic (match template logic)
         const sourceNode = nodes.find((n) => n.id === connection.source);
+        const targetNode = nodes.find((n) => n.id === connection.target);
         let edgeColor = '#888';
         function isInputsOrComponents(type) {
             return (
@@ -89,7 +114,19 @@ function PolicyCreator() {
                 type === 'const' ||
                 type === 'number' ||
                 type === 'op' ||
-                type === 'component'
+                type === 'component' ||
+                type === 'add' ||
+                type === 'subtract' ||
+                type === 'multiply' ||
+                type === 'divide'
+            );
+        }
+        function isOperations(type) {
+            return (
+                type === 'add' ||
+                type === 'subtract' ||
+                type === 'multiply' ||
+                type === 'divide'
             );
         }
         function isDecisions(type) {
@@ -112,6 +149,19 @@ function PolicyCreator() {
                 edgeColor = '#1976d2';
             } else if (isDecisions(t)) {
                 edgeColor = '#d32f2f';
+            }
+        }
+
+        if (targetNode) {
+            const targetType = targetNode.data.type;
+            const isBlueEdge = edgeColor === '#1976d2';
+            const isRedEdge = edgeColor === '#d32f2f';
+
+            if (isOperations(targetType) && !isBlueEdge) {
+                return;
+            }
+            if (targetType === 'output' && !isRedEdge) {
+                return;
             }
         }
         setEdges((eds) => {

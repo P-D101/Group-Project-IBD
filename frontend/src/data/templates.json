@@ -126,14 +126,14 @@
         ]
     },
     {
-        "Policy Name": "Log event on custom metric",
-        "Description": "Log event when custom metric < 50",
+    "Policy Name": "Log event on custom input",
+    "Description": "Log event when custom input < 50",
         "Data Sources": [],
         "Nodes": [
             {
                 "id": "0",
                 "type": "input",
-                "label": "Custom Metric",
+                "label": "Custom Input",
                 "description": "Input value"
             },
             {
@@ -155,8 +155,8 @@
                 "label": "Log Event",
                 "data": {
                     "recipient": "logs@example.com",
-                    "action": "Log custom metric event",
-                    "description": "Log event when custom metric is below 50"
+                    "action": "Log custom input event",
+                    "description": "Log event when custom input is below 50"
                 },
                 "description": "Log Event"
             }
@@ -239,14 +239,14 @@
         ]
     },
     {
-        "Policy Name": "Alert on custom metric",
-        "Description": "Send alert if custom metric > 75",
+    "Policy Name": "Alert on custom input",
+    "Description": "Send alert if custom input > 75",
         "Data Sources": [],
         "Nodes": [
             {
                 "id": "0",
                 "type": "input",
-                "label": "Custom Metric",
+                "label": "Custom Input",
                 "description": "Input value"
             },
             {
@@ -269,7 +269,7 @@
                 "data": {
                     "recipient": "alerts@example.com",
                     "action": "Alert",
-                    "description": "Alert if custom metric > 75"
+                    "description": "Alert if custom input > 75"
                 },
                 "description": "Send Notification"
             }
@@ -349,20 +349,19 @@
             {
                 "id": "3",
                 "type": "subtract",
+                "label": "Subtract",
                 "description": "Subtract two values"
             },
             {
                 "id": "4",
                 "type": "gt",
                 "label": "Greater Than (>)",
-                "inputs": ["subtract", "const100"],
                 "description": "Greater than (>)"
             },
             {
                 "id": "5",
                 "type": "output",
                 "label": "Send Notification",
-                "inputs": ["increase_gt"],
                 "data": {
                     "recipient": "finance@example.com",
                     "action": "Notify cost increase",
@@ -380,8 +379,8 @@
         ]
     },
     {
-        "Policy Name": "Ticket if usage & custom metric high",
-        "Description": "Create ticket if usage > 80% AND custom metric > 60",
+    "Policy Name": "Ticket if usage & custom input high",
+    "Description": "Create ticket if usage > 80% AND custom input > 60",
         "Data Sources": [],
         "Nodes": [
             {
@@ -393,7 +392,7 @@
             {
                 "id": "1",
                 "type": "input",
-                "label": "Custom Metric",
+                "label": "Custom Input",
                 "description": "Input value"
             },
             {
@@ -414,14 +413,12 @@
                 "id": "4",
                 "type": "gt",
                 "label": "Greater Than (>)",
-                "inputs": ["usage", "const80"],
                 "description": "Greater than (>)"
             },
             {
                 "id": "5",
                 "type": "gt",
                 "label": "Greater Than (>)",
-                "inputs": ["custom", "const60"],
                 "description": "Greater than (>)"
             },
             {
@@ -434,11 +431,10 @@
                 "id": "7",
                 "type": "output",
                 "label": "Create Ticket",
-                "inputs": ["and1"],
                 "data": {
                     "recipient": "ops@example.com",
-                    "action": "Ticket high usage & custom metric",
-                    "description": "Create ticket if usage > 80% AND custom metric > 60"
+                    "action": "Ticket high usage & custom input",
+                    "description": "Create ticket if usage > 80% AND custom input > 60"
                 },
                 "description": "Create Ticket"
             }
