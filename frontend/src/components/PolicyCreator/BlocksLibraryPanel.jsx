@@ -8,7 +8,7 @@ function BlocksLibraryPanel() {
             blocks: buildInputLibraryBlocks(),
         },
         {
-            title: "Components",
+            title: "Operations",
             blocks: [
                 { type: "const", label: "Constant" },
                 { type: "add", label: "Add" },

@@ -252,7 +252,11 @@ export function templateEdgesToEdges(templateEdges, templateBlocks = []) {
             type === "const" ||
             type === "number" ||
             type === "op" ||
-            type === "component"
+            type === "component" ||
+            type === "add" ||
+            type === "subtract" ||
+            type === "multiply" ||
+            type === "divide"
         );
     }
     function isDecisions(type) {
