@@ -31,7 +31,7 @@ if apistr != "":
 else:
     client = None
     print("No API key found. Please set the 'apistr' variable with your Google GenAI API key to enable Gemini client functionality.")
-
+    
 ##debug test
 
 
@@ -68,7 +68,7 @@ def process_query(user_query):
 
 
     response = client.models.generate_content(
-        model="gemini-3-flash-preview",
+        model="gemini-2.5-flash-lite", #"gemini-3-flash-preview",
         contents=[prompt],
         config=GenerateContentConfig(
             tools=tools,

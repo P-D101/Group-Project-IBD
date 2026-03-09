@@ -19,7 +19,7 @@ function Breadcrumbs() {
     }
 
     return (
-        <div className="bg-[#e8ebed]">
+        <div className="bg-transparent text-white">
             <ol className="flex items-center whitespace-nowrap pl-6">
                 {pathnames.map((value, index) => {
                     const last = index === pathnames.length - 1;
@@ -28,7 +28,7 @@ function Breadcrumbs() {
                     return (
                         <Link
                             to={to}
-                            className={`pt-4 pb-2 inline-flex items-center ${last ? "text-primary-focus" : "text-muted-foreground"}`}
+                            className={` pb-2 inline-flex items-center ${last ? "text-primary-focus" : "text-muted-foreground"}`}
                             key={index}
                         >
                             {getDisplayName(value)}

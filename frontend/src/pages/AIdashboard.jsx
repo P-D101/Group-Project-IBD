@@ -42,14 +42,17 @@ function AIdashboard() {
 
     return (
 
-        <div className="bg-[#e8ebed]">
+        <div className="min-h-screen bg-[#dedee0]/20 text-[#020102]">
 
             <div style={styles.pageContainer} className="pb-6 pt-4 pl-6 pr-6">
-                <h3 className="text-lg font-semibold">Welcome User</h3>
+                <h1 className="text-3xl font-bold tracking-tight text-[#020102] mb-2">
+                        Welcome User
+                    </h1>
 
                 {/* Navigation Tabs */}
-                <div style={styles.navRow} className="">
-                    <button className=" gap-4 px-2 py-1 bg-[#1b6a5e] text-indigo-600 rounded-lg hover:bg-[#1b6a5e]/80 text-white">
+                <div style={styles.navRow} className="flex gap-8 border-b border-slate-200 mb-4">
+                    {/*<button className=" gap-4 px-2 py-1 bg-[#1b6a5e] text-indigo-600 rounded-lg hover:bg-[#1b6a5e]/80 text-white">*/}
+                    <button className="pb-2 px-1 border-b-2 border-[#158173] text-[#158173] font-medium flex items-center gap-2">
                         Insights{" "}
                     </button>
                     <button
@@ -57,7 +60,7 @@ function AIdashboard() {
                             setCurrPage("policy-editor");
                             navigate("/policy-editor");
                         }}
-                        className="text-white gap-4 px-2 py-1 bg-[#84a49f]  rounded-lg hover:bg-[#1b6a5e] hover:shadow-md"
+                        className="pb-2 px-1 border-b-2 border-transparent text-slate-500 hover:text-[#158173] font-medium transition-all"
                     >
                         Policy Creation{" "}
                     </button>
@@ -66,7 +69,7 @@ function AIdashboard() {
                             setCurrPage("policy-viewer");
                             navigate("/policy-viewer");
                         }}
-                        className="text-white gap-4 px-2 py-1 bg-[#84a49f]  rounded-lg hover:bg-[#1b6a5e] hover:shadow-md"
+                        className="pb-2 px-1 border-b-2 border-transparent text-slate-500 hover:text-[#158173] font-medium transition-all"
                     >
                         Policy Viewer{" "}
                     </button>
@@ -81,7 +84,7 @@ function AIdashboard() {
                 {/* AI Ticket Suggestions Section */}
             <div>
                 {/*scrollable ticket suggestions*/}
-                <h3 className="text-lg font-semibold pt-4">
+                <h3 className="text-lg font-bold tracking-wide text-[#020102] pt-4 pb-2">
                     AI Ticket Recommendations
                 </h3>
                    <AIsuggestions/>
@@ -89,7 +92,7 @@ function AIdashboard() {
             </div>
 
                 {/* Analytics Section - Summary */}
-                <h3 className="text-lg font-semibold pt-4">
+                <h3 className="text-lg font-bold tracking-wide text-[#020102] pt-4 pb-2">
                     Data Analytics Overview
                 </h3>
 
@@ -106,11 +109,11 @@ function AIdashboard() {
 
 
                 {/* Server Data Table from components*/}
-                <h3 className="text-lg font-semibold pt-4">
+                <h3 className="text-lg font-bold tracking-wide text-[#020102] pt-4 pb-2">
                     Cloud Usage Data Per Server
                 </h3>
 
-                <ServiceViewer></ServiceViewer>
+                {/*<ServiceViewer></ServiceViewer>*/}
             </div>
         </div>
     );
