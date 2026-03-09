@@ -104,7 +104,7 @@ function AIquery() {
                      <p className="text-[#020102] text-sm leading-relaxed">{response}</p>
                         <p>Visit page: </p>
                         {url && (
-                            <a href={url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800 transition-colors">
+                            <a href={url} target="_blank" rel="noopener noreferrer" className="text-teal-600 underline hover:text-teal-800 transition-colors">
                                     {url}
                             </a>
                         )}
