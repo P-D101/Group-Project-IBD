@@ -42,11 +42,11 @@ function StatsCards(){
     return (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="bg-white p-4 rounded shadow-sm">
-                        <h3 className="">Weekly Variance</h3>
+                        <h3 className="font-semibold">Weekly Variance</h3>
                         <p>{(stats.weekly_variance * 100).toFixed(1)}%</p>
                     </div>
                     <div className="bg-white p-4 rounded shadow-sm">
-                        <h3 className="">Top Service and Spending</h3>
+                        <h3 className="font-semibold">Top Service and Spending</h3>
                         <p>{stats.top_service.toLocaleString()}</p>
                         <p>${(stats.top_spend).toFixed(1)}</p>
                     </div>

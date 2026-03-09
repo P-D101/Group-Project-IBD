@@ -62,38 +62,39 @@ function AIsuggestions(){
                     {suggested_tickets.map((ticket, index) => (
                         <div
                             key={ticket.title}
-                            className={"bg-white relative p-4 rounded shadow-sm flex-shrink-0 w-100 w-80 min-h-[250px] flex flex-col justify-between"}
+                            className={"bg-white relative p-4 rounded border-slate-100 shadow-sm flex-shrink-0 w-100 w-80 min-h-[250px] flex flex-col justify-between"}
                         >
                             <div className="flex justify-between items-start mb-2">
-                            <h3 className="text-lg font-semibold pr-4">
+                            <h3 className="text-md font-bold tracking-wide  pr-4 leading-tight">
                                 {ticket.title} 
                             </h3>
-                                <span className=" gap-4 px-2 py-1 bg-[#163158]/50 text-xs px-2 py-1 text-white rounded-lg hover:bg-[#163158]/50 hover:shadow-md ">
+                                <span className="whitespace-nowrap px-2 py-0.5 bg-[#002e5a] text-[10px] font-bold text-white rounded uppercase tracking-tighter">
+                                
                                     Priority{" "}: {ticket.priority}
                                 </span>
                             </div>
 
                             <p className="text-xs pb-2">{ticket.description}.</p>
 
-                            <div className="bg-blue-50 p-2 rounded mb-2">
-                            <p className=" text-xs pt-2 font-semibold">Suggested Action: </p>
-                            <p className=" text-xs pt-2">{ticket.action}</p>
+                            <div className="bg-slate-50 p-3 rounded-lg mb-2 border border-slate-100">
+                            <p className="text-[10px] font-bold tracking-wider text-[#158173]">Suggested Action: </p>
+                            <p className="text-xs mt-1 text-slate-700">{ticket.action}</p>
                             </div>
 
-                            <div className="bg-gray-100 p-2 rounded mb-4">
-                            <p className=" text-xs pt-2 font-semibold">Reasoning: </p>
-                            <p className="text-xs pb-4">{ticket.reasoning}</p>
+                            <div className="bg-[#f3f0ff]/50 p-3 rounded-lg mb-4 border border-[#e9e3ff]/40">
+                            <p className="text-[10px] font-bold italic tracking-wider text-[#6366f1]">Reasoning: </p>
+                            <p className="text-xs mt-1 text-slate-700 italic">{ticket.reasoning}</p>
                             </div>
                             
                             <div className=" mt-auto grid grid-cols-1 md:grid-cols-2 gap-2 pt-4">
                                 <button 
                                 onClick={() => handleApprove(index)}
-                                className=" gap-4 px-2 py-1 bg-[#1b6a5e] text-white rounded-lg hover:bg-[#84a49f] hover:shadow-md ">
+                                className=" gap-4 px-2 py-1 bg-[#1b6a5e] text-white rounded-full hover:bg-[#1b6a5e]/80 hover:shadow-md ">
                                     Approve{" "}
                                 </button>
                                 <button 
                                 onClick={() => handleReject(index)}
-                                className=" gap-4 px-2 py-1 bg-[#163158] text-white rounded-lg hover:bg-indigo-100 hover:shadow-md ">
+                                className=" gap-4 px-2 py-1 bg-[#163158] text-white rounded-full hover:bg-[#163158]/80 hover:shadow-md ">
                                     Reject{" "}
                                 </button>
                             </div>

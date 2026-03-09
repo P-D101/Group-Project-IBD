@@ -31,7 +31,7 @@ if apistr != "":
 else:
     client = None
     print("No API key found. Please set the 'apistr' variable with your Google GenAI API key to enable Gemini client functionality.")
-
+    
 ##debug test
 
 
@@ -60,6 +60,9 @@ def process_query(user_query):
     - Policy Editor: /policy-editor
     - Service Viewer: /service-viewer
     - Policy Viewer: /policy-viewer
+
+    Critical Point - STRICT OUTPUT: 
+    You must output ONLY valid, raw JSON. Do not include any conversational text like "Here are the suggestions". Do not wrap the JSON in markdown blocks (like ```json). The output must begin with { and end with }.
     """ + "User's query: " + user_query
 
 
@@ -68,12 +71,12 @@ def process_query(user_query):
 
 
     response = client.models.generate_content(
-        model="gemini-3-flash-preview",
+        model="gemini-2.5-flash-lite", #"gemini-3-flash-preview",
         contents=[prompt],
         config=GenerateContentConfig(
             tools=tools,
-            response_mime_type="application/json",
-        # response_json_schema=QueryResponse.model_json_schema(),
+            #response_mime_type="application/json",
+            response_json_schema=QueryResponse.model_json_schema(),
         ),  
 
     )
