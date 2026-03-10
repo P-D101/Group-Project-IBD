@@ -2,21 +2,21 @@ import React, { useEffect, useState } from "react";
 import DateRangeSelector from "../UI/DateRangeSelector";
 
 const AGGREGATE_OPTIONS = [
-  { value: "Average", label: "Average" },
-  { value: "Variance", label: "Variance" },
-  { value: "Minimum", label: "Min" },
-  { value: "Maximum", label: "Max" },
-  { value: "Sum", label: "Sum" },
-  { value: "Count", label: "Count" },
-  { value: "Percentile", label: "Percentile (n)" },
+  { value: "average", label: "Average" },
+  { value: "variance", label: "Variance" },
+  { value: "min", label: "Min" },
+  { value: "max", label: "Max" },
+  { value: "sum", label: "Sum" },
+  { value: "count", label: "Count" },
+  { value: "percentile", label: "Percentile (n)" },
 ];
 
 const TYPE_OPTIONS = [
-  { value: "Compute", label: "Compute" },
-  { value: "Storage", label: "Storage" },
-  { value: "Network", label: "Network" },
-  { value: "Control Plane", label: "Control Plane" },
-  { value: "All types", label: "All" },
+  { value: "compute", label: "Compute" },
+  { value: "storage", label: "Storage" },
+  { value: "network", label: "Network" },
+  { value: "control-plane", label: "Control Plane" },
+  { value: "all", label: "All" },
 ];
 
 function InputBlock({ onChange, value = {} }) {

@@ -12,8 +12,10 @@ def convert_program(json_program):
     start_nodes = []
 
     for node in json_program["Nodes"]:
-        if node["Type"] == "Input":
-            start_nodes.append(node["Index"])
+        if "type" not in node:
+            raise Exception("Node does not have a type")
+        if node["type"] == "input" or node["type"] == "const":
+            start_nodes.append(node["index"])
 
     sorted_order = program_graph.DAG_sort(start_nodes)
     for i, j in enumerate(sorted_order):
@@ -25,7 +27,6 @@ def convert_program(json_program):
         "name": json_program["Policy Name"]
     }
 
-
     for node in json_program["Nodes"]:
         try: 
 # There is an error case for a node that is not connected to the graph as this would no be in the index table and hence error would throw. 
@@ -33,11 +34,12 @@ def convert_program(json_program):
 # Another error case is for input nodes, these nodes are not in the in_set so an error would throw.
 # We want to leave the inputs in this case as an empty list so just passing works.
 
-            output_program["nodes"][index_mapping[node["Index"]]] = assign_node(node["Type"], node)
-            output_program["inputs"][index_mapping[node["Index"]]] = [index_mapping[i] for i in program_graph.in_set[node["Index"]]]
+            created_node = assign_node(node["type"], node)
+            output_program["nodes"][index_mapping[node["index"]]] = created_node
+            if node["index"] in program_graph.in_set:
+                output_program["inputs"][index_mapping[node["index"]]] = [index_mapping[i] for i in program_graph.in_set[node["index"]]]
         except Exception as e:
-            pass
-        
+            print("error: ",e)
     return output_program
 
 

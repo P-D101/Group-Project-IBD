@@ -51,13 +51,22 @@ class SELECTS(MyEnum):
     USAGE_COST = 'usage_cost'           # total usage cost without credit subtracted
     NET_COST = 'net_cost'               # net cost to the business
     USAGE_QUANTITY = 'usage_quantity'   # selects usage quantity and usage unit. (i.e. 20 GB / 1 hour / 3 GB hours)
-    def map(self):
+    def map(self, sum_agg = True):
+        res = ""
+        if sum_agg: 
+            res += "SUM("
         match self:
-            case SELECTS.BILLED_COST: return 'SUM(billed_cost)'
-            case SELECTS.CREDIT: return 'SUM(total_credits)'
-            case SELECTS.USAGE_COST: return 'SUM(total_usage_cost)'
-            case SELECTS.NET_COST: return 'SUM(net_cost)'
-            case SELECTS.USAGE_QUANTITY: return 'SUM(usage_quantity),usage_unit' # also gets grouped by usage_unit
+            case SELECTS.BILLED_COST: res +='billed_cost'
+            case SELECTS.CREDIT: res +='total_credits'
+            case SELECTS.USAGE_COST: res +='total_usage_cost'
+            case SELECTS.NET_COST: res +='net_cost'
+            case SELECTS.USAGE_QUANTITY: res +='usage_quantity' # also gets grouped by usage_unit
+
+        if sum_agg: 
+            res += ")"
+        if self == SELECTS.USAGE_QUANTITY:
+            res += ",usage_unit"
+        return res
 
 class GROUPBY(MyEnum):
     PROVIDER = 'provider'
@@ -94,6 +103,9 @@ def format_time_for_filter(provided_time):
         # time.max is 23:59:59 so BEFORE is inclusive
         dt = datetime.combine(dt,time.max) # in AFTER gets truncated to just %Y-%m-%d so time.max is just for BEFORE
     return dt
+
+
+
 
 class FILTERS(MyEnum):
     BEFORE = 'before'                       # value must be date OP: <
@@ -171,3 +183,33 @@ class FILTERS(MyEnum):
                     raise Exception(f"Bad Request: ${value} not in acceptible business units: ${get_data('business_unit')}")
                 return f"{self.map()} = {value}"
                 
+class AGGREGATES(MyEnum):
+    AVERAGE = 'average'
+    VARIANCE = 'variance'
+    MIN = 'min'
+    MAX = 'max'
+    SUM = 'sum'
+    COUNT = 'count'
+    PERCENTILE = 'percentile' # requires an additional parameter for which percentile
+    def map(self, field=None):
+        match self:
+            case AGGREGATES.AVERAGE: return f'AVG({SELECTS(field).map(sum_agg=False)})'
+            case AGGREGATES.VARIANCE: return 'SUM((<field> - (SELECT AVG(<field>) FROM gold_standard_usage)) * (<field> - (SELECT AVG(<field>) FROM gold_standard_usage))) / COUNT(*)'.replace('<field>',SELECTS(field).map(sum_agg=False))
+            case AGGREGATES.MIN: return f'MIN({SELECTS(field).map(sum_agg=False)})'
+            case AGGREGATES.MAX: return f'MAX({SELECTS(field).map(sum_agg=False)})'
+            case AGGREGATES.SUM: return f'SUM({SELECTS(field).map(sum_agg=False)})'
+            case AGGREGATES.COUNT: return 'COUNT(*)'
+            case AGGREGATES.PERCENTILE: raise Exception("Not implemented")
+
+
+class COMPUTE_TYPES(MyEnum):
+    COMPUTE = 'compute'
+    STORAGE = 'storage'
+    NETWORK = 'network'
+    CONTROL = 'control-plane'
+    def map(self):
+        match self:
+            case COMPUTE_TYPES.COMPUTE: return '("memory","cpu")'
+            case COMPUTE_TYPES.STORAGE: return '("storage")'
+            case COMPUTE_TYPES.NETWORK: return '("network","activity")'
+            case COMPUTE_TYPES.CONTROL: return '("control-plane")'

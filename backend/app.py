@@ -131,6 +131,7 @@ JSON body: key,value where key must be in FILTERS
     "region": "us-east-1"
 }
 """
+
 @app.route('/api/usage/breakdown/<timestep>') # slower as not fully indexed
 def grouped_usage(timestep):
     # check parameter
@@ -209,7 +210,6 @@ def grouped_usage(timestep):
     # TODO: pandas, add a top n query parameter so i can remove the route below
 
     return database.query(query)
-
 
 """
 Example Query: https://localhost:5000/api/usage/top_services/AWS/daily

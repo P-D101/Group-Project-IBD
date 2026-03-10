@@ -56,13 +56,10 @@ if __name__ == "__main__":
                         running_programs.remove(program)
         
         for program in running_programs:
-            print()
-            print('\033[93m' + '\033[1m' + f'Program: {program['name']} '.ljust(110, '-') + '\033[0m')
-            print()
+            print('\n\033[93m' + '\033[1m' + f'Program: {program['name']} '.ljust(110, '-') + '\033[0m\n')
             compute_program(program)
             print()
 
-        print('\033[96m' + ' End Execute '.center(110, '-') + '\033[0m')
-        print()
+        print('\033[96m' + ' End Execute '.center(110, '-') + '\033[0m\n')
 
         time.sleep(10)
