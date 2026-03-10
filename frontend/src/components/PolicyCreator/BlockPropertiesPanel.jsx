@@ -141,7 +141,7 @@ export default function BlockPropertiesPanel({ block, onBlockUpdate }) {
     if (!block) return;
     const nextPayload = {
       ...(block.payload || {}),
-      recipient: value,
+      receiver: value,
     };
     onBlockUpdate({ ...block, payload: nextPayload });
   };
@@ -255,9 +255,9 @@ export default function BlockPropertiesPanel({ block, onBlockUpdate }) {
               <span style={labelTextStyle}>Recipient</span>
               <input
                 type="text"
-                value={block?.payload?.recipient ?? ""}
+                value={block?.payload?.receiver ?? ""}
                 placeholder="Ticket Recipient (email)"
-                onChange={(e) => handleOutputMessageChange(e.target.value)}
+                onChange={(e) => handleTicketRecipientChange(e.target.value)}
                 style={inputStyle}
                 onFocus={handleFocus}
                 onBlur={handleBlur}

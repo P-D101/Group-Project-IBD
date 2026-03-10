@@ -53,12 +53,12 @@ export function createNodeFromBlock(block, position) {
 
   let constValue = 0;
   if (block.type === "const") {
-    // Try to use label as value if it's a valid float
-    if (block.label && !isNaN(parseFloat(block.label))) {
-      constValue = parseFloat(block.label);
-    }
     if (block.value !== undefined && !isNaN(parseFloat(block.value))) {
       constValue = parseFloat(block.value);
+    }
+    // Try to use label as value if it's a valid float and the value field doesn't work
+    if (block.label && !isNaN(parseFloat(block.label))) {
+      constValue = parseFloat(block.label);
     }
   }
   return {
@@ -72,15 +72,7 @@ export function createNodeFromBlock(block, position) {
       label: block.label,
       description: block.description,
       value: block.type === "const" ? constValue : undefined,
-      inputConfig: block.type === "input" ? block.inputConfig || {} : undefined,
-      payload:
-        block.type == "ticket"
-          ? baseTicket
-          : block.type == "input"
-            ? block.payload || block.inputConfig || {}
-            : block.type == "const"
-              ? { value: constValue }
-              : {},
+      inputConfig: block.type === "input" ? block.payload|| {} : undefined,
     },
   };
 }

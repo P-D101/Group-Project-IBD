@@ -30,9 +30,9 @@ function BlocksLibraryPanel() {
         {
             title: "Outputs",
             blocks: [
-                { type: "output", label: "Create Ticket" },
-                { type: "output", label: "Send Notification" },
-                { type: "output", label: "Log Event" },
+                { type: "ticket", label: "Create Ticket" },
+                { type: "ticket", label: "Send Notification" },
+                { type: "ticket", label: "Log Event" },
             ],
         },
     ];

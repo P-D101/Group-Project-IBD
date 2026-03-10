@@ -28,7 +28,7 @@
         "type": "ticket",
         "label": "Create Ticket",
         "data": {
-          "recipient": "ops@example.com",
+          "receiver": "ops@example.com",
           "action": "Scale down instances",
           "description": "Scale down due to low usage"
         },
@@ -70,7 +70,7 @@
         "type": "ticket",
         "label": "Send Notification",
         "data": {
-          "recipient": "finance@example.com",
+          "receiver": "finance@example.com",
           "action": "Notify on high cost",
           "description": "Send notification to finance team"
         },
@@ -112,7 +112,7 @@
         "type": "ticket",
         "label": "Send Notification",
         "data": {
-          "recipient": "ops@example.com",
+          "receiver": "ops@example.com",
           "action": "Notify on high usage",
           "description": "Send notification when usage exceeds 80%"
         },
@@ -154,7 +154,7 @@
         "type": "ticket",
         "label": "Log Event",
         "data": {
-          "recipient": "logs@example.com",
+          "receiver": "logs@example.com",
           "action": "Log custom input event",
           "description": "Log event when custom input is below 50"
         },
@@ -221,7 +221,7 @@
         "type": "ticket",
         "label": "Create Ticket",
         "data": {
-          "recipient": "ops@example.com",
+          "receiver": "ops@example.com",
           "action": "Scale up",
           "description": "Scale up if usage > 90% and cost < 150"
         },
@@ -267,7 +267,7 @@
         "type": "ticket",
         "label": "Send Notification",
         "data": {
-          "recipient": "alerts@example.com",
+          "receiver": "alerts@example.com",
           "action": "Alert",
           "description": "Alert if custom input > 75"
         },
@@ -309,7 +309,7 @@
         "type": "ticket",
         "label": "Log Event",
         "data": {
-          "recipient": "logs@example.com",
+          "receiver": "logs@example.com",
           "action": "Log low usage",
           "description": "Log event if usage < 10%"
         },
@@ -363,7 +363,7 @@
         "type": "ticket",
         "label": "Send Notification",
         "data": {
-          "recipient": "finance@example.com",
+          "receiver": "finance@example.com",
           "action": "Notify cost increase",
           "description": "Notify if cost increases by more than 100"
         },
@@ -432,7 +432,7 @@
         "type": "ticket",
         "label": "Create Ticket",
         "data": {
-          "recipient": "ops@example.com",
+          "receiver": "ops@example.com",
           "action": "Ticket high usage & custom input",
           "description": "Create ticket if usage > 80% AND custom input > 60"
         },

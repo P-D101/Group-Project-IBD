@@ -35,6 +35,19 @@ function PolicyCreator() {
     setSelectedTemplate(template);
   };
 
+    const loadFromBackendFormat = (backendPolicy) => {
+        // the frontend and backend formats are basically the same except the backend uses "index" where the frontend uses "id"
+        const nodesFieldsFixed = backendPolicy.Nodes.map(node => {
+            const {index,...rest} = node;
+            return {id:index,...rest};
+        });
+
+        setNodes(nodesFieldsFixed.map(node => createNodeFromBlock(node,node.position)));
+
+        setEdges(templateEdgesToEdges(backendPolicy.Connections, nodesFieldsFixed));
+
+        setPolicyName(backendPolicy["Policy Name"]);
+    }
     // Load policy from API if an ID was given in the page parameters
     useEffect(() => {
         async function fetchPolicy() {
@@ -48,8 +61,7 @@ function PolicyCreator() {
                 }
             }
             const policy = await response.json();
-            setSelectedTemplate(policy);
-            setPolicyName(policy["Policy Name"])
+            loadFromBackendFormat(policy);
         };
         if (VPL_id) fetchPolicy();
     },[])
@@ -274,6 +286,7 @@ function PolicyCreator() {
     selectedNodeId != null
       ? (() => {
           const node = nodes.find((n) => n.id === selectedNodeId);
+          console.log(node)
           if (!node) return null;
           return {
             id: node.data.id,
@@ -299,18 +312,12 @@ function PolicyCreator() {
         business_unit: [],
       },
       Nodes: nodes.map((node) => {
-        const payload =
-          node.data.type === "ticket"
-            ? {
-                receiver: node.data.payload?.recipient ?? "",
-                description: node.data.description ?? "",
-              }
-            : node.data.payload;
+        const {id,inputConfig,value,position, ...rest} = node.data;
         return {
-          index: node.id,
+          index: node.data.id,
+          payload: node.data.type === "input" ? inputConfig : (node.data.type === "const" ? {value: value} : {}),
           position: node.position,
-          type: node.data.type,
-          payload,
+          ...rest
         };
       }),
       Connections: edges.map((edge) => [
@@ -435,64 +442,64 @@ function PolicyCreator() {
       return;
     }
 
-        try {
-            const doSaveExisting = async (url) => {
-                const response = await fetch(url, {
-                    method:"PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(policyObject),
-                    mode: "cors",
-                });
-                return response;
-            }
-            const doSaveNew = async (url) => {
-                const response = await fetch(url, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(policyObject),
-                    mode: "cors",
-                });
-                return response;
-            };
+    try {
+        const doSaveExisting = async (url) => {
+            const response = await fetch(url, {
+                method:"PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(policyObject),
+                mode: "cors",
+            });
+            return response;
+        }
+        const doSaveNew = async (url) => {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(policyObject),
+                mode: "cors",
+            });
+            return response;
+        };
 
-            let response = "";
+        let response = "";
 
-            if (VPL_id) {
+        if (VPL_id) {
+            response = await doSaveExisting(`http://localhost:5000/api/policies/${VPL_id}`);
+            if (!response.ok && response.status === 403) {
                 response = await doSaveExisting(`http://localhost:5000/api/policies/${VPL_id}`);
-                if (!response.ok && response.status === 403) {
-                    response = await doSaveExisting(`http://localhost:5000/api/policies/${VPL_id}`);
-                }
-            } else {
+            }
+        } else {
+            response = await doSaveNew(`http://localhost:5000/api/policies`);
+            if (!response.ok && response.status === 403) {
                 response = await doSaveNew(`http://localhost:5000/api/policies`);
-                if (!response.ok && response.status === 403) {
-                    response = await doSaveNew(`http://localhost:5000/api/policies`);
-                }
             }
+        }
 
 
-            if (!response.ok) {
-                let details = "";
-                try {
-                    const contentType = response.headers.get("content-type") || "";
-                    if (contentType.includes("application/json")) {
-                        const json = await response.json();
-                        details = json?.error || JSON.stringify(json);
-                    } else {
-                        details = await response.text();
-                    }
-                } catch (err) {
-                    details = "";
+        if (!response.ok) {
+            let details = "";
+            try {
+                const contentType = response.headers.get("content-type") || "";
+                if (contentType.includes("application/json")) {
+                    const json = await response.json();
+                    details = json?.error || JSON.stringify(json);
+                } else {
+                    details = await response.text();
                 }
-                const statusInfo = `HTTP ${response.status} ${response.statusText}`.trim();
-                const extra = details || statusInfo;
-                window.alert(
-                    `Error: Unable to save policy${extra ? ` (${extra})` : ""}`
-                );
-                return;
-            } else if (!VPL_id) {
-                const json = await response.json();
-                navigate(`/policy-editor/${json["policy_id"]}`)
+            } catch (err) {
+                details = "";
             }
+            const statusInfo = `HTTP ${response.status} ${response.statusText}`.trim();
+            const extra = details || statusInfo;
+            window.alert(
+                `Error: Unable to save policy${extra ? ` (${extra})` : ""}`
+            );
+            return;
+        } else if (!VPL_id) {
+            const json = await response.json();
+            navigate(`/policy-editor/${json["policy_id"]}`)
+        }
 
       window.alert("Policy saved succesfully");
     } catch (error) {
