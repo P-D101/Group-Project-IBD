@@ -38,8 +38,12 @@ function PolicyCreator() {
     const loadFromBackendFormat = (backendPolicy) => {
         // the frontend and backend formats are basically the same except the backend uses "index" where the frontend uses "id"
         const nodesFieldsFixed = backendPolicy.Nodes.map(node => {
-            const {index,...rest} = node;
-            return {id:index,...rest};
+            const {index,payload,...rest} = node;
+            return {
+              id:index,
+              inputConfig: payload,
+              ...rest
+            };
         });
 
         setNodes(nodesFieldsFixed.map(node => createNodeFromBlock(node,node.position)));

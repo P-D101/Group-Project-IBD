@@ -61,7 +61,6 @@ export function createNodeFromBlock(block, position) {
       constValue = parseFloat(block.label);
     }
   }
-  console.log(block,"sfbuy")
   return {
     id,
     type: vplToFlowType(block.type),
