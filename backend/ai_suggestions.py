@@ -1,7 +1,8 @@
 import sys, traceback #debugging
 import subprocess
 import pandas as pd
-from database import get_db
+from .database import get_db
+from . import database
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import IsolationForest
@@ -12,7 +13,6 @@ from typing import Optional
 from google.genai.types import Tool, GenerateContentConfig, UrlContext
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from . import database
 import os
  
 
