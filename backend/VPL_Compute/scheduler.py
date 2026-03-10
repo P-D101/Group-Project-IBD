@@ -42,9 +42,25 @@ if __name__ == "__main__":
             file_name = file_path.split('/')[-1]
             os.rename(file_path, os.path.join(dir_path, "data", "programs", file_name))
 
+        remove_program_file_paths = glob(os.path.join(dir_path, "data", "remove-programs", "*.json"))
+        for file_path in remove_program_file_paths:
+
+            file_name = file_path.split('/')[-1]
+
+            with open(file_path, 'r') as remove_file:
+                remove_object = json.load(remove_file)
+                for program in programs:
+                    if program["name"] == remove_object["Policy Name"]:
+                        programs.remove(program)
+
+            os.remove(file_path)
+            os.remove(dir_path + "/data/programs/" + file_name)
+
         running_programs = programs.copy()
 
         
+
+
         disable_program_file_paths = glob(os.path.join(dir_path, "data", "disable-programs", "*.json"))
         
         for file_path in disable_program_file_paths:
