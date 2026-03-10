@@ -10,9 +10,32 @@ import React from "react";
 import { set } from "date-fns";
 
 function StatsCards(){
-    let [stats, setStats] = useState({weekly_variance: 0, top_service: 'Not Found', top_spend: 0});
-    let [loading, setLoading] = useState(true);
+    let [stats, setStats] = useState({"weekly_cost":"","last_week_cost":"","perc_change":"","service_categories":[]});
+    let [loading, setLoading] = useState(false);
+    
+    let process_data = (data) => {
+        console.log(data)
+        let perc_change = 100 * ((data['week1'] - data['week2']) / data['week2'])
+        let sign = perc_change > 0 ? '+' : ''
+        let joined_data = []
+        for (let i = 0; i < data["service_categories"].length; i++) {
+            joined_data.push([data["service_categories"][i],data["service_costs"][i]])
+        }
+
+        let modified_data = {
+            "weekly_cost": data['week0'].toFixed(2),
+            "last_week_cost": data['week1'].toFixed(2),
+            "perc_change": `${sign}${Math.round(perc_change,3)}`,
+            "service_categories": joined_data
+        }
+        console.log(modified_data)
+        setStats(modified_data)
+    }
+    
+    
     async function getStats() {
+        if (loading) return;
+        setLoading(true)
         console.log("getStats is running...");
 
         try {
@@ -23,7 +46,7 @@ function StatsCards(){
 
             const data = await response.json();
             //alert("Backend sent: " + JSON.stringify(data));//for debugging
-            setStats(data);
+            process_data(data);
             setLoading(false);
         }
         catch (e){
@@ -34,7 +57,8 @@ function StatsCards(){
     }
 
     useEffect(() => {
-        getStats();}, []);
+        getStats();
+    }, []);
     
     if (loading) return <p>Loading stats...</p>; 
 
@@ -42,13 +66,28 @@ function StatsCards(){
     return (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="bg-white p-4 rounded shadow-sm">
-                        <h3 className="font-semibold">Weekly Variance</h3>
-                        <p>{(stats.weekly_variance * 100).toFixed(1)}%</p>
+                        <ul>
+                            <li>
+                                <h3 className="font-semibold">Weekly Cost</h3>
+                                <p>{stats.weekly_cost}</p>
+                            </li>
+                            <li>
+                                <h3 className="font-semibold">Last Weekly Cost</h3>
+                                <p>{stats.last_week_cost}  ({stats.perc_change}%)</p>
+                            </li>
+                        </ul>
                     </div>
                     <div className="bg-white p-4 rounded shadow-sm">
-                        <h3 className="font-semibold">Top Service and Spending</h3>
-                        <p>{stats.top_service.toLocaleString()}</p>
-                        <p>${(stats.top_spend).toFixed(1)}</p>
+                        <h3 className="font-semibold">Top Service Category Spending</h3>
+                        <ul>
+                        {stats.service_categories.map(([category_name,service_cost]) => {
+                            return <li>
+                                <p>{category_name}</p>
+                                <p>${service_cost.toFixed(2)}</p>
+                            </li>
+                        })}
+                        
+                        </ul>
                     </div>
                 </div>
     )

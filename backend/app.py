@@ -5,10 +5,11 @@ from .VPL_Compute.pass_program import convert_program
 from .VPL_Compute.compute_program import compute_program
 from flask import Flask, request, make_response
 from flask_cors import CORS
-from interface import TIMESPAN,SELECTS,GROUPBY,FILTERS, get_data
-from dashboard_data import get_dashboard_data
-from dashboard_graph import get_dashboard_graph 
-from ai_query import get_user_query
+from .interface import TIMESPAN,SELECTS,GROUPBY,FILTERS, get_data
+from .dashboard_data import get_dashboard_data
+from .dashboard_graph import get_dashboard_graph 
+from .ai_query import get_user_query
+from .ai_suggestions import get_user_query
 
 from . import database
 import pandas as pd
@@ -63,7 +64,6 @@ def dashboard_graph():
 
 @app.route('/api/suggestions', methods=['GET'])
 def ticket_suggestions():
-    from ai_suggestions import get_user_query # moved here to stop it from running too many times
     return get_user_query()
 
 ## Data fields enumerations
