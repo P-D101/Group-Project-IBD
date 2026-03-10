@@ -1,147 +1,147 @@
-    import {
-        ReactFlow,
-        Background,
-        Controls,
-        ReactFlowProvider,
-        useReactFlow,
-    } from "@xyflow/react";
-    import "@xyflow/react/dist/style.css";
-    import BinaryOperatorNode from "../nodes/BinaryOperatorNode";
-    import InputNode from "../nodes/InputNode";
-    import OutputNode from "../nodes/OutputNode";
-    import ConstantNode from "../nodes/ConstantNode";
-    import React from "react";
+import {
+  ReactFlow,
+  Background,
+  Controls,
+  ReactFlowProvider,
+  useReactFlow,
+} from "@xyflow/react";
+import "@xyflow/react/dist/style.css";
+import BinaryOperatorNode from "../nodes/BinaryOperatorNode";
+import InputNode from "../nodes/InputNode";
+import OutputNode from "../nodes/OutputNode";
+import ConstantNode from "../nodes/ConstantNode";
+import React from "react";
 
-    function FlowWrapper({
-        nodes,
-        edges,
-        onNodesChange,
-        onEdgesChange,
-        onConnect,
-        onNodeSelect,
-        onDropBlock,
-    }) {
-        const reactFlowInstance = useReactFlow();
-    
-    const nodeTypes = {
-        binaryOperatorN: BinaryOperatorNode,
-        inputN: InputNode,
-        outputN: OutputNode,
-        constantN: ConstantNode,
-    };
+function FlowWrapper({
+  nodes,
+  edges,
+  onNodesChange,
+  onEdgesChange,
+  onConnect,
+  onNodeSelect,
+  onDropBlock,
+}) {
+  const reactFlowInstance = useReactFlow();
 
-    const handleNodeClick = (_, node) => {
-        if (onNodeSelect) {
-            onNodeSelect(node.id);
-        }
-    };
+  const nodeTypes = {
+    binaryOperatorN: BinaryOperatorNode,
+    inputN: InputNode,
+    outputN: OutputNode,
+    constantN: ConstantNode,
+  };
 
-    const handleSelectionChange = ({ nodes: selectedNodes }) => {
-        if (!onNodeSelect) return;
-        if (!selectedNodes || selectedNodes.length === 0) {
-            onNodeSelect(null);
-            return;
-        }
-        onNodeSelect(selectedNodes[0].id);
-    };
+  const handleNodeClick = (_, node) => {
+    if (onNodeSelect) {
+      onNodeSelect(node.id);
+    }
+  };
 
-    const handleDrop = (event) => {
-        event.preventDefault();
+  const handleSelectionChange = ({ nodes: selectedNodes }) => {
+    if (!onNodeSelect) return;
+    if (!selectedNodes || selectedNodes.length === 0) {
+      onNodeSelect(null);
+      return;
+    }
+    onNodeSelect(selectedNodes[0].id);
+  };
 
-        if (!onDropBlock || !reactFlowInstance) return;
+  const handleDrop = (event) => {
+    event.preventDefault();
 
-        const blockType = event.dataTransfer?.getData("application/vpl-block");
-        const label = event.dataTransfer?.getData("application/vpl-label");
-        const blockJson = event.dataTransfer?.getData("application/vpl-block-json");
+    if (!onDropBlock || !reactFlowInstance) return;
 
-        let droppedBlock = null;
-        if (blockJson) {
-            try {
-                droppedBlock = JSON.parse(blockJson);
-            } catch {
-                droppedBlock = null;
-            }
-        }
+    const blockType = event.dataTransfer?.getData("application/vpl-block");
+    const label = event.dataTransfer?.getData("application/vpl-label");
+    const blockJson = event.dataTransfer?.getData("application/vpl-block-json");
 
-        if (!blockType || !label) {
-            return;
-        }
+    let droppedBlock = null;
+    if (blockJson) {
+      try {
+        droppedBlock = JSON.parse(blockJson);
+      } catch {
+        droppedBlock = null;
+      }
+    }
 
-        // Convert screen coordinates to flow coordinates
-        const position = reactFlowInstance.screenToFlowPosition({
-            x: event.clientX,
-            y: event.clientY,
-        });
+    if (!blockType || !label) {
+      return;
+    }
 
-        onDropBlock(
-            droppedBlock || {
-                type: blockType,
-                label,
-            },
-            position,
-        );
-    };
+    // Convert screen coordinates to flow coordinates
+    const position = reactFlowInstance.screenToFlowPosition({
+      x: event.clientX,
+      y: event.clientY,
+    });
 
-    const handleDragOver = (event) => {
-        event.preventDefault();
-        if (event.dataTransfer) {
-            console.log("dropEffect", event.dataTransfer.dropEffect);
-            event.dataTransfer.dropEffect = "copy";
-        }
-    };
-
-    // ...existing code...
-    return (
-        <div style={{ width: "100%", height: "100%" }}>
-            <ReactFlow
-                nodes={nodes}
-                edges={edges}
-                onNodesChange={onNodesChange}
-                onEdgesChange={onEdgesChange}
-                onConnect={onConnect}
-                onNodeClick={handleNodeClick}
-                onSelectionChange={handleSelectionChange}
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-                nodeTypes={nodeTypes}
-                fitView
-                edgesUpdatable={true}
-            >
-                <Background />
-                <Controls />
-            </ReactFlow>
-        </div>
+    onDropBlock(
+      droppedBlock || {
+        type: blockType,
+        label,
+      },
+      position,
     );
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
+    if (event.dataTransfer) {
+      console.log("dropEffect", event.dataTransfer.dropEffect);
+      event.dataTransfer.dropEffect = "copy";
+    }
+  };
+
+  // ...existing code...
+  return (
+    <div style={{ width: "100%", height: "100%" }}>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        onNodeClick={handleNodeClick}
+        onSelectionChange={handleSelectionChange}
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        nodeTypes={nodeTypes}
+        fitView
+        edgesUpdatable={true}
+      >
+        <Background />
+        <Controls />
+      </ReactFlow>
+    </div>
+  );
 }
 
 function CenterCanvas(props) {
-    const mainStyle = {
-        flex: 1,
-        display: "flex",
-        flexDirection: "column",
-        minWidth: 0,
-    };
+  const mainStyle = {
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    minWidth: 0,
+  };
 
-    const canvasStyle = {
-        position: "relative",
-        width: "100%",
-        height: "100%",
-        backgroundColor: "#ffffff",
-        border: "1px solid #d0d0d0",
-        borderRadius: "0.375rem",
-        overflow: "hidden",
-        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.05)",
-    };
+  const canvasStyle = {
+    position: "relative",
+    width: "100%",
+    height: "100%",
+    backgroundColor: "#ffffff",
+    border: "1px solid #d0d0d0",
+    borderRadius: "0.375rem",
+    overflow: "hidden",
+    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.05)",
+  };
 
-    return (
-        <main style={mainStyle}>
-            <div style={canvasStyle}>
-                <ReactFlowProvider>
-                    <FlowWrapper {...props} />
-                </ReactFlowProvider>
-            </div>
-        </main>
-    );
+  return (
+    <main style={mainStyle}>
+      <div style={canvasStyle}>
+        <ReactFlowProvider>
+          <FlowWrapper {...props} />
+        </ReactFlowProvider>
+      </div>
+    </main>
+  );
 }
 
 export default CenterCanvas;

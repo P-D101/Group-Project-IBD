@@ -18,7 +18,7 @@ def compute_program(program, t = time.time()):
     for node, inputs in zip(program["nodes"], program["inputs"]):
         try:
             print(node,inputs)
-            for input in [node_values[i] for i in inputs]:
+            for input in [node_values[j] for j in inputs]:
                 try:
                     if input == 'Do Not Read Output':
                         raise OutputError()
@@ -26,12 +26,16 @@ def compute_program(program, t = time.time()):
                     raise OutputError('Cannot read output of an input only block')
                 except Exception as e:
                     raise Exception(f'Error with input value {input}: {e}')
-            inputs = [node_values[i] for i in inputs]
+            # inputs = [node_values[j] for j in inputs]
             if len(inputs) > 2:
                 raise Exception('Too many inputs')
-            node_values.append(node.compute(*inputs))
+            node_vals = [node_values[j] for j in inputs]
+            node_values.append(node.compute(*node_vals))
+        except OutputError as e:
+            print('\033[91m' + f'Output error with program "{program['name']}":', e, f'in node {node.__class__.__name__} with input {[node_values[i] for i in inputs]}' + '\033[0m')
         except Exception as e:
-            print('\033[91m' + f'Error with program "{program['name']}":', e, f'in node {node.__class__.__name__} with input {[node_values[i] for i in inputs]}' + '\033[0m')
+            print(inputs)
+            print('\033[91m' + f'Some error with program "{program['name']}":', e, f'in node {node.__class__.__name__} with input {[node_values[i] for i in inputs]}' + '\033[0m')
             break
 
 

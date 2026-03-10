@@ -1,20 +1,20 @@
-import BlockPropertiesPanelWithBoundary from "./BlockPropertiesPanel";
+import BlockPropertiesPanel from "./BlockPropertiesPanel";
 
 function RightSidebar({ selectedBlock, onBlockUpdate }) {
-    const sidebarStyle = {
-        display: "flex",
-        flexDirection: "column",
-        flex: "0 0 auto",
-    };
+  const sidebarStyle = {
+    display: "flex",
+    flexDirection: "column",
+    flex: "0 0 auto",
+  };
 
-    return (
-        <aside style={sidebarStyle}>
-            <BlockPropertiesPanelWithBoundary
-                block={selectedBlock}
-                onBlockUpdate={onBlockUpdate}
-            />
-        </aside>
-    );
+  return (
+    <aside style={sidebarStyle}>
+      <BlockPropertiesPanel
+        block={selectedBlock}
+        onBlockUpdate={onBlockUpdate}
+      />
+    </aside>
+  );
 }
 
 export default RightSidebar;

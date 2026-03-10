@@ -20,12 +20,12 @@ def get_data_from_db(field, aggregate, compute_type, after=None, before=None):
     where_clauses = []
     if after:
         try:
-            where_clauses.append(FILTERS.AFTER.validate_and_process_to_SQL(after,SELECTS(field).map(sum_agg=False)))
+            where_clauses.append(FILTERS.AFTER.validate_and_process_to_SQL(after,'usage_date'))
         except Exception as e:
             return {"error": f"Bad Request: filter after's value not valid, reason: {e}"}, 400
     if before:
         try:
-            where_clauses.append(FILTERS.BEFORE.validate_and_process_to_SQL(before,SELECTS(field).map(sum_agg=False)))
+            where_clauses.append(FILTERS.BEFORE.validate_and_process_to_SQL(before,'usage_date'))
         except Exception as e:
             return {"error": f"Bad Request: filter before's value not valid, reason: {e}"}, 400
     if compute_type != "all":
@@ -131,10 +131,9 @@ class TICKET(Node):
         self.receiver = node_object["payload"]["receiver"]
 
     def compute(self, args):
-        for val in args[0]:
-            if val:
-                print(self.receiver)
-                print(self.description)
+        if args:
+            print(self.receiver)
+            print(self.description)
         return 'Do Not Read Output'
     
 class INPUT(Node):

@@ -1,452 +1,452 @@
 [
-    {
-        "Policy Name": "Scale when low usage",
-        "Description": "Create ticket to scale down instances when usage < 20%",
-        "Data Sources": [],
-        "Nodes": [
-            {
-                "id": "0",
-                "type": "input",
-                "label": "Usage %",
-                "description": "Input value"
-            },
-            {
-                "id": "1",
-                "type": "const",
-                "label": "20",
-                "data": { "value": 20 },
-                "description": "Constant value"
-            },
-            {
-                "id": "2",
-                "type": "lt",
-                "label": "Less Than (<)",
-                "description": "Less than (<)"
-            },
-            {
-                "id": "3",
-                "type": "output",
-                "label": "Create Ticket",
-                "data": {
-                    "recipient": "ops@example.com",
-                    "action": "Scale down instances",
-                    "description": "Scale down due to low usage"
-                },
-                "description": "Create Ticket"
-            }
-        ],
-        "Connections": [
-            ["0", "2", "arg-0"],
-            ["1", "2", "arg-1"],
-            ["2", "3", ""]
-        ]
-    },
-    {
-        "Policy Name": "Notify on high cost",
-        "Description": "Notify when daily cost > $200",
-        "Data Sources": [],
-        "Nodes": [
-            {
-                "id": "0",
-                "type": "input",
-                "label": "Daily Cost",
-                "description": "This block represents an input value for the policy."
-            },
-            {
-                "id": "1",
-                "type": "const",
-                "label": "200",
-                "data": { "value": 200 },
-                "description": "This block represents a constant value used in the policy."
-            },
-            {
-                "id": "2",
-                "type": "gt",
-                    "label": "Greater Than (>)",
-                "description": "Greater than (>)"
-            },
-            {
-                "id": "3",
-                "type": "output",
-                "label": "Send Notification",
-                "data": {
-                    "recipient": "finance@example.com",
-                    "action": "Notify on high cost",
-                    "description": "Send notification to finance team"
-                },
-                "description": "Create ticket/notification"
-            }
-        ],
-        "Connections": [
-            ["0", "2", "arg-0"],
-            ["1", "2", "arg-1"],
-            ["2", "3", ""]
-        ]
-    },
-    {
-        "Policy Name": "Notify on high usage",
-        "Description": "Send notification when usage > 80%",
-        "Data Sources": [],
-        "Nodes": [
-            {
-                "id": "0",
-                "type": "input",
-                "label": "Usage %",
-                "description": "Input value"
-            },
-            {
-                "id": "1",
-                "type": "const",
-                "label": "80",
-                "data": { "value": 80 },
-                "description": "Constant value"
-            },
-            {
-                "id": "2",
-                "type": "gt",
-                    "label": "Greater Than (>)",
-                "description": "Greater than (>)"
-            },
-            {
-                "id": "3",
-                "type": "output",
-                "label": "Send Notification",
-                "data": {
-                    "recipient": "ops@example.com",
-                    "action": "Notify on high usage",
-                    "description": "Send notification when usage exceeds 80%"
-                },
-                "description": "Send Notification"
-            }
-        ],
-        "Connections": [
-            ["0", "2", "arg-0"],
-            ["1", "2", "arg-1"],
-            ["2", "3", ""]
-        ]
-    },
-    {
+  {
+    "Policy Name": "Scale when low usage",
+    "Description": "Create ticket to scale down instances when usage < 20%",
+    "Data Sources": [],
+    "Nodes": [
+      {
+        "id": "0",
+        "type": "input",
+        "label": "Usage %",
+        "description": "Input value"
+      },
+      {
+        "id": "1",
+        "type": "const",
+        "label": "20",
+        "data": { "value": 20 },
+        "description": "Constant value"
+      },
+      {
+        "id": "2",
+        "type": "lt",
+        "label": "Less Than (<)",
+        "description": "Less than (<)"
+      },
+      {
+        "id": "3",
+        "type": "ticket",
+        "label": "Create Ticket",
+        "data": {
+          "recipient": "ops@example.com",
+          "action": "Scale down instances",
+          "description": "Scale down due to low usage"
+        },
+        "description": "Create Ticket"
+      }
+    ],
+    "Connections": [
+      ["0", "2", "arg-0"],
+      ["1", "2", "arg-1"],
+      ["2", "3", ""]
+    ]
+  },
+  {
+    "Policy Name": "Notify on high cost",
+    "Description": "Notify when daily cost > $200",
+    "Data Sources": [],
+    "Nodes": [
+      {
+        "id": "0",
+        "type": "input",
+        "label": "Daily Cost",
+        "description": "This block represents an input value for the policy."
+      },
+      {
+        "id": "1",
+        "type": "const",
+        "label": "200",
+        "data": { "value": 200 },
+        "description": "This block represents a constant value used in the policy."
+      },
+      {
+        "id": "2",
+        "type": "gt",
+        "label": "Greater Than (>)",
+        "description": "Greater than (>)"
+      },
+      {
+        "id": "3",
+        "type": "ticket",
+        "label": "Send Notification",
+        "data": {
+          "recipient": "finance@example.com",
+          "action": "Notify on high cost",
+          "description": "Send notification to finance team"
+        },
+        "description": "Create ticket/notification"
+      }
+    ],
+    "Connections": [
+      ["0", "2", "arg-0"],
+      ["1", "2", "arg-1"],
+      ["2", "3", ""]
+    ]
+  },
+  {
+    "Policy Name": "Notify on high usage",
+    "Description": "Send notification when usage > 80%",
+    "Data Sources": [],
+    "Nodes": [
+      {
+        "id": "0",
+        "type": "input",
+        "label": "Usage %",
+        "description": "Input value"
+      },
+      {
+        "id": "1",
+        "type": "const",
+        "label": "80",
+        "data": { "value": 80 },
+        "description": "Constant value"
+      },
+      {
+        "id": "2",
+        "type": "gt",
+        "label": "Greater Than (>)",
+        "description": "Greater than (>)"
+      },
+      {
+        "id": "3",
+        "type": "ticket",
+        "label": "Send Notification",
+        "data": {
+          "recipient": "ops@example.com",
+          "action": "Notify on high usage",
+          "description": "Send notification when usage exceeds 80%"
+        },
+        "description": "Send Notification"
+      }
+    ],
+    "Connections": [
+      ["0", "2", "arg-0"],
+      ["1", "2", "arg-1"],
+      ["2", "3", ""]
+    ]
+  },
+  {
     "Policy Name": "Log event on custom input",
     "Description": "Log event when custom input < 50",
-        "Data Sources": [],
-        "Nodes": [
-            {
-                "id": "0",
-                "type": "input",
-                "label": "Custom Input",
-                "description": "Input value"
-            },
-            {
-                "id": "1",
-                "type": "const",
-                "label": "50",
-                "data": { "value": 50 },
-                "description": "Constant value"
-            },
-            {
-                "id": "2",
-                "type": "lt",
-                "label": "Less Than (<)",
-                "description": "Less than (<)"
-            },
-            {
-                "id": "3",
-                "type": "output",
-                "label": "Log Event",
-                "data": {
-                    "recipient": "logs@example.com",
-                    "action": "Log custom input event",
-                    "description": "Log event when custom input is below 50"
-                },
-                "description": "Log Event"
-            }
-        ],
-        "Connections": [
-            ["0", "2", "arg-0"],
-            ["1", "2", "arg-1"],
-            ["2", "3", ""]
-        ]
-    },
-    {
-        "Policy Name": "Auto-scale up on spike",
-        "Description": "Scale up if usage > 90% and cost < 150",
-        "Data Sources": [],
-        "Nodes": [
-            {
-                "id": "0",
-                "type": "input",
-                "label": "Usage %",
-                "description": "Input value"
-            },
-            {
-                "id": "1",
-                "type": "input",
-                "label": "Daily Cost",
-                "description": "Input value"
-            },
-            {
-                "id": "2",
-                "type": "const",
-                "label": "90",
-                "data": { "value": 90 },
-                "description": "Constant value"
-            },
-            {
-                "id": "3",
-                "type": "const",
-                "label": "150",
-                "data": { "value": 150 },
-                "description": "Constant value"
-            },
-            {
-                "id": "4",
-                "type": "gt",
-                "label": "Greater Than (>)",
-                "description": "Greater than (>)"
-            },
-            {
-                "id": "5",
-                "type": "lt",
-                "label": "Less Than (<)",
-                "description": "Less than (<)"
-            },
-            {
-                "id": "6",
-                "type": "and",
-                "label": "AND",
-                "description": "AND"
-            },
-            {
-                "id": "7",
-                "type": "output",
-                "label": "Create Ticket",
-                "data": {
-                    "recipient": "ops@example.com",
-                    "action": "Scale up",
-                    "description": "Scale up if usage > 90% and cost < 150"
-                },
-                "description": "Create Ticket"
-            }
-        ],
-        "Connections": [
-            ["0", "4", "arg-0"],
-            ["2", "4", "arg-1"],
-            ["1", "5", "arg-0"],
-            ["3", "5", "arg-1"],
-            ["4", "6", "arg-0"],
-            ["5", "6", "arg-1"],
-            ["6", "7", ""]
-        ]
-    },
-    {
+    "Data Sources": [],
+    "Nodes": [
+      {
+        "id": "0",
+        "type": "input",
+        "label": "Custom Input",
+        "description": "Input value"
+      },
+      {
+        "id": "1",
+        "type": "const",
+        "label": "50",
+        "data": { "value": 50 },
+        "description": "Constant value"
+      },
+      {
+        "id": "2",
+        "type": "lt",
+        "label": "Less Than (<)",
+        "description": "Less than (<)"
+      },
+      {
+        "id": "3",
+        "type": "ticket",
+        "label": "Log Event",
+        "data": {
+          "recipient": "logs@example.com",
+          "action": "Log custom input event",
+          "description": "Log event when custom input is below 50"
+        },
+        "description": "Log Event"
+      }
+    ],
+    "Connections": [
+      ["0", "2", "arg-0"],
+      ["1", "2", "arg-1"],
+      ["2", "3", ""]
+    ]
+  },
+  {
+    "Policy Name": "Auto-scale up on spike",
+    "Description": "Scale up if usage > 90% and cost < 150",
+    "Data Sources": [],
+    "Nodes": [
+      {
+        "id": "0",
+        "type": "input",
+        "label": "Usage %",
+        "description": "Input value"
+      },
+      {
+        "id": "1",
+        "type": "input",
+        "label": "Daily Cost",
+        "description": "Input value"
+      },
+      {
+        "id": "2",
+        "type": "const",
+        "label": "90",
+        "data": { "value": 90 },
+        "description": "Constant value"
+      },
+      {
+        "id": "3",
+        "type": "const",
+        "label": "150",
+        "data": { "value": 150 },
+        "description": "Constant value"
+      },
+      {
+        "id": "4",
+        "type": "gt",
+        "label": "Greater Than (>)",
+        "description": "Greater than (>)"
+      },
+      {
+        "id": "5",
+        "type": "lt",
+        "label": "Less Than (<)",
+        "description": "Less than (<)"
+      },
+      {
+        "id": "6",
+        "type": "and",
+        "label": "AND",
+        "description": "AND"
+      },
+      {
+        "id": "7",
+        "type": "ticket",
+        "label": "Create Ticket",
+        "data": {
+          "recipient": "ops@example.com",
+          "action": "Scale up",
+          "description": "Scale up if usage > 90% and cost < 150"
+        },
+        "description": "Create Ticket"
+      }
+    ],
+    "Connections": [
+      ["0", "4", "arg-0"],
+      ["2", "4", "arg-1"],
+      ["1", "5", "arg-0"],
+      ["3", "5", "arg-1"],
+      ["4", "6", "arg-0"],
+      ["5", "6", "arg-1"],
+      ["6", "7", ""]
+    ]
+  },
+  {
     "Policy Name": "Alert on custom input",
     "Description": "Send alert if custom input > 75",
-        "Data Sources": [],
-        "Nodes": [
-            {
-                "id": "0",
-                "type": "input",
-                "label": "Custom Input",
-                "description": "Input value"
-            },
-            {
-                "id": "1",
-                "type": "const",
-                "label": "75",
-                "data": { "value": 75 },
-                "description": "Constant value"
-            },
-            {
-                "id": "2",
-                "type": "gt",
-                "label": "Greater Than (>)",
-                "description": "Greater than (>)"
-            },
-            {
-                "id": "3",
-                "type": "output",
-                "label": "Send Notification",
-                "data": {
-                    "recipient": "alerts@example.com",
-                    "action": "Alert",
-                    "description": "Alert if custom input > 75"
-                },
-                "description": "Send Notification"
-            }
-        ],
-        "Connections": [
-            ["0", "2", "arg-0"],
-            ["1", "2", "arg-1"],
-            ["2", "3", ""]
-        ]
-    },
-    {
-        "Policy Name": "Log low usage event",
-        "Description": "Log event if usage < 10%",
-        "Data Sources": [],
-        "Nodes": [
-            {
-                "id": "0",
-                "type": "input",
-                "label": "Usage %",
-                "description": "Input value"
-            },
-            {
-                "id": "1",
-                "type": "const",
-                "label": "10",
-                "data": { "value": 10 },
-                "description": "Constant value"
-            },
-            {
-                "id": "2",
-                "type": "lt",
-                "label": "Less Than (<)",
-                "description": "Less than (<)"
-            },
-            {
-                "id": "3",
-                "type": "output",
-                "label": "Log Event",
-                "data": {
-                    "recipient": "logs@example.com",
-                    "action": "Log low usage",
-                    "description": "Log event if usage < 10%"
-                },
-                "description": "Log Event"
-            }
-        ],
-        "Connections": [
-            ["0", "2", "arg-0"],
-            ["1", "2", "arg-1"],
-            ["2", "3", ""]
-        ]
-    },
-    {
-        "Policy Name": "Notify on cost increase",
-        "Description": "Notify if today's cost - yesterday's cost > 100",
-        "Data Sources": [],
-        "Nodes": [
-            {
-                "id": "0",
-                "type": "input",
-                "label": "Daily Cost",
-                "description": "Input value"
-            },
-            {
-                "id": "1",
-                "type": "input",
-                "label": "Yesterday Cost",
-                "description": "Input value"
-            },
-            {
-                "id": "2",
-                "type": "const",
-                "label": "100",
-                "data": { "value": 100 },
-                "description": "Constant value"
-            },
-            {
-                "id": "3",
-                "type": "subtract",
-                "label": "Subtract",
-                "description": "Subtract two values"
-            },
-            {
-                "id": "4",
-                "type": "gt",
-                "label": "Greater Than (>)",
-                "description": "Greater than (>)"
-            },
-            {
-                "id": "5",
-                "type": "output",
-                "label": "Send Notification",
-                "data": {
-                    "recipient": "finance@example.com",
-                    "action": "Notify cost increase",
-                    "description": "Notify if cost increases by more than 100"
-                },
-                "description": "Send Notification"
-            }
-        ],
-        "Connections": [
-            ["0", "3", "arg-0"],
-            ["1", "3", "arg-1"],
-            ["3", "4", "arg-0"],
-            ["2", "4", "arg-1"],
-            ["4", "5", ""]
-        ]
-    },
-    {
+    "Data Sources": [],
+    "Nodes": [
+      {
+        "id": "0",
+        "type": "input",
+        "label": "Custom Input",
+        "description": "Input value"
+      },
+      {
+        "id": "1",
+        "type": "const",
+        "label": "75",
+        "data": { "value": 75 },
+        "description": "Constant value"
+      },
+      {
+        "id": "2",
+        "type": "gt",
+        "label": "Greater Than (>)",
+        "description": "Greater than (>)"
+      },
+      {
+        "id": "3",
+        "type": "ticket",
+        "label": "Send Notification",
+        "data": {
+          "recipient": "alerts@example.com",
+          "action": "Alert",
+          "description": "Alert if custom input > 75"
+        },
+        "description": "Send Notification"
+      }
+    ],
+    "Connections": [
+      ["0", "2", "arg-0"],
+      ["1", "2", "arg-1"],
+      ["2", "3", ""]
+    ]
+  },
+  {
+    "Policy Name": "Log low usage event",
+    "Description": "Log event if usage < 10%",
+    "Data Sources": [],
+    "Nodes": [
+      {
+        "id": "0",
+        "type": "input",
+        "label": "Usage %",
+        "description": "Input value"
+      },
+      {
+        "id": "1",
+        "type": "const",
+        "label": "10",
+        "data": { "value": 10 },
+        "description": "Constant value"
+      },
+      {
+        "id": "2",
+        "type": "lt",
+        "label": "Less Than (<)",
+        "description": "Less than (<)"
+      },
+      {
+        "id": "3",
+        "type": "ticket",
+        "label": "Log Event",
+        "data": {
+          "recipient": "logs@example.com",
+          "action": "Log low usage",
+          "description": "Log event if usage < 10%"
+        },
+        "description": "Log Event"
+      }
+    ],
+    "Connections": [
+      ["0", "2", "arg-0"],
+      ["1", "2", "arg-1"],
+      ["2", "3", ""]
+    ]
+  },
+  {
+    "Policy Name": "Notify on cost increase",
+    "Description": "Notify if today's cost - yesterday's cost > 100",
+    "Data Sources": [],
+    "Nodes": [
+      {
+        "id": "0",
+        "type": "input",
+        "label": "Daily Cost",
+        "description": "Input value"
+      },
+      {
+        "id": "1",
+        "type": "input",
+        "label": "Yesterday Cost",
+        "description": "Input value"
+      },
+      {
+        "id": "2",
+        "type": "const",
+        "label": "100",
+        "data": { "value": 100 },
+        "description": "Constant value"
+      },
+      {
+        "id": "3",
+        "type": "subtract",
+        "label": "Subtract",
+        "description": "Subtract two values"
+      },
+      {
+        "id": "4",
+        "type": "gt",
+        "label": "Greater Than (>)",
+        "description": "Greater than (>)"
+      },
+      {
+        "id": "5",
+        "type": "ticket",
+        "label": "Send Notification",
+        "data": {
+          "recipient": "finance@example.com",
+          "action": "Notify cost increase",
+          "description": "Notify if cost increases by more than 100"
+        },
+        "description": "Send Notification"
+      }
+    ],
+    "Connections": [
+      ["0", "3", "arg-0"],
+      ["1", "3", "arg-1"],
+      ["3", "4", "arg-0"],
+      ["2", "4", "arg-1"],
+      ["4", "5", ""]
+    ]
+  },
+  {
     "Policy Name": "Ticket if usage & custom input high",
     "Description": "Create ticket if usage > 80% AND custom input > 60",
-        "Data Sources": [],
-        "Nodes": [
-            {
-                "id": "0",
-                "type": "input",
-                "label": "Usage %",
-                "description": "Input value"
-            },
-            {
-                "id": "1",
-                "type": "input",
-                "label": "Custom Input",
-                "description": "Input value"
-            },
-            {
-                "id": "2",
-                "type": "const",
-                "label": "80",
-                "data": { "value": 80 },
-                "description": "Constant value"
-            },
-            {
-                "id": "3",
-                "type": "const",
-                "label": "60",
-                "data": { "value": 60 },
-                "description": "Constant value"
-            },
-            {
-                "id": "4",
-                "type": "gt",
-                "label": "Greater Than (>)",
-                "description": "Greater than (>)"
-            },
-            {
-                "id": "5",
-                "type": "gt",
-                "label": "Greater Than (>)",
-                "description": "Greater than (>)"
-            },
-            {
-                "id": "6",
-                "type": "and",
-                "label": "AND",
-                "description": "AND"
-            },
-            {
-                "id": "7",
-                "type": "output",
-                "label": "Create Ticket",
-                "data": {
-                    "recipient": "ops@example.com",
-                    "action": "Ticket high usage & custom input",
-                    "description": "Create ticket if usage > 80% AND custom input > 60"
-                },
-                "description": "Create Ticket"
-            }
-        ],
-        "Connections": [
-            ["0", "4", "arg-0"],
-            ["2", "4", "arg-1"],
-            ["1", "5", "arg-0"],
-            ["3", "5", "arg-1"],
-            ["4", "6", "arg-0"],
-            ["5", "6", "arg-1"],
-            ["6", "7", ""]
-        ]
-    }
+    "Data Sources": [],
+    "Nodes": [
+      {
+        "id": "0",
+        "type": "input",
+        "label": "Usage %",
+        "description": "Input value"
+      },
+      {
+        "id": "1",
+        "type": "input",
+        "label": "Custom Input",
+        "description": "Input value"
+      },
+      {
+        "id": "2",
+        "type": "const",
+        "label": "80",
+        "data": { "value": 80 },
+        "description": "Constant value"
+      },
+      {
+        "id": "3",
+        "type": "const",
+        "label": "60",
+        "data": { "value": 60 },
+        "description": "Constant value"
+      },
+      {
+        "id": "4",
+        "type": "gt",
+        "label": "Greater Than (>)",
+        "description": "Greater than (>)"
+      },
+      {
+        "id": "5",
+        "type": "gt",
+        "label": "Greater Than (>)",
+        "description": "Greater than (>)"
+      },
+      {
+        "id": "6",
+        "type": "and",
+        "label": "AND",
+        "description": "AND"
+      },
+      {
+        "id": "7",
+        "type": "ticket",
+        "label": "Create Ticket",
+        "data": {
+          "recipient": "ops@example.com",
+          "action": "Ticket high usage & custom input",
+          "description": "Create ticket if usage > 80% AND custom input > 60"
+        },
+        "description": "Create Ticket"
+      }
+    ],
+    "Connections": [
+      ["0", "4", "arg-0"],
+      ["2", "4", "arg-1"],
+      ["1", "5", "arg-0"],
+      ["3", "5", "arg-1"],
+      ["4", "6", "arg-0"],
+      ["5", "6", "arg-1"],
+      ["6", "7", ""]
+    ]
+  }
 ]

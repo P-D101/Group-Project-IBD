@@ -90,16 +90,20 @@ class GROUPBY(MyEnum):
             case GROUPBY.BUSINESS_UNIT: return 'business_unit'
 
 
-DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+DATETIME_FORMAT1 = "%Y-%m-%d %H:%M:%S"
+DATETIME_FORMAT2 = "%Y-%m-%dT%H:%M:%S.000Z"
 DATE_FORMAT = "%Y-%m-%d"
 def format_time_for_filter(provided_time):
     try:
-        dt = datetime.strptime(provided_time, DATETIME_FORMAT) # if this errors try to parse as %Y-%m-%d
+        dt = datetime.strptime(provided_time, DATETIME_FORMAT1).date() # if this errors try to parse as %Y-%m-%d
     except:
         try:
-            dt = datetime.strptime(provided_time,DATE_FORMAT).date() # if this errors then throw a real error
+            dt = datetime.strptime(provided_time, DATETIME_FORMAT2).date() # if this errors try to parse as %Y-%m-%d
         except:
-            raise Exception(f"datetime: {provided_time} does not conform to {DATETIME_FORMAT} or {DATE_FORMAT}")
+            try:
+                dt = datetime.strptime(provided_time,DATE_FORMAT).date() # if this errors then throw a real error
+            except:
+                raise Exception(f"datetime: {provided_time} does not conform to {DATETIME_FORMAT1} or {DATETIME_FORMAT2} or {DATE_FORMAT}")
         # time.max is 23:59:59 so BEFORE is inclusive
         dt = datetime.combine(dt,time.max) # in AFTER gets truncated to just %Y-%m-%d so time.max is just for BEFORE
     return dt
