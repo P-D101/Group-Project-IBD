@@ -34,14 +34,7 @@ if __name__ == "__main__":
     while True:
 
         print('\033[92m' + ' Start Execute '.center(110, '-') + '\033[0m')
-
-        new_programs = load_programs("new-programs")
-        programs.extend(new_programs)
-        # move all programs from new-programs to programs
-        for file_path in glob(os.path.join(dir_path, "data", "new-programs", "*.json")):
-            file_name = file_path.split('/')[-1]
-            os.rename(file_path, os.path.join(dir_path, "data", "programs", file_name))
-
+        
         remove_program_file_paths = glob(os.path.join(dir_path, "data", "remove-programs", "*.json"))
         for file_path in remove_program_file_paths:
 
@@ -56,10 +49,14 @@ if __name__ == "__main__":
             os.remove(file_path)
             os.remove(dir_path + "/data/programs/" + file_name)
 
+        new_programs = load_programs("new-programs")
+        programs.extend(new_programs)
+        # move all programs from new-programs to programs
+        for file_path in glob(os.path.join(dir_path, "data", "new-programs", "*.json")):
+            file_name = file_path.split('/')[-1]
+            os.rename(file_path, os.path.join(dir_path, "data", "programs", file_name))
+
         running_programs = programs.copy()
-
-        
-
 
         disable_program_file_paths = glob(os.path.join(dir_path, "data", "disable-programs", "*.json"))
         
