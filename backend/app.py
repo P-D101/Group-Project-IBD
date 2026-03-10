@@ -417,7 +417,8 @@ def delete_vpl(vplID):
         # move the file to a deleted folder instead of deleting it permanently, in case of accidental deletion
         deleted_dir = os.path.join(os.path.dirname(__file__), "data", "remove-programs")
         os.makedirs(deleted_dir, exist_ok=True)
-        os.rename(file_path, os.path.join(deleted_dir, filename))
+        # copy instead of move
+        shutil.copy(file_path, os.path.join(deleted_dir, filename))
     except Exception as e:
         return {"error": f"Failed to delete VPL: {e}"}, 500
     return {"message": "VPL deleted", "vpl_id": vplID}, 200
