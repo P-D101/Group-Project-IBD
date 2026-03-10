@@ -426,14 +426,14 @@ def delete_vpl(vplID):
     if not os.path.exists(programs_file_path) and not os.path.exists(new_programs_file_path):
         return {"error": "VPL not found"}, 404
     try:
-        if os.path.exists(programs_file_path):
+        if os.path.exists(new_programs_file_path): # program is in new-programs so it can be deleted directly instead of moving directory
+            os.remove(new_programs_file_path)
+        elif os.path.exists(programs_file_path):
             # move the file to a deleted folder instead of deleting it permanently, in case of accidental deletion
             deleted_dir = os.path.join(os.path.dirname(__file__), "data", "remove-programs")
             os.makedirs(deleted_dir, exist_ok=True)
             # copy instead of move
             shutil.copy(programs_file_path, os.path.join(deleted_dir, filename))
-        else: # program is only in new-programs, so it can be deleted directly
-            os.remove(new_programs_file_path)
     except Exception as e:
         return {"error": f"Failed to delete VPL: {e}"}, 500
     return {"message": "VPL deleted", "vpl_id": vplID}, 200
