@@ -21,6 +21,27 @@ function PolicyListItem({ policy, group, triggerReload }) {
         triggerReload();
     };
 
+
+    const dataSources = (policy) => {
+        if (!policy["Data Sources"] || policy["Data Sources"].length == 0) {
+            return <b>"No data sources";</b>
+        }
+        // backwards compatibility for old policies without "Data Sources" field, treat as no data sources
+        if (Array.isArray(policy["Data Sources"])) {
+            return policy["Data Sources"].map(name => <div className="bg-blue-200 p-1 rounded-lg mt-2 w-fit">{name}</div>);
+        }
+        
+        return <ul>
+        {Object.keys(policy["Data Sources"]).map(key => {
+            if (policy["Data Sources"][key].length == 0) return null; // if data source is marked as false, don't show it
+            let name = key.split("_").join(" ")
+            return <li className="bg-blue-200 p-1 rounded-lg mt-2 w-fit text-transform: capitalize">
+                <p>{name}:{policy["Data Sources"][key].join(", ")}</p>
+            </li>
+        })}
+        </ul>;
+    };
+
     const groupToColour = {"enabled":"bg-green-100","disabled":"bg-red-200","processing":"bg-yellow-100"}
     return (
         <li key={policy["id"]} className={"w-fit p-5 "+groupToColour[group]+" rounded-lg shadow-sm"}>
@@ -54,13 +75,10 @@ function PolicyListItem({ policy, group, triggerReload }) {
                 </div>
             )
             : (<div>(note: can't edit whilst processing)</div>)}
+            <div>
+                {dataSources(policy)}
+            </div>
             
-
-            <div className="mt-2"><b>Sources:</b> {
-                policy["Data Sources"].length == 0
-                    ? "No data sources"
-                    : policy["Data Sources"].map(name => <div className="bg-blue-200 p-1 rounded-lg mt-2 w-fit">{name}</div>)
-            }</div>
         </li>
     );
 }
