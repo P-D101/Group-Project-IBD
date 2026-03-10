@@ -9,6 +9,7 @@ from flask import Flask, request, make_response
 from flask_cors import CORS
 from interface import TIMESPAN,SELECTS,GROUPBY,FILTERS, get_data
 from dashboard_data import get_dashboard_data
+from dashboard_graph import get_dashboard_graph 
 from ai_query import get_user_query
 
 import database
@@ -57,6 +58,10 @@ def overview_provider(provider): # TODO
 @app.route('/api/dashboard-data', methods=['GET'])
 def dashboard_overview():
     return get_dashboard_data()
+
+@app.route('/api/dashboard-graph', methods=['GET'])
+def dashboard_graph():
+    return get_dashboard_graph()
 
 @app.route('/api/suggestions', methods=['GET'])
 def ticket_suggestions():
