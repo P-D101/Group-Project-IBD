@@ -1,7 +1,7 @@
 import pandas as pd
 from flask import Flask, jsonify
 from flask_cors import CORS 
-import database
+from . import database
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -18,10 +18,10 @@ def get_dashboard_graph():
     """
 
     query2 ="""
-    SELECT business_unit, 
+    SELECT service_name, 
         SUM(billed_cost) AS total_cost
     FROM gold_standard_usage
-    GROUP BY business_unit
+    GROUP BY service_name
     ORDER BY total_cost DESC
     LIMIT 10
 """
@@ -35,10 +35,10 @@ def get_dashboard_graph():
         usage_date = df['usage_date'].tolist()
 
         df2 = pd.read_sql_query(query2, database.get_db())
-        business_unit = df2['business_unit'].tolist()
+        service_name = df2['service_name'].tolist()
         total_cost = df2['total_cost'].tolist()
     
-        response = {'daily_net_cost': daily_net, 'usage_date': usage_date, 'business_unit': business_unit, 'total_cost': total_cost }
+        response = {'daily_net_cost': daily_net, 'usage_date': usage_date, 'service_name': service_name, 'total_cost': total_cost }
         return jsonify(response)
     
     except Exception as e:

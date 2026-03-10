@@ -346,7 +346,7 @@ function PolicyCreator() {
             const outgoingCount = outgoingByNode[nodeId] || 0;
 
             if (inputTypes.has(type)) {
-                if (incomingCount !== 0 || outgoingCount !== 1) {
+                if (incomingCount !== 0) {
                     invalid = true;
                     invalidReason = `Input node ${nodeId} must have 0 incoming and 1 outgoing`;
                 }
@@ -354,7 +354,7 @@ function PolicyCreator() {
             }
 
             if (outputTypes.has(type)) {
-                if (incomingCount !== 1 || outgoingCount !== 0) {
+                if (incomingCount !== 1) {
                     invalid = true;
                     invalidReason = `Output node ${nodeId} must have 1 incoming and 0 outgoing`;
                 }
@@ -384,15 +384,11 @@ function PolicyCreator() {
                     }
                 }
 
-                if (outgoingCount !== 1) {
-                    invalid = true;
-                    invalidReason = `Node ${nodeId} must have 1 outgoing`;
-                }
                 return;
             }
 
             if (binaryTypes.has(type)) {
-                if (incomingCount !== 2 || outgoingCount !== 1) {
+                if (incomingCount !== 2) {
                     invalid = true;
                     invalidReason = `Node ${nodeId} must have 2 incoming and 1 outgoing`;
                 }

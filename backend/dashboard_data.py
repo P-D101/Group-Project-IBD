@@ -11,22 +11,26 @@ def get_dashboard_data():
     FROM gold_standard_usage
     GROUP BY usage_week
     ORDER BY usage_week DESC
-    LIMIT 2
+    LIMIT 3
     """
 
-    query_topservice = """
-    SELECT service_name, SUM(billed_cost) as total_spend
-    FROM gold_standard_usage
-
-    WHERE usage_month = (
-            SELECT MAX(usage_month) 
-            FROM gold_standard_usage)
-            
-    GROUP BY service_name
-    ORDER BY total_spend DESC
-    LIMIT 1"""
+    query_service_categories = """
+    SELECT service_category, SUM(total_cost) AS total_cost FROM (
+        SELECT 
+        CASE
+            WHEN meter_dimension IN ('cpu','memory') THEN 'Compute'
+            WHEN meter_dimension = 'storage' THEN 'Storage'
+            WHEN meter_dimension IN ('network','activity') THEN 'Network'
+            WHEN meter_dimension = 'control-plane' THEN 'Control Plane'
+            ELSE "Other"
+        END AS service_category,
+        SUM(billed_cost) AS total_cost
+        FROM gold_standard_usage
+        GROUP BY meter_dimension)
+    GROUP BY service_category
+    ORDER BY total_cost DESC"""
     df = pd.read_sql_query(query_var, database.get_db())
-    df2 = pd.read_sql_query(query_topservice, database.get_db())
+    df2 = pd.read_sql_query(query_service_categories, database.get_db())
     #cols_to_use = ['BillingPeriodStart', 'EffectiveCost', 'ListCost']
     #file_name = 'focus_data_table.csv' 
     #df = pd.read_csv(file_name, usecols= cols_to_use)
@@ -38,26 +42,14 @@ def get_dashboard_data():
     #oct_cost = df[df['BillingPeriodStart'] == '2024-10-01 00:00:00']['EffectiveCost'].sum()
 
     try:
-        if len(df) == 2:
-            this_week = df.iloc[0]['weekly_total']
-            last_week = df.iloc[1]['weekly_total']
-            
-            var = (this_week - last_week) / last_week
-        else:
-            var = 0
-
-        if not df2.empty:
-            top_service = df2.iloc[0]['service_name']
-            top_spend = df2.iloc[0]['total_spend']
-        else:
-            top_service = "No Data"
-            top_spend = 0
-        response = {'weekly_variance': var, 'top_service': top_service, 'top_spend': top_spend}
-
-        
-        print(var, top_service, top_spend)
-
-        return jsonify(response)
+        res = {
+            'week0': df.iloc[0]['weekly_total'], 
+            'week1': df.iloc[1]['weekly_total'],
+            'week2': df.iloc[2]['weekly_total'], 
+            'service_categories': df2['service_category'].to_list(),
+            'service_costs': df2['total_cost'].to_list()
+        }
+        return jsonify(res)
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
