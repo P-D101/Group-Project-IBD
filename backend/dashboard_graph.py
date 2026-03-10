@@ -17,6 +17,15 @@ def get_dashboard_graph():
     GROUP BY usage_date
     """
 
+    query2 ="""
+    SELECT business_unit, 
+        SUM(billed_cost) AS total_cost
+    FROM gold_standard_usage
+    GROUP BY business_unit
+    ORDER BY total_cost DESC
+    LIMIT 10
+"""
+
 
     
    
@@ -24,8 +33,12 @@ def get_dashboard_graph():
         df = pd.read_sql_query(query, database.get_db())
         daily_net = df['daily_net_cost'].tolist()
         usage_date = df['usage_date'].tolist()
+
+        df2 = pd.read_sql_query(query2, database.get_db())
+        business_unit = df2['business_unit'].tolist()
+        total_cost = df2['total_cost'].tolist()
     
-        response = {'daily_net_cost': daily_net, 'usage_date': usage_date}
+        response = {'daily_net_cost': daily_net, 'usage_date': usage_date, 'business_unit': business_unit, 'total_cost': total_cost }
         return jsonify(response)
     
     except Exception as e:

@@ -3,7 +3,7 @@ import { Chart } from "chart.js/auto";
 import "chartjs-adapter-date-fns";
 
 function DashboardGraphs(){
-    let [data, setData] = useState({daily_net_cost: [], usage_date:[]});
+    let [data, setData] = useState({daily_net_cost: [], usage_date:[], business_unit:[], total_cost:[]});
     let [loading, setLoading] = useState(true);
 
     const chartRef1 = useRef(null);
@@ -19,7 +19,7 @@ function DashboardGraphs(){
                 }
     
                 const json_result = await response.json();
-                //alert("Backend sent: " + JSON.stringify(data));//for debugging
+                alert("Backend sent: " + JSON.stringify(data.business_unit));//for debugging
                 setData(json_result);
                 setLoading(false);
             }
@@ -71,10 +71,10 @@ function DashboardGraphs(){
             type: "bar",
             options: {responsive: true,maintainAspectRatio: false,},
             data: {
-                labels: ["Jan", "Feb", "Mar", "Apr", "May"],
+                labels: data.business_unit,
                 datasets: [{
-                        label: "Server Usage",
-                        data: [65, 59, 80, 81, 56, 55],
+                        label: "Spending/$",
+                        data: data.total_cost,
                         backgroundColor: "#163158",
                         borderColor: "#8d94a9",
                         borderWidth: 1,
@@ -96,9 +96,9 @@ function DashboardGraphs(){
                             <canvas ref ={chartRef1}></canvas>
                         </div>
 
-                        {/*Graph 2 - dummy data*/}
-                        <div className="p-6 pb-20 relative w-full h-64 bg-white rounded shadow-sm">
-                            <h3 className="text-center mt-4">Server Usage Graph</h3>
+                        {/*Graph 2 using db data*/}
+                        <div className="p-6 pb-20 relative w-full h-96 bg-white rounded shadow-sm">
+                            <h3 className="text-center mt-4">Top 10 Business Unit Spending</h3>
                             <canvas ref = {chartRef2}></canvas>
                         </div>
                 </div>
