@@ -17,7 +17,7 @@ function Breadcrumbs() {
                 return urlname.charAt(0).toUpperCase() + urlname.slice(1);
         }
     }
-    var logical_pathnames = pathnames
+    var logical_pathnames = pathnames.map(x=>x)
     // if the start of the pathnames is not "ai-dashboard", then we want to add it to the beginning of the pathnames array
     if (pathnames.length === 0 || pathnames[0] !== "ai-dashboard") {
         logical_pathnames.unshift("ai-dashboard");
@@ -27,9 +27,16 @@ function Breadcrumbs() {
         <div className="bg-transparent text-white">
             <ol className="flex items-center whitespace-nowrap pl-6">
                 {logical_pathnames.map((value, index) => {
-                    const last = index === pathnames.length - 1;
-                    const to = `/${pathnames.slice(0, index + 1).join("/")}`;
-
+                    let to;
+                    const last = index === logical_pathnames.length - 1;
+                    if (value == "ai-dashboard") {
+                        to = '/ai-dashboard';   
+                    } else {
+                        to = `/${pathnames.slice(0, index).join("/")}`;
+                    }
+                    
+                    
+                    console.log(value, index)
                     return (
                         <li>
                             <Link
