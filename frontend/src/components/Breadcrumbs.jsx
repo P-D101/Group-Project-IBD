@@ -17,16 +17,22 @@ function Breadcrumbs() {
                 return urlname.charAt(0).toUpperCase() + urlname.slice(1);
         }
     }
+    var logical_pathnames = pathnames
+    // if the start of the pathnames is not "ai-dashboard", then we want to add it to the beginning of the pathnames array
+    if (pathnames.length === 0 || pathnames[0] !== "ai-dashboard") {
+        logical_pathnames.unshift("ai-dashboard");
+    }
 
     return (
         <div className="bg-transparent text-white">
             <ol className="flex items-center whitespace-nowrap pl-6">
-                {pathnames.map((value, index) => {
+                {logical_pathnames.map((value, index) => {
                     const last = index === pathnames.length - 1;
                     const to = `/${pathnames.slice(0, index + 1).join("/")}`;
 
                     return (
-                        <Link
+                        <li>
+                            <Link
                             to={to}
                             className={` pb-2 inline-flex items-center ${last ? "text-primary-focus" : "text-muted-foreground"}`}
                             key={index}
@@ -46,6 +52,7 @@ function Breadcrumbs() {
                                 <path d="m9 18 6-6-6-6" />
                             </svg>
                         </Link>
+                        </li>
                     );
                 })}
             </ol>

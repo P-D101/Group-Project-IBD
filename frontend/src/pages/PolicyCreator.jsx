@@ -274,7 +274,14 @@ function PolicyCreator() {
     const handleSave = async () => {
         const policyObject = {
             "Policy Name": policyName,
-            "Data Sources": [],
+            "Data Sources": {
+                "provider": [],
+                "billing_account": [],
+                "sub_account": [],
+                "service_name": [],
+                "application": [],
+                "business_unit": []
+            },
             Nodes: nodes.map((node) => ({
                 index: node.id,
                 position: node.position,
