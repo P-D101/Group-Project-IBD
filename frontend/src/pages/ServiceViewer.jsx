@@ -28,7 +28,7 @@ function ServiceViewer() {
     }, []);
 
     return (
-        <div className="flex flex-col h-screen bg-gray-50">
+        <div className="flex flex-col bg-gray-50">
 
             {/* Main Content Area */}
             <div className="flex gap-4 p-4 overflow-hidden flex-1">

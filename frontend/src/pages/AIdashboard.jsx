@@ -113,7 +113,7 @@ function AIdashboard() {
                     Cloud Usage Data Per Server
                 </h3>
 
-                {/*<ServiceViewer></ServiceViewer>*/}
+                <ServiceViewer></ServiceViewer>
             </div>
         </div>
     );
