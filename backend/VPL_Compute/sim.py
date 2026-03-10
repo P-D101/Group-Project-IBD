@@ -1,11 +1,9 @@
-import sys
 import os
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 #### This file is for simulating what would have happened in the last week if a given policy was added
 
 import time
-from compute_program import compute_program
-from pass_program import convert_program
+from .compute_program import compute_program
+from .pass_program import convert_program
 from glob import glob
 import os
 import json
@@ -15,7 +13,6 @@ def sim_policy(program):
     t = time.time() - 1000
     test_program = convert_program(json.loads(program))
 
-    
     '''
     dir_path = os.path.dirname(os.path.realpath(__file__))[:-12]
 
@@ -41,52 +38,9 @@ def sim_policy(program):
         t = t + 100
 
 if __name__ == '__main__':
-    sim_policy('''
-{
-    "Policy Name" : "example",
-    "Data Sources" : ["Cloud_Serves_1", "Cloud_Serves_2"],
-    "Nodes" : [
-        {
-            "Index": 0,
-            "Type" : "Input",
-            "Position" : [100, 100],
-            "Input Channel" : "Usage",
-            "Input Provider" : "Cloud_Serves_1"
-        }, {
-            "Index": 1,
-            "Type" : "Input",
-            "Position" : [100, 200],
-            "Input Channel" : "Usage",
-            "Input Provider" : "Cloud_Serves_2"
-        }, {
-            "Index": 2,
-            "Type" : "Greater Than",
-            "Position" : [200, 100]
-        }, {
-            "Index": 3,
-            "Type" : "Greater Than",
-            "Position" : [200, 200]
-        }, {
-            "Index": 4,
-            "Type" : "Ticket",
-            "Position" : [300, 100],
-            "Receiver" : "example.email@calero.com",
-            "Description" : "example 1"
-        }, {
-            "Index": 5,
-            "Type" : "Ticket",
-            "Position" : [300, 200],
-            "Receiver" : "example.email@calero.com",
-            "Description" : "example 2"
-        }
-    ],
-    "Connections" : [
-        [0, 2],
-        [1, 2],
-        [1, 3],
-        [0, 3],
-        [2, 4],
-        [3, 5]
-    ]
-}
-''')
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    
+    with open(dir_path[:-12] + '/data/programs/policy_77526dac-d0e6-473a-8abc-03aac309de74.json', 'r') as example_file:
+        example_program = json.load(example_file)
+
+    sim_policy(json.dumps(example_program))

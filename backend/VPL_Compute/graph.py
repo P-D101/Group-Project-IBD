@@ -54,7 +54,6 @@ class Graph:
                         nodes.append(output_node)
             except:
                 pass
-
         self.out_set = out_set
         self.in_set = in_set
 

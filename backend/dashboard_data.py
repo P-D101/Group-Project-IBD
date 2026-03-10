@@ -1,10 +1,8 @@
 import pandas as pd
 from flask import Flask, jsonify
 from flask_cors import CORS 
-import database
-import sys
+from . import database
 import os
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
  
 
 def get_dashboard_data():

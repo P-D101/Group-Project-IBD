@@ -2,7 +2,7 @@ import React from "react";
 import DateSelector from "./DatePicker";
 
 function DateRangeSelector({ value, onAfter, onBefore, onChange }) {
-  const after = value?.after ?? null;
+  const after = value?.after ?? null; // TODO: make sure that the date format is %Y-%m-%d %H:%M:%S
   const before = value?.before ?? null;
 
   const emitRange = (nextAfter, nextBefore) => {

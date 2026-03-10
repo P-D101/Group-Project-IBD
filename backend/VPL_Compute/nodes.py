@@ -2,25 +2,51 @@
 import numpy as np
 import time
 import sys
+
 import inspect
+from backend import database
+from backend.interface import SELECTS, AGGREGATES, COMPUTE_TYPES, FILTERS
 
+def get_data_from_db(field, aggregate, compute_type, after=None, before=None):
+    if field not in SELECTS:
+        return {"error": f"Bad Request: selection parameter: {field} not in acceptible selections: {SELECTS.to_list()}"}, 400
 
-def Cloud_Serves_1_Usage(t):
-    return np.array([max(min(0.1 * np.sin(0.1 * t) + 0.4 * np.sin(0.01 * t + 1) + 0.5, 1), 0)])
+    if aggregate not in AGGREGATES:
+        return {"error": f"Bad Request: aggregate parameter: {aggregate} not in acceptible aggregates: {AGGREGATES.to_list()}"}, 400
 
-def Cloud_Serves_2_Usage(t):
-    return np.array([max(min(0.4 * np.sin(0.1 * t) + 0.4 * np.sin(0.01 * t + 2) + 0.4, 1), 0)])
+    if compute_type not in COMPUTE_TYPES and compute_type != "all":
+        return {"error": f"Bad Request: compute_type parameter: {compute_type} not in acceptible compute types: {COMPUTE_TYPES.to_list()}"}, 400    
 
-def Cloud_Serves_3_Usage(t):
-    return np.array([max(min(0.6 * np.sin(0.1 * t) + 0.1 * np.sin(0.01 * t + 3) + 0.6, 1), 0)])
+    where_clauses = []
+    if after:
+        try:
+            where_clauses.append(FILTERS.AFTER.validate_and_process_to_SQL(after,SELECTS(field).map(sum_agg=False)))
+        except Exception as e:
+            return {"error": f"Bad Request: filter after's value not valid, reason: {e}"}, 400
+    if before:
+        try:
+            where_clauses.append(FILTERS.BEFORE.validate_and_process_to_SQL(before,SELECTS(field).map(sum_agg=False)))
+        except Exception as e:
+            return {"error": f"Bad Request: filter before's value not valid, reason: {e}"}, 400
+    if compute_type != "all":
+        where_clauses.append(f"meter_dimension IN {COMPUTE_TYPES(compute_type).map()}")
 
-def get_data(channel_name, t = time.time()):
-    if channel_name == "Cloud_Serves_1:Usage":
-        return Cloud_Serves_1_Usage(t)
-    if channel_name == "Cloud_Serves_2:Usage":
-        return Cloud_Serves_2_Usage(t)
-    if channel_name == "Cloud_Serves_3:Usage":
-        return Cloud_Serves_3_Usage(t)
+    if len(where_clauses) == 0:
+        where_clause = ""
+    else:
+        where_clause = "WHERE " + " AND ".join(where_clauses)
+
+    query = f"""
+    SELECT
+        {AGGREGATES(aggregate).map(field)}
+    FROM gold_standard_usage
+    {where_clause}
+    """
+    print(query)
+    
+    res = database.query(query)[0][0]
+    print(res)
+    return res
 
 ###### End section for testing
 
@@ -40,77 +66,69 @@ class ADD(Node):
     def __init__(self):
         super().__init__()
 
-    def compute(self, args):
-        return sum(args)
+    def compute(self, arg1, arg2):
+        return arg1 + arg2
 
 class SUBTRACT(Node):
     def __init__(self):
         super().__init__()
 
-    def compute(self, args):
-        return args[0] - sum(args[1:])
+    def compute(self, arg1, arg2):
+        return arg1 - arg2
     
 class MULTIPLY(Node):
     def __init__(self):
         super().__init__()
 
-    def compute(self, args):
-        return np.multiply(*args)
+    def compute(self, arg1, arg2):
+        return arg1 * arg2
     
 class DIVIDE(Node):
     def __init__(self):
         super().__init__()
 
-    def compute(self, args):
-        return np.divide(*args)
+    def compute(self, arg1, arg2):
+        return arg1 / arg2
 
 class GREATER_THAN(Node):
     def __init__(self):
         super().__init__()
 
-    def compute(self, args = [0]):
-        greaterthan = np.array([True for _ in range(len(args[0]))])
-        for i in range(len(args)-1):
-            greaterthan = np.logical_and(greaterthan, args[i+1] - args[i] < 0)
-        return greaterthan
+    def compute(self, arg1, arg2):
+        print(arg1, arg2)
+        return arg1 > arg2
 
 class LESS_THAN(Node):
     def __init__(self):
         super().__init__()
 
-    def compute(self, args = [0]):
-        lessthan = np.array([True for _ in range(len(args[0]))])
-        for i in range(len(args)-1):
-            lessthan = np.logical_and(lessthan, args[i+1] - args[i] > 0)
-        return lessthan
+    def compute(self, arg1, arg2):
+        return arg1 < arg2
 
 class EQUALS(Node):
     def __init__(self):
         super().__init__()
 
-    def compute(self, args = [0]):
-        equal = np.array([True for _ in range(len(args[0]))])
-        for arg in args[1:]:
-            equal = np.logical_and(equal, arg - args[0] == 0)
-        return equal
+    def compute(self, arg1, arg2):
+        return arg1 == arg2
     
 class AND(Node):
     def __init__(self):
         super().__init__()
-    def compute(self, args):
-        return np.logical_and(*args)
-    
+    def compute(self, arg1, arg2):
+        return np.logical_and(arg1, arg2)
+
 class OR(Node):
     def __init__(self):
         super().__init__()
-    def compute(self, args):
-        return np.logical_or(*args)
+    def compute(self, arg1, arg2):
+        return np.logical_or(arg1, arg2)
 
 class TICKET(Node):
     def __init__(self, node_object):
         super().__init__()
-        self.description = node_object["Description"]
-        self.receiver = node_object["Receiver"]
+        self.description = node_object["payload"]["description"]
+        self.receiver = node_object["payload"]["receiver"]
 
     def compute(self, args):
         for val in args[0]:
@@ -122,25 +140,24 @@ class TICKET(Node):
 class INPUT(Node):
     def __init__(self, node_object):
         super().__init__()
-        self.provider = node_object["Input Provider"]
-        self.channel = node_object["Input Channel"]
-        
-        self.field = node_object["Field"]
-        self.aggregate = node_object["Aggregate"]
-        self.type = node_object["Type"]
-        self.date_after = node_object["Date After"]
-        self.date_before = node_object["Date Before"] or None
-    
+        # check if field, aggregate, date_after, date_before are in node_object and if not set to None
+        self.field = node_object["payload"]["field"]
+        self.aggregate = node_object["payload"]["aggregate"]
+        self.type = node_object["payload"]["type"]
+        self.date_after = node_object["payload"]["after"]
+        self.date_before = node_object["payload"]["before"]
 
-    def compute(self, args, t):
-        return get_data(f'{self.provider}:{self.channel}', t)
+    def compute(self):
+        # args will be empty
+        # this will return a value based on the field, aggregate, type, date_after and date_before
+        return get_data_from_db(self.field,self.aggregate,self.type,self.date_after,self.date_before)
 
 class CONSTANT(Node):
     def __init__(self, node_object):
-        self.value = node_object["Value"]
+        self.value = node_object["payload"]["value"]
         super().__init__()
 
-    def compute(self, args):
+    def compute(self):
         return self.value
     
 class OUTPUT(Node):
@@ -194,7 +211,5 @@ def assign_node(type, node):
         return CONSTANT(node)
     elif type == "output":
         return OUTPUT()
-
-
-if __name__ == "__main__":
-    print(get_data("Cloud_Serves_1:Usage"))
+    else:
+        raise Exception(f'Node type {type} not recognized')
