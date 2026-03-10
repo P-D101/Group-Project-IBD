@@ -20,7 +20,7 @@ CORS(
     resources={
         r"/api/*": {
             "origins": "*",
-            "methods": ["GET", "POST", "DELETE", "OPTIONS"],
+            "methods": ["GET", "POST", "DELETE", "OPTIONS", "PUT"],
             "allow_headers": ["Content-Type", "Authorization"],
         }
     },
@@ -31,7 +31,7 @@ CORS(
 def add_cors_headers(response):
     # Explicit CORS headers to avoid 403 from preflight
     response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE, OPTIONS"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE, OPTIONS, PUT"
     response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
     return response
 
@@ -277,9 +277,14 @@ import os
 import uuid
 import json
 
+def is_in_removed(vplID):
+    file_path = os.path.join(os.path.dirname(__file__), "data", "remove-programs", f"policy_{vplID}.json")
+    return os.path.exists(file_path)
 
 @app.route("/api/policies/<vplID>", methods=["GET"])
 def get_vpl_from_id(vplID):
+    if is_in_removed(vplID):
+        return {"error":"VPL has been deleted"}, 404
     # load input file ./programs/policy_{vplID}.json then respond with this file
     file_path = os.path.join(os.path.dirname(__file__), "data", "programs", f"policy_{vplID}.json")
 
@@ -297,6 +302,8 @@ def get_vpl_from_id(vplID):
 
 @app.route("/api/policies/<vplID>/disabled", methods=["GET"])
 def get_vpl_from_id_disabled(vplID):
+    if is_in_removed(vplID):
+        return {"error":"VPL has been deleted"}
     # load input file ./programs/policy_{vplID}.json then respond with this file
     file_path = os.path.join(os.path.dirname(__file__), "data", "disable-programs", f"policy_{vplID}.json")
 
@@ -337,22 +344,26 @@ def get_vpls():
     enabled_dir = os.path.join(os.path.dirname(__file__), "data", "programs")
     disabled_dir = os.path.join(os.path.dirname(__file__), "data", "disable-programs")
     processing_dir = os.path.join(os.path.dirname(__file__), "data", "new-programs")
+    removed_dir = os.path.join(os.path.dirname(__file__),"data","remove-programs")
 
     # check dir exists
-    if not os.path.exists(enabled_dir) and not os.path.exists(disabled_dir):
+    if not os.path.exists(enabled_dir) and not os.path.exists(disabled_dir) and not os.path.exists(processing_dir):
         return {"vpl_ids": []} # if not return empty list
     
     vpl_ids = {}
     get_id = lambda f: f.split("policy_")[1].split(".json")[0]
+    if os.path.exists(removed_dir): # we only want to remove files in "remove-programs" if they're not processing. This is because deleted processing programs just get directly deleted, instead of being copied to remove-programs
+        removed_files = set(os.listdir(removed_dir))
     if os.path.exists(disabled_dir):
-        disabled_files = set(os.listdir(disabled_dir))
+        disabled_files = set(os.listdir(disabled_dir)).difference(removed_files)
         vpl_ids["disabled"] = [get_id(f) for f in disabled_files if f.startswith("policy_") and f.endswith(".json")]
     if os.path.exists(enabled_dir):
-        enabled_files = set(os.listdir(enabled_dir)).difference(disabled_files)
+        enabled_files = set(os.listdir(enabled_dir)).difference(disabled_files).difference(removed_files)
         vpl_ids["enabled"] = [get_id(f) for f in enabled_files if f.startswith("policy_") and f.endswith(".json")]
     if os.path.exists(processing_dir):
         processing_files = os.listdir(processing_dir)
         vpl_ids["processing"] = [get_id(f) for f in processing_files if f.startswith("policy_") and f.endswith(".json")]
+
 
 
     return {"vpl_ids": vpl_ids}
@@ -410,28 +421,32 @@ def save_policy():
 def delete_vpl(vplID):
     # delete the file ./programs/policy_{vplID}.json
     filename = f"policy_{vplID}.json"
-    file_path = os.path.join(os.path.dirname(__file__), "data", "programs", filename)
-    if not os.path.exists(file_path):
+    programs_file_path = os.path.join(os.path.dirname(__file__), "data", "programs", filename)
+    new_programs_file_path = os.path.join(os.path.dirname(__file__), "data", "new-programs", filename)
+    if not os.path.exists(programs_file_path) and not os.path.exists(new_programs_file_path):
         return {"error": "VPL not found"}, 404
     try:
-        # move the file to a deleted folder instead of deleting it permanently, in case of accidental deletion
-        deleted_dir = os.path.join(os.path.dirname(__file__), "data", "remove-programs")
-        os.makedirs(deleted_dir, exist_ok=True)
-        # copy instead of move
-        shutil.copy(file_path, os.path.join(deleted_dir, filename))
+        if os.path.exists(programs_file_path):
+            # move the file to a deleted folder instead of deleting it permanently, in case of accidental deletion
+            deleted_dir = os.path.join(os.path.dirname(__file__), "data", "remove-programs")
+            os.makedirs(deleted_dir, exist_ok=True)
+            # copy instead of move
+            shutil.copy(programs_file_path, os.path.join(deleted_dir, filename))
+        else: # program is only in new-programs, so it can be deleted directly
+            os.remove(new_programs_file_path)
     except Exception as e:
         return {"error": f"Failed to delete VPL: {e}"}, 500
     return {"message": "VPL deleted", "vpl_id": vplID}, 200
 
 @app.route("/api/policies/<vplID>/disable", methods=["POST"])
 def disable_vpl(vplID):
-    # delete the file ./programs/policy_{vplID}.json
+    # disable the file ./programs/policy_{vplID}.json
     filename = f"policy_{vplID}.json"
     file_path = os.path.join(os.path.dirname(__file__), "data", "programs", filename)
     if not os.path.exists(file_path):
         return {"error": "VPL not found"}, 404
     try:
-        # move the file to a deleted folder instead of deleting it permanently, in case of accidental deletion
+        # move the file to a disabled folder instead of deleting it permanently, in case of accidental deletion
         deleted_dir = os.path.join(os.path.dirname(__file__), "data", "disable-programs")
         os.makedirs(deleted_dir, exist_ok=True)
         # copy instead of move
@@ -442,7 +457,7 @@ def disable_vpl(vplID):
 
 @app.route("/api/policies/<vplID>/enable", methods=["POST"])
 def enable_vpl(vplID):
-    # move the file from ./disable-programs/policy_{vplID}.json back to ./programs/policy_{vplID}.json
+    # remove the file from ./disable-programs/policy_{vplID}.json
     filename = f"policy_{vplID}.json"
     file_path = os.path.join(os.path.dirname(__file__), "data", "disable-programs", filename)
     if not os.path.exists(file_path):
@@ -450,7 +465,7 @@ def enable_vpl(vplID):
 
     try:
         # delte the file in the disabled folder
-        # check if it is in programs, if not copy it
+        # check if it is in programs, if not copy it (theoretically it should always be in programs)
         enabled_file_path = os.path.join(os.path.dirname(__file__), "data", "programs", filename)
         if not os.path.exists(enabled_file_path):
             shutil.copy(file_path, enabled_file_path)
@@ -465,15 +480,26 @@ def enable_vpl(vplID):
 def update_vpl(vplID):
     # update the file ./programs/policy_{vplID}.json with the new data from the request body
     filename = f"policy_{vplID}.json"
-    file_path = os.path.join(os.path.dirname(__file__), "data", "programs", filename)
-    if not os.path.exists(file_path):
+    programs_file_path = os.path.join(os.path.dirname(__file__), "data", "programs", filename)
+    new_programs_file_path = os.path.join(os.path.dirname(__file__), "data", "new-programs", filename)
+    if not os.path.exists(programs_file_path) and not os.path.exists(new_programs_file_path):
         return {"error": "VPL not found"}, 404
     new_data = request.get_json()
     if not new_data or 'Nodes' not in new_data: # CHANGED - we have two vpl interpreters, the old one uses 'blocks' and the new one uses 'Nodes', we want to support both for now but validate that at least one is present
         return {"error": "Invalid policy format"}, 400
     try:
-        with open(file_path, "w") as f:
-            json.dump(new_data, f, indent=2)
+        if os.path.exists(new_programs_file_path):
+            with open(new_programs_file_path, "w") as f:
+                json.dump(new_data, f, indent=2)
+        elif os.path.exists(programs_file_path):
+            # Copy old file to remove-programs
+            deleted_dir = os.path.join(os.path.dirname(__file__), "data", "remove-programs")
+            shutil.copy(programs_file_path, os.path.join(deleted_dir, filename))
+
+            # Add new file to new-programs
+            with open(new_programs_file_path, "w") as f:
+                json.dump(new_data, f, indent=2)
+
     except Exception as e:
         return {"error": f"Failed to update VPL: {e}"}, 500
     return {"message": "VPL updated", "vpl_id": vplID}, 200

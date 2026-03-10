@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
-import {
-  addEdge,
-  applyEdgeChanges,
-  applyNodeChanges,
-  MarkerType,
-} from "@xyflow/react";
+import { useNavigate, useParams } from "react-router";
+import { addEdge, applyEdgeChanges, applyNodeChanges, MarkerType } from "@xyflow/react";
 import Header from "../components/PolicyCreator/Header";
 import LeftSidebar from "../components/PolicyCreator/LeftSidebar";
 import CenterCanvas from "../components/PolicyCreator/CenterCanvas";
@@ -20,7 +15,9 @@ import {
 } from "../components/PolicyCreator/vplUtils";
 
 function PolicyCreator() {
-  const VPL_id = useParams().id;
+    const navigate = useNavigate();
+
+    const VPL_id = useParams().id;
 
   const [saveError, setSaveError] = useState("");
   // UI State
@@ -38,21 +35,24 @@ function PolicyCreator() {
     setSelectedTemplate(template);
   };
 
-  // Load policy from API if an ID was given in the page parameters
-  useEffect(() => {
-    async function fetchPolicy() {
-      const response = await fetch(
-        `http://localhost:5000/api/policies/${VPL_id}`,
-      );
-      if (!response.ok) {
-        window.alert(`Policy ID ${VPL_id} could not be found`);
-        return;
-      }
-      const policy = await response.json();
-      setSelectedTemplate(policy);
-    }
-    fetchPolicy();
-  }, []);
+    // Load policy from API if an ID was given in the page parameters
+    useEffect(() => {
+        async function fetchPolicy() {
+            let response = await fetch(`http://localhost:5000/api/policies/${VPL_id}`);
+            if (!response.ok) {
+                response = await fetch(`http://localhost:5000/api/policies/${VPL_id}/processing`);
+                if (!response.ok) {
+                    window.alert(`Policy ID ${VPL_id} could not be found`)
+                    navigate("/policy-editor")
+                    return;
+                }
+            }
+            const policy = await response.json();
+            setSelectedTemplate(policy);
+            setPolicyName(policy["Policy Name"])
+        };
+        if (VPL_id) fetchPolicy();
+    },[])
 
   // When template changes, pre-populate nodes from its vplBlocks
   useEffect(() => {
@@ -435,43 +435,64 @@ function PolicyCreator() {
       return;
     }
 
-    try {
-      const doSave = async (url) => {
-        const response = await fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(policyObject),
-          mode: "cors",
-        });
-        return response;
-      };
-
-      let response = await doSave("http://localhost:5000/api/policies");
-      if (!response.ok && response.status === 403) {
-        response = await doSave("http://localhost:5000/api/policies");
-      }
-
-      if (!response.ok) {
-        let details = "";
         try {
-          const contentType = response.headers.get("content-type") || "";
-          if (contentType.includes("application/json")) {
-            const json = await response.json();
-            details = json?.error || JSON.stringify(json);
-          } else {
-            details = await response.text();
-          }
-        } catch (err) {
-          details = "";
-        }
-        const statusInfo =
-          `HTTP ${response.status} ${response.statusText}`.trim();
-        const extra = details || statusInfo;
-        window.alert(
-          `Error: Unable to save policy${extra ? ` (${extra})` : ""}`,
-        );
-        return;
-      }
+            const doSaveExisting = async (url) => {
+                const response = await fetch(url, {
+                    method:"PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(policyObject),
+                    mode: "cors",
+                });
+                return response;
+            }
+            const doSaveNew = async (url) => {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(policyObject),
+                    mode: "cors",
+                });
+                return response;
+            };
+
+            let response = "";
+
+            if (VPL_id) {
+                response = await doSaveExisting(`http://localhost:5000/api/policies/${VPL_id}`);
+                if (!response.ok && response.status === 403) {
+                    response = await doSaveExisting(`http://localhost:5000/api/policies/${VPL_id}`);
+                }
+            } else {
+                response = await doSaveNew(`http://localhost:5000/api/policies`);
+                if (!response.ok && response.status === 403) {
+                    response = await doSaveNew(`http://localhost:5000/api/policies`);
+                }
+            }
+
+
+            if (!response.ok) {
+                let details = "";
+                try {
+                    const contentType = response.headers.get("content-type") || "";
+                    if (contentType.includes("application/json")) {
+                        const json = await response.json();
+                        details = json?.error || JSON.stringify(json);
+                    } else {
+                        details = await response.text();
+                    }
+                } catch (err) {
+                    details = "";
+                }
+                const statusInfo = `HTTP ${response.status} ${response.statusText}`.trim();
+                const extra = details || statusInfo;
+                window.alert(
+                    `Error: Unable to save policy${extra ? ` (${extra})` : ""}`
+                );
+                return;
+            } else if (!VPL_id) {
+                const json = await response.json();
+                navigate(`/policy-editor/${json["policy_id"]}`)
+            }
 
       window.alert("Policy saved succesfully");
     } catch (error) {

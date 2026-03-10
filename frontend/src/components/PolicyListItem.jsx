@@ -24,7 +24,7 @@ function PolicyListItem({ policy, group, triggerReload }) {
 
     const dataSources = (policy) => {
         if (!policy["Data Sources"] || policy["Data Sources"].length == 0) {
-            return <b>"No data sources";</b>
+            return <b>No data sources</b>
         }
         // backwards compatibility for old policies without "Data Sources" field, treat as no data sources
         if (Array.isArray(policy["Data Sources"])) {
@@ -47,8 +47,6 @@ function PolicyListItem({ policy, group, triggerReload }) {
         <li key={policy["id"]} className={"w-fit p-5 "+groupToColour[group]+" rounded-lg shadow-sm"}>
             <h3 className="text-l font-semibold mb-2">{policy["Policy Name"]}</h3>
 
-            {group != "processing"
-            ? (
                 <div>
                     <button
                         onClick={navigateToPolicy}
@@ -56,14 +54,16 @@ function PolicyListItem({ policy, group, triggerReload }) {
                     >
                         Edit
                     </button>
-                    <button
-                        onClick={() => {
-                            toggleStatus();
-                        }}
-                        className="text-white gap-4 px-2 py-1 mr-2 bg-[#84a49f]  rounded-lg hover:bg-[#1b6a5e] hover:shadow-md"
-                    >
-                        {group == "enabled" ? "Disable" : "Enable"}
-                    </button>
+                    {group != "processing" ? (
+                        <button
+                            onClick={() => {
+                                toggleStatus();
+                            }}
+                            className="text-white gap-4 px-2 py-1 mr-2 bg-[#84a49f]  rounded-lg hover:bg-[#1b6a5e] hover:shadow-md"
+                        >
+                            {group == "enabled" ? "Disable" : "Enable"}
+                        </button>
+                    ) : <></> }
                     <button
                         onClick={() => {
                             deletePolicy();
@@ -73,8 +73,6 @@ function PolicyListItem({ policy, group, triggerReload }) {
                         Delete
                     </button>
                 </div>
-            )
-            : (<div>(note: can't edit whilst processing)</div>)}
             <div>
                 {dataSources(policy)}
             </div>
