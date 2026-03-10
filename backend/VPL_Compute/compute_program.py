@@ -1,10 +1,8 @@
-import sys
 import os
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import json
-from nodes import *
-from pass_program import convert_program
+from .nodes import *
+from .pass_program import convert_program
 import time
 
 class OutputError(Exception):

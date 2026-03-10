@@ -1,6 +1,6 @@
 from enum import Enum
 from datetime import datetime, time
-import database
+from . import database
 # TODO: cleanup into multiple different files and into its own folder - create folder structure
 ############
 # Internal #

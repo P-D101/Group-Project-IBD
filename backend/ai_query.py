@@ -13,7 +13,7 @@ import http
 import sys
 import subprocess
 import pandas as pd
-from database import get_db
+from .database import get_db
 from google import genai
 import os
 from pydantic import BaseModel, Field

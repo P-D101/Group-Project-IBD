@@ -1,11 +1,9 @@
-import sys
 import os
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 #### This file is for simulating what would have happened in the last week if a given policy was added
 
 import time
-from compute_program import compute_program
-from pass_program import convert_program
+from .compute_program import compute_program
+from .pass_program import convert_program
 from glob import glob
 import os
 import json
@@ -15,7 +13,6 @@ def sim_policy(program):
     t = time.time() - 1000
     test_program = convert_program(json.loads(program))
 
-    
     '''
     dir_path = os.path.dirname(os.path.realpath(__file__))[:-12]
 

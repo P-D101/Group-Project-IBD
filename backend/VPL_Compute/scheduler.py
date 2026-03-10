@@ -1,5 +1,5 @@
-from compute_program import compute_program
-from pass_program import convert_program
+from .compute_program import compute_program
+from .pass_program import convert_program
 import time
 import os
 import json

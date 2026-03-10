@@ -1,10 +1,8 @@
-import sys
 import os
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import json
-from nodes import *
-from graph import Graph
+from .nodes import *
+from .graph import Graph
 
 def convert_program(json_program):
 

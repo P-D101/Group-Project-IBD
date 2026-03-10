@@ -1,17 +1,15 @@
 import shutil
-import sys
 import os
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from VPL_Compute.pass_program import convert_program
-from VPL_Compute.compute_program import compute_program
+from .VPL_Compute.pass_program import convert_program
+from .VPL_Compute.compute_program import compute_program
 from flask import Flask, request, make_response
 from flask_cors import CORS
-from interface import TIMESPAN,SELECTS,GROUPBY,FILTERS, get_data
-from dashboard_data import get_dashboard_data
-from ai_query import get_user_query
+from .interface import TIMESPAN,SELECTS,GROUPBY,FILTERS, get_data
+from .dashboard_data import get_dashboard_data
+from .ai_query import get_user_query
 
-import database
+from . import database
 import pandas as pd
 
 app = Flask(__name__)
@@ -261,7 +259,7 @@ def top_services(provider,timestep):
 ############################################
 #                VPL Policy API            #
 ############################################
-import VPL_Compute.nodes as nodes
+import backend.VPL_Compute.nodes as nodes
 
 @app.route("/api/vpl/node_types", methods=["GET"])
 def get_node_types():
