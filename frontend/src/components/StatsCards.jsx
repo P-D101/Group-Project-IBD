@@ -66,7 +66,7 @@ function StatsCards(){
     return (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="bg-white p-4 rounded shadow-sm">
-                        <ul>
+                        <ul className="flex flex-row gap-8">
                             <li>
                                 <h3 className="font-semibold">Weekly Cost</h3>
                                 <p>{stats.weekly_cost}</p>
@@ -79,15 +79,16 @@ function StatsCards(){
                     </div>
                     <div className="bg-white p-4 rounded shadow-sm">
                         <h3 className="font-semibold">Top Service Category Spending</h3>
-                        <ul>
-                        {stats.service_categories.map(([category_name,service_cost]) => {
-                            return <li>
-                                <p>{category_name}</p>
+                        <ul className="flex flex-row gap-8">
+                        {stats.service_categories.slice(0,5).map(([category_name,service_cost]) => {
+                            return <li key = {category_name}>
+                                <p className="font-semibold">{  category_name}</p>
                                 <p>${service_cost.toFixed(2)}</p>
                             </li>
                         })}
                         
                         </ul>
+
                     </div>
                 </div>
     )
