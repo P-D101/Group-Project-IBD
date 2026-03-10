@@ -14,6 +14,7 @@ from google.genai.types import Tool, GenerateContentConfig, UrlContext
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
+import json
  
 
 class JsonTicket(BaseModel):
@@ -30,6 +31,16 @@ class TicketList(BaseModel):
 
 def get_user_query():
     apistr = "" #add api key here for testing
+    # check if config.json exists and has apikey field, if not, print error and return
+    if apistr == "" and os.path.exists("config.json"):
+        # load the config file and get the apikey
+        with open("config.json", "r") as config_file:
+            config = json.load(config_file)
+            if "apikey" in config:
+                apistr = config["apikey"]
+            else:
+                print("Error: apikey field not found in config.json")
+                return jsonify({"error": "API key not found in config file"}), 500
     client = genai.Client(api_key=apistr)
     
     #ml model using isolation forest to detect anomalies

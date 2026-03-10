@@ -43,3 +43,4 @@ backend/data/CloudExpenses.db
 backend/data/CloudExpenses.db-journal
 backend/data/CloudExpensesSmall.db
 backend/data/CloudExpensesSmall.db-journal
+backend/config.json
