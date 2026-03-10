@@ -23,11 +23,9 @@ def get_dashboard_graph():
     FROM gold_standard_usage
     GROUP BY service_name
     ORDER BY total_cost DESC
-    LIMIT 10
+    LIMIT 7
 """
 
-
-    
    
     try:
         df = pd.read_sql_query(query, database.get_db())
@@ -39,6 +37,7 @@ def get_dashboard_graph():
         total_cost = df2['total_cost'].tolist()
     
         response = {'daily_net_cost': daily_net, 'usage_date': usage_date, 'service_name': service_name, 'total_cost': total_cost }
+
         return jsonify(response)
     
     except Exception as e:

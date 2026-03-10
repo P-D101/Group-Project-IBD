@@ -3,7 +3,7 @@ import { Chart } from "chart.js/auto";
 import "chartjs-adapter-date-fns";
 
 function DashboardGraphs(){
-    let [data, setData] = useState({daily_net_cost: [], usage_date:[], business_unit:[], total_cost:[]});
+    let [data, setData] = useState({daily_net_cost: [], usage_date:[], service_name:[], total_cost:[]});
     let [loading, setLoading] = useState(true);
 
     const chartRef1 = useRef(null);
@@ -19,7 +19,6 @@ function DashboardGraphs(){
                 }
     
                 const json_result = await response.json();
-                alert("Backend sent: " + JSON.stringify(data.business_unit));//for debugging
                 setData(json_result);
                 setLoading(false);
             }
@@ -33,7 +32,7 @@ function DashboardGraphs(){
     
     useEffect (() => {
         if (loading || !chartRef1.current || !chartRef2.current) return;
-
+        
         const currentGraph = Chart.getChart(chartRef1.current); 
         const currentGraph2 = Chart.getChart(chartRef2.current); 
         if (currentGraph) {
@@ -71,7 +70,7 @@ function DashboardGraphs(){
             type: "bar",
             options: {responsive: true,maintainAspectRatio: false,},
             data: {
-                labels: data.business_unit,
+                labels: data.service_name,
                 datasets: [{
                         label: "Spending/$",
                         data: data.total_cost,
@@ -98,7 +97,7 @@ function DashboardGraphs(){
 
                         {/*Graph 2 using db data*/}
                         <div className="p-6 pb-20 relative w-full h-96 bg-white rounded shadow-sm">
-                            <h3 className="text-center mt-4">Top 10 Business Unit Spending</h3>
+                            <h3 className="text-center mt-4">Top 7 Service Spending</h3>
                             <canvas ref = {chartRef2}></canvas>
                         </div>
                 </div>
