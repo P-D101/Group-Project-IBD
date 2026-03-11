@@ -9,13 +9,16 @@ from backend.interface import SELECTS, AGGREGATES, COMPUTE_TYPES, FILTERS
 
 def get_data_from_db(field, aggregate, compute_type, after=None, before=None):
     if field not in SELECTS:
-        return {"error": f"Bad Request: selection parameter: {field} not in acceptible selections: {SELECTS.to_list()}"}, 400
+        raise Exception(f"Bad Request: selection parameter: {field} not in acceptible selections: {SELECTS.to_list()}")
+        # return {"error": f"Bad Request: selection parameter: {field} not in acceptible selections: {SELECTS.to_list()}"}, 400
 
     if aggregate not in AGGREGATES:
-        return {"error": f"Bad Request: aggregate parameter: {aggregate} not in acceptible aggregates: {AGGREGATES.to_list()}"}, 400
+        raise Exception(f"Bad Request: aggregate parameter: {aggregate} not in acceptible aggregates: {AGGREGATES.to_list()}")
+        # return {"error": f"Bad Request: aggregate parameter: {aggregate} not in acceptible aggregates: {AGGREGATES.to_list()}"}, 400
 
     if compute_type not in COMPUTE_TYPES and compute_type != "all":
-        return {"error": f"Bad Request: compute_type parameter: {compute_type} not in acceptible compute types: {COMPUTE_TYPES.to_list()}"}, 400    
+        raise Exception(f"Bad Request: compute_type parameter: {compute_type} not in acceptible compute types: {COMPUTE_TYPES.to_list()}")
+        # return {"error": f"Bad Request: compute_type parameter: {compute_type} not in acceptible compute types: {COMPUTE_TYPES.to_list()}"}, 400
 
     where_clauses = []
     if after:
@@ -46,6 +49,8 @@ def get_data_from_db(field, aggregate, compute_type, after=None, before=None):
     
     res = database.query(query)[0][0]
     print(res)
+    if res is None:
+        return 0
     return res
 
 ###### End section for testing
@@ -81,6 +86,7 @@ class MULTIPLY(Node):
         super().__init__()
 
     def compute(self, arg1, arg2):
+        print("mult",arg1,arg2)
         return arg1 * arg2
     
 class DIVIDE(Node):
@@ -95,6 +101,7 @@ class GREATER_THAN(Node):
         super().__init__()
 
     def compute(self, arg1, arg2):
+        print("gt",arg1, arg2)
         return arg1 > arg2
 
 class LESS_THAN(Node):
@@ -126,10 +133,13 @@ class OR(Node):
 class TICKET(Node):
     def __init__(self, node_object):
         super().__init__()
-        self.description = node_object["description"]
+        self.description = ""
+        if "description" in node_object["payload"]:
+            self.description = node_object["payload"]["description"]
         self.receiver = node_object["payload"]["receiver"]
 
     def compute(self, args):
+        print("ticket",args)
         if args:
             print(self.receiver)
             print(self.description)
@@ -142,8 +152,16 @@ class INPUT(Node):
         self.field = node_object["payload"]["field"]
         self.aggregate = node_object["payload"]["aggregate"]
         self.type = node_object["payload"]["type"]
+        # if before or after field does not exist set to None
+
+        self.date_after = None
+        if "after" in node_object["payload"]:
+            self.date_after = node_object["payload"]["after"]
         self.date_after = node_object["payload"]["after"]
-        self.date_before = node_object["payload"]["before"]
+
+        self.date_before = None
+        if "before" in node_object["payload"]:
+            self.date_before = node_object["payload"]["before"]
 
     def compute(self):
         # args will be empty
