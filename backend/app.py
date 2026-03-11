@@ -8,7 +8,7 @@ from flask_cors import CORS
 from .interface import TIMESPAN,SELECTS,GROUPBY,FILTERS, get_data
 from .dashboard_data import get_dashboard_data
 from .dashboard_graph import get_dashboard_graph 
-from .ai_query import get_user_query
+from .ai_query import get_user_query_chat
 from .ai_suggestions import get_user_query
 
 from . import database
@@ -525,7 +525,11 @@ def update_vpl(vplID):
 
 @app.route('/api/query', methods=['POST', 'OPTIONS'])
 def ai_query():
-    return get_user_query()
+    try:
+        return get_user_query_chat()
+    except Exception as e:
+        print(f"get_user_query_chat error: {e}")
+        return {"error": str(e)}, 500
 
 @app.teardown_appcontext
 def on_close(exception):

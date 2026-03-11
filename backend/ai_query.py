@@ -87,7 +87,7 @@ def process_query(user_query):
     return result
 
 
-def get_user_query():
+def get_user_query_chat():
     user_query = "Tell me what the site does" #example query for now
     if request.method == 'OPTIONS':
         return '', 200
