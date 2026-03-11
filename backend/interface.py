@@ -26,10 +26,14 @@ def get_data(field):
     if field not in GROUPBY:
         return f'Bad Request: {field} not in acceptible data fields: {GROUPBY.to_list()}', 400
     
-    res = database.query(f"SELECT DISTINCT {GROUPBY(field).map()} FROM cost_entity;")
+    res = database.query(f"SELECT DISTINCT {GROUPBY(field).map()} FROM gold_standard_usage;")
 
     # each row will just be one element so flatten the list for a nicer format
-    return list(map(lambda x: x[0], res))
+    def round_if_number(x):
+        if isinstance(x[0], float):
+            return round(x[0], 2)
+        return x[0]
+    return list(map(round_if_number, res))
 
 #############
 # Interface #
