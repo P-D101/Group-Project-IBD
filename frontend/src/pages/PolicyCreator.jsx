@@ -42,11 +42,16 @@ function PolicyCreator() {
             return {
               id:index,
               inputConfig: payload,
+              payload,
               ...rest
             };
         });
 
+        console.log(nodesFieldsFixed)
+
         setNodes(nodesFieldsFixed.map(node => createNodeFromBlock(node,node.position)));
+        
+        console.log(nodes)
 
         setEdges(templateEdgesToEdges(backendPolicy.Connections, nodesFieldsFixed));
 

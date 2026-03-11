@@ -73,6 +73,7 @@ export function createNodeFromBlock(block, position) {
       description: block.description,
       value: block.type === "const" ? constValue : undefined,
       inputConfig: block.type === "input" ? block.inputConfig|| {} : undefined,
+      payload: (block.type !== "const" && block.type!=="input") ? block.payload : undefined
     },
   };
 }
