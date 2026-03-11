@@ -9,7 +9,7 @@ from .interface import TIMESPAN,SELECTS,GROUPBY,FILTERS, get_data
 from .dashboard_data import get_dashboard_data
 from .dashboard_graph import get_dashboard_graph 
 from .ai_query import get_user_query
-from .ai_suggestions import get_user_query
+from .ai_suggestions import get_suggestions
 
 from . import database
 import pandas as pd
@@ -64,7 +64,34 @@ def dashboard_graph():
 
 @app.route('/api/suggestions', methods=['GET'])
 def ticket_suggestions():
-    return get_user_query()
+    return get_suggestions()
+
+
+############################################
+#              Tickets API                 #
+############################################
+
+@app.route("/api/tickets", methods=["GET"])
+def list_tickets():
+    tickets = database.get_tickets()
+    return {"tickets": tickets}
+
+@app.route("/api/tickets", methods=["POST", "OPTIONS"])
+def create_ticket():
+    if request.method == "OPTIONS":
+        return "", 200
+    data = request.get_json(silent=True) or {}
+    receiver = data.get("receiver", "")
+    description = data.get("description", "")
+    if not description:
+        return {"error": "description is required"}, 400
+    ticket_id = database.insert_ticket(receiver, description)
+    return {
+        "id": ticket_id,
+        "receiver": receiver,
+        "description": description,
+    }, 201
+
 
 ## Data fields enumerations
 @app.route("/api/data/<field>")

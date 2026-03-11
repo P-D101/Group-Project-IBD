@@ -25,8 +25,7 @@ dist-ssr
 
 # backend
 .venv/
-backend/__pycache__/
-backend/venv/
+*/__pycache__/
 backend/VPL-Compute/__pycache__/
 backend/VPL-Compute/fuzzer.py
 backend/VPL-Compute/graph.py
@@ -44,3 +43,4 @@ backend/data/CloudExpenses.db-journal
 backend/data/CloudExpensesSmall.db
 backend/data/CloudExpensesSmall.db-journal
 backend/config.json
+*.env
