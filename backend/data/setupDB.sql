@@ -1151,3 +1151,17 @@ ON gold_standard_usage (
     application,
     usage_date
 );
+
+--==============================--
+--        TICKETS TABLE         --
+--==============================--
+
+CREATE TABLE IF NOT EXISTS tickets (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    receiver TEXT NOT NULL DEFAULT '',
+    description TEXT NOT NULL DEFAULT '',
+    raised_at DATETIME NOT NULL DEFAULT (DATETIME('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_tickets_raised_at
+ON tickets (raised_at DESC);

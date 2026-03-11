@@ -19,13 +19,16 @@ import os
 from pydantic import BaseModel, Field
 from typing import Optional
 from google.genai.types import Tool, GenerateContentConfig, UrlContext
-
+from dotenv import load_dotenv
 
 class QueryResponse(BaseModel):
     response: str = Field(..., description="The response to the user's query")
     url: Optional[str] = Field(None, description="A URL to a relevant page or resource requested (optional)")
 
-apistr = "" #add api key here for testing
+# Load environment variables and get the GEMINI_API_KEY (alias as apistr for use below)
+load_dotenv()
+apistr = os.environ.get("GEMINI_API_KEY", "")
+
 if apistr != "":
     client = genai.Client(api_key=apistr)
 else:

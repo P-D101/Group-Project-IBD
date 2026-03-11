@@ -133,18 +133,20 @@ class OR(Node):
 class TICKET(Node):
     def __init__(self, node_object):
         super().__init__()
-        self.description = ""
-        if "description" in node_object["payload"]:
-            self.description = node_object["payload"]["description"]
-        self.receiver = node_object["payload"]["receiver"]
+        self.description = node_object.get("description", "")
+        payload = node_object.get("payload", {})
+        self.receiver = payload.get("receiver", "")
 
     def compute(self, args):
         print("ticket",args)
         if args:
-            print(self.receiver)
-            print(self.description)
+            print(f"TICKET raised -> receiver: {self.receiver}, description: {self.description}")
+            try:
+                database.insert_ticket(self.receiver, self.description)
+            except Exception as e:
+                print(f"Failed to persist ticket: {e}")
         return 'Do Not Read Output'
-    
+
 class INPUT(Node):
     def __init__(self, node_object):
         super().__init__()
