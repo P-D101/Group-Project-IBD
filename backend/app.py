@@ -71,6 +71,46 @@ def ticket_suggestions():
 def get_data_enumeration(field):
     return get_data(field)
 
+
+@app.route("/api/data/filtered/<field>", methods=["POST"])
+def get_filtered_data_enumeration(field):
+    if field not in GROUPBY:
+        return {"error": f"Bad Request: {field} not in acceptable data fields: {GROUPBY.to_list()}"}, 400
+
+    target_column = GROUPBY(field).map()
+    filters = request.get_json(silent=True) or {}
+
+    where_clauses = []
+    args = []
+
+    for filter_key, filter_values in filters.items():
+        if filter_key == field:
+            continue
+        if filter_key not in GROUPBY:
+            continue
+
+        mapped_column = GROUPBY(filter_key).map()
+
+        if isinstance(filter_values, list):
+            valid_values = [value for value in filter_values if value is not None and value != ""]
+            if not valid_values:
+                continue
+            placeholders = ",".join(["?"] * len(valid_values))
+            where_clauses.append(f"{mapped_column} IN ({placeholders})")
+            args.extend(valid_values)
+        elif filter_values is not None and filter_values != "":
+            where_clauses.append(f"{mapped_column} = ?")
+            args.append(filter_values)
+
+    where_sql = f"WHERE {' AND '.join(where_clauses)}" if where_clauses else ""
+    query = f"""
+    SELECT DISTINCT {target_column} 
+    FROM cost_entity {where_sql} 
+    ORDER BY {target_column};
+    """
+    rows = database.query(query, args) or []
+    return [row[0] for row in rows if row and row[0] is not None]
+
 @app.route("/api/time_fields")
 def get_time_fields():
     return TIMESPAN.to_list()
@@ -482,6 +522,7 @@ def update_vpl(vplID):
     filename = f"policy_{vplID}.json"
     programs_file_path = os.path.join(os.path.dirname(__file__), "data", "programs", filename)
     new_programs_file_path = os.path.join(os.path.dirname(__file__), "data", "new-programs", filename)
+    print(os.path.exists(programs_file_path), os.path.exists(new_programs_file_path))
     if not os.path.exists(programs_file_path) and not os.path.exists(new_programs_file_path):
         return {"error": "VPL not found"}, 404
     new_data = request.get_json()

@@ -20,8 +20,8 @@ export const INPUT_BLOCK_PRESETS = [
         label: "Daily Cost",
         inputConfig: {
             field: "net_cost",
-            aggregate: "Average",
-            type: "All",
+            aggregate: "average",
+            type: "all",
             after: daysAgo(1)
         },
     },
@@ -29,8 +29,8 @@ export const INPUT_BLOCK_PRESETS = [
         label: "Average Daily Cost (last month)",
         inputConfig: {
             field: "net_cost",
-            aggregate: "Average",
-            type: "All",
+            aggregate: "average",
+            type: "all",
             ...lastMonthRange(),
         },
     },
@@ -38,8 +38,8 @@ export const INPUT_BLOCK_PRESETS = [
         label: "Total Cost (last month)",
         inputConfig: {
             field: "billed_cost",
-            aggregate: "Sum",
-            type: "All",
+            aggregate: "sum",
+            type: "all",
             ...lastMonthRange(),
         },
     },
@@ -47,24 +47,24 @@ export const INPUT_BLOCK_PRESETS = [
         label: "Daily Usage",
         inputConfig: {
             field: "usage_quantity",
-            aggregate: "Average",
-            type: "All",
+            aggregate: "average",
+            type: "all",
         },
     },
     {
         label: "Usage %",
         inputConfig: {
             field: "usage_percent",
-            aggregate: "Average",
-            type: "All",
+            aggregate: "average",
+            type: "all",
         },
     },
     {
         label: "Average Daily Usage (last month)",
         inputConfig: {
             field: "usage_quantity",
-            aggregate: "Average",
-            type: "All",
+            aggregate: "average",
+            type: "all",
             ...lastMonthRange(),
         },
     },
@@ -72,8 +72,8 @@ export const INPUT_BLOCK_PRESETS = [
         label: "Total Usage (last month)",
         inputConfig: {
             field: "usage_quantity",
-            aggregate: "Sum",
-            type: "All",
+            aggregate: "sum",
+            type: "all",
             ...lastMonthRange(),
         },
     },

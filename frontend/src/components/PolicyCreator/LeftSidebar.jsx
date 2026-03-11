@@ -4,7 +4,13 @@ import TemplatesList from "./TemplatesList";
 import DataSourceSelection from "./DataSourceSelection";
 
 
-function LeftSidebar({ templates, selectedTemplate, onTemplateSelect }) {
+function LeftSidebar({
+    templates,
+    selectedTemplate,
+    onTemplateSelect,
+    dataSources,
+    onDataSourcesChange,
+}) {
     const sidebarStyle = {
         display: "flex",
         flexDirection: "column",
@@ -37,7 +43,8 @@ function LeftSidebar({ templates, selectedTemplate, onTemplateSelect }) {
             </div>
             {currPage == "data-source" && (
                 <DataSourceSelection 
-                
+                    dataSources={dataSources}
+                    onDataSourcesChange={onDataSourcesChange}
                 />
             )}
             {currPage == "template-policies" && (

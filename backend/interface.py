@@ -84,14 +84,14 @@ class GROUPBY(MyEnum):
             case GROUPBY.BILLING_ACCOUNT: return 'billing_account_id'
             case GROUPBY.SUB_ACCOUNT: return 'sub_account_id'
             case GROUPBY.SERVICE_CATEGORY: return 'service_category'
+            case GROUPBY.SERVICE_NAME: return 'service_name'
             case GROUPBY.REGION: return 'region_id'
             case GROUPBY.RESOURCE: return 'resource_id'
             case GROUPBY.APPLICATION: return 'application'
             case GROUPBY.BUSINESS_UNIT: return 'business_unit'
 
-
 DATETIME_FORMAT1 = "%Y-%m-%d %H:%M:%S"
-DATETIME_FORMAT2 = "%Y-%m-%dT%H:%M:%S.000Z"
+DATETIME_FORMAT2 = "%Y-%m-%dT%H:%M:%S.%fZ"
 DATE_FORMAT = "%Y-%m-%d"
 def format_time_for_filter(provided_time):
     try:

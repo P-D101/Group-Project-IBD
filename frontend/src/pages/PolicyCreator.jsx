@@ -14,6 +14,32 @@ import {
   templateEdgesToEdges,
 } from "../components/PolicyCreator/vplUtils";
 
+const DATA_SOURCE_FIELDS = [
+  "provider",
+  "billing_account",
+  "sub_account",
+  "service_name",
+  "application",
+  "business_unit",
+];
+
+const EMPTY_DATA_SOURCES = DATA_SOURCE_FIELDS.reduce((acc, key) => {
+  acc[key] = [];
+  return acc;
+}, {});
+
+function normalizeDataSources(rawDataSources) {
+  if (!rawDataSources || Array.isArray(rawDataSources)) {
+    return { ...EMPTY_DATA_SOURCES };
+  }
+
+  return DATA_SOURCE_FIELDS.reduce((acc, key) => {
+    const nextValues = rawDataSources[key];
+    acc[key] = Array.isArray(nextValues) ? nextValues : [];
+    return acc;
+  }, {});
+}
+
 function PolicyCreator() {
     const navigate = useNavigate();
 
@@ -24,6 +50,7 @@ function PolicyCreator() {
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [bottomLibraryExpanded, setBottomLibraryExpanded] = useState(false);
   const [policyName, setPolicyName] = useState("");
+  const [dataSources, setDataSources] = useState({ ...EMPTY_DATA_SOURCES });
 
   // Flowchart state
   const [nodes, setNodes] = useState([]);
@@ -56,6 +83,7 @@ function PolicyCreator() {
         setEdges(templateEdgesToEdges(backendPolicy.Connections, nodesFieldsFixed));
 
         setPolicyName(backendPolicy["Policy Name"]);
+        setDataSources(normalizeDataSources(backendPolicy["Data Sources"]));
     }
     // Load policy from API if an ID was given in the page parameters
     useEffect(() => {
@@ -312,14 +340,7 @@ function PolicyCreator() {
   const handleSave = async () => {
     const policyObject = {
       "Policy Name": policyName,
-      "Data Sources": {
-        provider: [],
-        billing_account: [],
-        sub_account: [],
-        service_name: [],
-        application: [],
-        business_unit: [],
-      },
+      "Data Sources": dataSources,
       Nodes: nodes.map((node) => {
         const {id,inputConfig,value,position, ...rest} = node.data;
         return {
@@ -564,6 +585,8 @@ function PolicyCreator() {
           templates={Templates}
           selectedTemplate={selectedTemplate}
           onTemplateSelect={handleTemplateSelect}
+          dataSources={dataSources}
+          onDataSourcesChange={setDataSources}
         />
 
         <CenterCanvas
