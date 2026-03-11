@@ -35,6 +35,7 @@ def convert_program(json_program):
 # We want to leave the inputs in this case as an empty list so just passing works.
 
             created_node = assign_node(node["type"], node)
+            #print(created_node)
             output_program["nodes"][index_mapping[node["index"]]] = created_node
             if node["index"] in program_graph.in_set:
                 output_program["inputs"][index_mapping[node["index"]]] = [index_mapping[i] for i in program_graph.in_set[node["index"]]]

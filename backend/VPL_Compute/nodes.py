@@ -95,7 +95,6 @@ class GREATER_THAN(Node):
         super().__init__()
 
     def compute(self, arg1, arg2):
-        print(arg1, arg2)
         return arg1 > arg2
 
 class LESS_THAN(Node):
@@ -127,7 +126,7 @@ class OR(Node):
 class TICKET(Node):
     def __init__(self, node_object):
         super().__init__()
-        self.description = node_object["payload"]["description"]
+        self.description = node_object["description"]
         self.receiver = node_object["payload"]["receiver"]
 
     def compute(self, args):

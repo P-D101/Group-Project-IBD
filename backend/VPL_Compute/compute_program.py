@@ -14,10 +14,12 @@ def compute_program(program, t = time.time()):
 ###### The list of output values for each node
     node_values = []
 
+    #print(program)
+
 ###### Run though all the nodes in DAG order
     for node, inputs in zip(program["nodes"], program["inputs"]):
         try:
-            print(node,inputs)
+            #print(node,inputs)
             for input in [node_values[j] for j in inputs]:
                 try:
                     if input == 'Do Not Read Output':
@@ -30,11 +32,13 @@ def compute_program(program, t = time.time()):
             if len(inputs) > 2:
                 raise Exception('Too many inputs')
             node_vals = [node_values[j] for j in inputs]
-            node_values.append(node.compute(*node_vals))
+            computed_value = node.compute(*node_vals)
+            print('\033[94m' + node.__class__.__name__  + ' : ' + f'{computed_value} \033[0m')
+            node_values.append(computed_value)
         except OutputError as e:
             print('\033[91m' + f'Output error with program "{program['name']}":', e, f'in node {node.__class__.__name__} with input {[node_values[i] for i in inputs]}' + '\033[0m')
         except Exception as e:
-            print(inputs)
+            #print(inputs)
             print('\033[91m' + f'Some error with program "{program['name']}":', e, f'in node {node.__class__.__name__} with input {[node_values[i] for i in inputs]}' + '\033[0m')
             break
 
