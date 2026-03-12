@@ -7,7 +7,7 @@ import os
 
 def get_dashboard_data():
     query_var = """
-    SELECT usage_week, SUM(billed_cost) as weekly_total
+    SELECT usage_week, SUM(total_usage_cost) as weekly_total
     FROM gold_standard_usage
     GROUP BY usage_week
     ORDER BY usage_week DESC
@@ -24,7 +24,7 @@ def get_dashboard_data():
             WHEN meter_dimension = 'control-plane' THEN 'Control Plane'
             ELSE "Other"
         END AS service_category,
-        SUM(billed_cost) AS total_cost
+        SUM(total_usage_cost) AS total_cost
         FROM gold_standard_usage
         GROUP BY meter_dimension)
     GROUP BY service_category

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Chart } from "chart.js/auto";
 import "chartjs-adapter-date-fns";
+import { PropagateLoader } from "react-spinners";
 
 function DashboardGraphs(){
     let [data, setData] = useState({daily_net_cost: [], usage_date:[], service_name:[], total_cost:[]});
@@ -82,7 +83,13 @@ function DashboardGraphs(){
             });
         },[loading, data]);
 
-    if (loading) return <p>Loading graph...</p>; 
+    if (loading)
+    return (
+      <div className="flex w-full flex-col items-center justify-center gap-4 text-center">
+        <p className="text-sm font-medium text-gray-600">Loading dashboard graphs...</p>
+        <PropagateLoader color="green" />
+      </div>
+    );
     
 
 

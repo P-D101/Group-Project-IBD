@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 def get_dashboard_graph():
     query = """
     SELECT 
-        SUM(net_cost) AS daily_net_cost, 
+        SUM(total_usage_cost) AS daily_net_cost, 
         usage_date 
     FROM gold_standard_usage 
     WHERE usage_month == '2024-09' 
@@ -19,7 +19,7 @@ def get_dashboard_graph():
 
     query2 ="""
     SELECT service_name, 
-        SUM(billed_cost) AS total_cost
+        SUM(total_usage_cost) AS total_cost
     FROM gold_standard_usage
     GROUP BY service_name
     ORDER BY total_cost DESC

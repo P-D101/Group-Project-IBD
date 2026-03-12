@@ -42,7 +42,8 @@ function AIsuggestions() {
 
   if (loading)
     return (
-      <div className="flex justify-center items-center w-full py-10">
+      <div className="flex w-full flex-col items-center justify-center gap-4 text-center">
+        <p className="text-sm font-medium text-gray-600">Loading Calero AI suggestions...</p>
         <PropagateLoader color="green" />
       </div>
     );

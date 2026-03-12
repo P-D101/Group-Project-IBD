@@ -342,10 +342,18 @@ function PolicyCreator() {
       "Policy Name": policyName,
       "Data Sources": dataSources,
       Nodes: nodes.map((node) => {
-        const {id,inputConfig,value,position, ...rest} = node.data;
+        console.log(node)
+        const { id, inputConfig, value, position, payload, ...rest } = node.data;
+        const nextPayload =
+          node.data.type === "input"
+            ? inputConfig ?? payload ?? {}
+            : node.data.type === "const"
+              ? { value: value }
+              : payload ?? {};
+
         return {
           index: node.data.id,
-          payload: node.data.type === "input" ? inputConfig : (node.data.type === "const" ? {value: value} : {}),
+          payload: nextPayload,
           position: node.position,
           ...rest
         };

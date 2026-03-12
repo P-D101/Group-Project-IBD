@@ -4,7 +4,7 @@ import TableTitle from "./TableTitle";
 import TableFooter from "./TableFooter";
 import TableBody from "./TableBody";
 
-function Table({ headers, rows }) {
+function Table({ headers, rows, loading }) {
     const outerBg = "bg-white";
     const containerBg = "bg-white border-gray-200";
 
@@ -17,8 +17,8 @@ function Table({ headers, rows }) {
 
                 <TableTitle />
 
-                <TableBody headers={headers} rows={rows} />
-
+                <TableBody headers={headers} rows={rows} loading={loading}/>
+                
                 <TableFooter>Showing {rows.length} rows</TableFooter>
             </div>
         </div>

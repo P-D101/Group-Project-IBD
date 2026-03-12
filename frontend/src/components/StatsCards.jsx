@@ -8,6 +8,7 @@ import BaseLayout from "../components/BaseLayout";
 import { useNavigate } from "react-router-dom";
 import React from "react";
 import { set } from "date-fns";
+import { PropagateLoader } from "react-spinners";
 
 function StatsCards(){
     let [stats, setStats] = useState({"weekly_cost":"","last_week_cost":"","perc_change":"","service_categories":[]});
@@ -59,9 +60,14 @@ function StatsCards(){
     useEffect(() => {
         getStats();
     }, []);
-    
-    if (loading) return <p>Loading stats...</p>; 
 
+    if (loading)
+    return (
+      <div className="flex w-full flex-col items-center justify-center gap-4 text-center">
+        <p className="text-sm font-medium text-gray-600">Loading Overview Statistics...</p>
+        <PropagateLoader color="green" />
+      </div>
+    );
 
     return (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -69,11 +75,11 @@ function StatsCards(){
                         <ul className="flex flex-row gap-8">
                             <li>
                                 <h3 className="font-semibold">Weekly Cost</h3>
-                                <p>{stats.weekly_cost}</p>
+                                <p>${stats.weekly_cost}</p>
                             </li>
                             <li>
                                 <h3 className="font-semibold">Last Weekly Cost</h3>
-                                <p>{stats.last_week_cost}  ({stats.perc_change}%)</p>
+                                <p>${stats.last_week_cost}  ({stats.perc_change}%)</p>
                             </li>
                         </ul>
                     </div>

@@ -61,6 +61,16 @@ export function createNodeFromBlock(block, position) {
       constValue = parseFloat(block.label);
     }
   }
+
+  const inputConfig =
+    block.type === "input" ? block.inputConfig ?? block.payload ?? {} : undefined;
+  const payload =
+    block.type === "const"
+      ? block.payload ?? (block.value !== undefined ? { value: constValue } : undefined)
+      : block.type === "input"
+        ? inputConfig
+        : block.payload;
+
   return {
     id,
     type: vplToFlowType(block.type),
@@ -72,8 +82,8 @@ export function createNodeFromBlock(block, position) {
       label: block.label,
       description: block.description,
       value: block.type === "const" ? constValue : undefined,
-      inputConfig: block.type === "input" ? block.inputConfig|| {} : undefined,
-      payload: (block.type !== "const" && block.type!=="input") ? block.payload : undefined
+      inputConfig,
+      payload,
     },
   };
 }
