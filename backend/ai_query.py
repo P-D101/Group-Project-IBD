@@ -27,7 +27,7 @@ class QueryResponse(BaseModel):
 
 # Load environment variables and get the GEMINI_API_KEY (alias as apistr for use below)
 load_dotenv()
-apistr = "AIzaSyC4LVdcuoyM3ZzyB9NLC8vGsET5WTkt1l4"
+apistr = os.environ.get("GEMINI_API_KEY", "")
 
 if apistr != "":
     client = genai.Client(api_key=apistr)

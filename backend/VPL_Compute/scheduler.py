@@ -77,4 +77,4 @@ if __name__ == "__main__":
 
         print('\033[96m' + ' End Execute '.center(110, '-') + '\033[0m\n')
 
-        time.sleep(10)
+        time.sleep(15*60)
