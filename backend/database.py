@@ -63,7 +63,7 @@ def insert_ticket(receiver, description):
 def get_tickets(limit=50):
     ensure_tickets_table()
     rows = query(
-        "SELECT id, receiver, description, raised_at FROM tickets ORDER BY raised_at DESC LIMIT ?",
+        "SELECT id, receiver, description, raised_at FROM tickets GROUP BY description ORDER BY raised_at DESC LIMIT ?",
         [limit],
     )
     if not rows:
