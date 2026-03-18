@@ -1,0 +1,118 @@
+{
+  "Policy Name": "AWS Lambda Usage Spike",
+  "Data Sources": {
+    "provider": [],
+    "billing_account": [],
+    "sub_account": [],
+    "service_name": [
+      "AWS Lambda"
+    ],
+    "application": [],
+    "business_unit": []
+  },
+  "Nodes": [
+    {
+      "index": "0",
+      "payload": {
+        "field": "net_cost",
+        "aggregate": "average",
+        "type": "all",
+        "after": "2026-03-11T13:51:28.606Z"
+      },
+      "position": {
+        "x": 171.20001220703125,
+        "y": 111.30000305175781
+      },
+      "type": "input",
+      "label": "Daily Cost"
+    },
+    {
+      "index": "1",
+      "payload": {
+        "field": "net_cost",
+        "aggregate": "average",
+        "type": "all",
+        "after": "2026-02-10T13:51:28.607Z",
+        "before": "2026-03-12T13:51:28.607Z"
+      },
+      "position": {
+        "x": 357.94979189647205,
+        "y": 61.42787347849438
+      },
+      "type": "input",
+      "label": "Average Daily Cost (last month)"
+    },
+    {
+      "index": "2",
+      "payload": {},
+      "position": {
+        "x": 440.2369845294535,
+        "y": 365.13697079654344
+      },
+      "type": "multiply",
+      "label": "Multiply"
+    },
+    {
+      "index": "3",
+      "payload": {
+        "value": 2
+      },
+      "position": {
+        "x": 663.1964964292739,
+        "y": 165.83846832282657
+      },
+      "type": "const",
+      "label": "2"
+    },
+    {
+      "index": "4",
+      "payload": {},
+      "position": {
+        "x": 304.90436992058994,
+        "y": 550.3816691789659
+      },
+      "type": "gt",
+      "label": "Greater Than (>)"
+    },
+    {
+      "index": "5",
+      "payload": {
+        "receiver": "techguy@calero.com"
+      },
+      "position": {
+        "x": 303.47834420322584,
+        "y": 784.2498868266847
+      },
+      "type": "ticket",
+      "label": "Create Ticket",
+      "description": "The daily cost has exceeded twice that of the average daily cost over the last month - look into why."
+    }
+  ],
+  "Connections": [
+    [
+      "1",
+      "2",
+      "arg-0"
+    ],
+    [
+      "3",
+      "2",
+      "arg-1"
+    ],
+    [
+      "0",
+      "4",
+      "arg-0"
+    ],
+    [
+      "2",
+      "4",
+      "arg-1"
+    ],
+    [
+      "4",
+      "5",
+      "arg-0"
+    ]
+  ]
+}

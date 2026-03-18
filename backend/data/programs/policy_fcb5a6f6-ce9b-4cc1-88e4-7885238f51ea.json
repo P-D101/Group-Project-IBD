@@ -1,0 +1,79 @@
+{
+  "Policy Name": "Oracle Compute Underutilisation Notification",
+  "Data Sources": {
+    "provider": [
+      "Oracle"
+    ],
+    "billing_account": [],
+    "sub_account": [],
+    "service_name": [
+      "COMPUTE"
+    ],
+    "application": [],
+    "business_unit": []
+  },
+  "Nodes": [
+    {
+      "index": "7",
+      "position": {
+        "x": 286.70001220703125,
+        "y": -2.1749935150146484
+      },
+      "payload": {
+        "field": "net_cost",
+        "aggregate": "average",
+        "type": "all",
+        "after": "2026-03-11T13:33:22.558Z"
+      },
+      "type": "input",
+      "label": "Custom Input"
+    },
+    {
+      "index": "8",
+      "payload": {
+        "value": 10
+      },
+      "position": {
+        "x": 450.21396540435927,
+        "y": 29.860249758586434
+      },
+      "type": "const",
+      "label": "Constant"
+    },
+    {
+      "index": "9",
+      "position": {
+        "x": 363.44012070914016,
+        "y": 222.1170245833016
+      },
+      "type": "eq",
+      "label": "Equals (=)"
+    },
+    {
+      "index": "11",
+      "position": {
+        "x": 350.31542855477994,
+        "y": 350.4750304659236
+      },
+      "type": "ticket",
+      "label": "Create Ticket"
+    }
+  ],
+  "Connections": [
+    [
+      "7",
+      "9",
+      "arg-0"
+    ],
+    [
+      "8",
+      "9",
+      "arg-1"
+    ],
+    [
+      "9",
+      "11",
+      "arg-0"
+    ]
+  ]
+}

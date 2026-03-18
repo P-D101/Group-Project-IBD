@@ -1,0 +1,347 @@
+{
+  "Policy Name": "Enterprise Multi-Signal Cost Guardrail (Showcase)",
+  "Data Sources": {
+    "provider": [
+      "AWS"
+    ],
+    "billing_account": [],
+    "sub_account": [],
+    "service_name": [
+      "AWS Lambda",
+      "Amazon EC2",
+      "Amazon S3"
+    ],
+    "application": [],
+    "business_unit": []
+  },
+  "Nodes": [
+    {
+      "index": "0",
+      "payload": {
+        "after": "2026-03-05T00:00:00.000Z",
+        "aggregate": "average",
+        "before": "2026-03-12T00:00:00.000Z",
+        "field": "net_cost",
+        "type": "all"
+      },
+      "position": {
+        "x": -33.79052633082307,
+        "y": 211.39939062430585
+      },
+      "type": "input",
+      "label": "Current 7-Day Avg Cost"
+    },
+    {
+      "index": "1",
+      "payload": {
+        "after": "2026-02-10T00:00:00.000Z",
+        "aggregate": "average",
+        "before": "2026-03-12T00:00:00.000Z",
+        "field": "net_cost",
+        "type": "all"
+      },
+      "position": {
+        "x": 143.99142857142857,
+        "y": 97.77285714285713
+      },
+      "type": "input",
+      "label": "30-Day Avg Cost Baseline"
+    },
+    {
+      "index": "2",
+      "payload": {
+        "after": "2026-02-10T00:00:00.000Z",
+        "aggregate": "max",
+        "before": "2026-03-12T00:00:00.000Z",
+        "field": "net_cost",
+        "type": "all"
+      },
+      "position": {
+        "x": 461.91857142857145,
+        "y": 0.7057142857142793
+      },
+      "type": "input",
+      "label": "30-Day Max Daily Cost"
+    },
+    {
+      "index": "3",
+      "payload": {
+        "after": "2026-02-10T00:00:00.000Z",
+        "aggregate": "variance",
+        "before": "2026-03-12T00:00:00.000Z",
+        "field": "net_cost",
+        "type": "all"
+      },
+      "position": {
+        "x": 779.8457142857143,
+        "y": 151.0914285714286
+      },
+      "type": "input",
+      "label": "30-Day Cost Variance"
+    },
+    {
+      "index": "4",
+      "payload": {
+        "value": 1.5
+      },
+      "position": {
+        "x": 320.35285714285715,
+        "y": 207.6957142857143
+      },
+      "type": "const",
+      "label": "1.5"
+    },
+    {
+      "index": "5",
+      "payload": {
+        "value": 0.9
+      },
+      "position": {
+        "x": 619.14,
+        "y": 110.62857142857138
+      },
+      "type": "const",
+      "label": "0.9"
+    },
+    {
+      "index": "6",
+      "payload": {
+        "value": 1200
+      },
+      "position": {
+        "x": 950.7385714285715,
+        "y": 267.85
+      },
+      "type": "const",
+      "label": "1200"
+    },
+    {
+      "index": "7",
+      "payload": {},
+      "position": {
+        "x": 230.12142857142857,
+        "y": 326.3285714285714
+      },
+      "type": "multiply",
+      "label": "Multiply"
+    },
+    {
+      "index": "8",
+      "payload": {},
+      "position": {
+        "x": 523.4399999999999,
+        "y": 324.96142857142854
+      },
+      "type": "multiply",
+      "label": "Multiply"
+    },
+    {
+      "index": "9",
+      "payload": {},
+      "position": {
+        "x": 11.841428571428551,
+        "y": 506.8357142857143
+      },
+      "type": "gt",
+      "label": "Greater Than (>)"
+    },
+    {
+      "index": "10",
+      "payload": {},
+      "position": {
+        "x": 309.2614285714286,
+        "y": 500
+      },
+      "type": "gt",
+      "label": "Greater Than (>)"
+    },
+    {
+      "index": "11",
+      "payload": {},
+      "position": {
+        "x": 847.2985714285714,
+        "y": 391.99571428571426
+      },
+      "type": "gt",
+      "label": "Greater Than (>)"
+    },
+    {
+      "index": "12",
+      "payload": {},
+      "position": {
+        "x": 176.95714285714286,
+        "y": 671.8742857142857
+      },
+      "type": "and",
+      "label": "AND"
+    },
+    {
+      "index": "13",
+      "payload": {},
+      "position": {
+        "x": 310.8271428571428,
+        "y": 845.5014285714286
+      },
+      "type": "and",
+      "label": "AND"
+    },
+    {
+      "index": "14",
+      "payload": {
+        "after": "2026-03-01T00:00:00.000Z",
+        "aggregate": "sum",
+        "before": "2026-03-12T00:00:00.000Z",
+        "field": "net_cost",
+        "type": "all"
+      },
+      "position": {
+        "x": 804.9614285714285,
+        "y": 543.7485714285714
+      },
+      "type": "input",
+      "label": "Month-to-Date Net Cost"
+    },
+    {
+      "index": "15",
+      "payload": {
+        "value": 25000
+      },
+      "position": {
+        "x": 974.5314285714285,
+        "y": 680.462857142857
+      },
+      "type": "const",
+      "label": "25000"
+    },
+    {
+      "index": "16",
+      "payload": {},
+      "position": {
+        "x": 889.0628571428571,
+        "y": 797.6514285714286
+      },
+      "type": "gt",
+      "label": "Greater Than (>)"
+    },
+    {
+      "index": "17",
+      "payload": {},
+      "position": {
+        "x": 540.0442857142857,
+        "y": 966.3614285714285
+      },
+      "type": "or",
+      "label": "OR"
+    },
+    {
+      "index": "18",
+      "payload": {
+        "receiver": "finops-oncall@calero.com"
+      },
+      "position": {
+        "x": 542.7785714285715,
+        "y": 1106.7914285714287
+      },
+      "type": "ticket",
+      "label": "Create Ticket",
+      "description": "Cost guardrail triggered. The policy detected either a statistically significant spend anomaly (spike + near-peak + high variance) or a month-to-date budget breach. Investigate workload shifts, deployment changes, and pricing/commitment opportunities."
+    }
+  ],
+  "Connections": [
+    [
+      "1",
+      "7",
+      "arg-0"
+    ],
+    [
+      "4",
+      "7",
+      "arg-1"
+    ],
+    [
+      "2",
+      "8",
+      "arg-0"
+    ],
+    [
+      "5",
+      "8",
+      "arg-1"
+    ],
+    [
+      "0",
+      "9",
+      "arg-0"
+    ],
+    [
+      "7",
+      "9",
+      "arg-1"
+    ],
+    [
+      "0",
+      "10",
+      "arg-0"
+    ],
+    [
+      "8",
+      "10",
+      "arg-1"
+    ],
+    [
+      "3",
+      "11",
+      "arg-0"
+    ],
+    [
+      "6",
+      "11",
+      "arg-1"
+    ],
+    [
+      "9",
+      "12",
+      "arg-0"
+    ],
+    [
+      "10",
+      "12",
+      "arg-1"
+    ],
+    [
+      "12",
+      "13",
+      "arg-0"
+    ],
+    [
+      "11",
+      "13",
+      "arg-1"
+    ],
+    [
+      "14",
+      "16",
+      "arg-0"
+    ],
+    [
+      "15",
+      "16",
+      "arg-1"
+    ],
+    [
+      "13",
+      "17",
+      "arg-0"
+    ],
+    [
+      "16",
+      "17",
+      "arg-1"
+    ],
+    [
+      "17",
+      "18",
+      "arg-0"
+    ]
+  ]
+}

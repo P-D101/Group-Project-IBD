@@ -1,0 +1,78 @@
+{
+  "Policy Name": "Extreme Variance Anomoly in Compute Costs",
+  "Data Sources": {
+    "provider": [],
+    "billing_account": [],
+    "sub_account": [],
+    "service_name": [],
+    "application": [],
+    "business_unit": []
+  },
+  "Nodes": [
+    {
+      "index": "3",
+      "position": {
+        "x": 287.6886967301222,
+        "y": 178.3832116293819
+      },
+      "payload": {
+        "field": "net_cost",
+        "aggregate": "average",
+        "type": "all",
+        "after": "2026-03-11T13:33:22.558Z"
+      },
+      "type": "input",
+      "label": "Daily Cost"
+    },
+    {
+      "index": "4",
+      "position": {
+        "x": 403.2122747705007,
+        "y": 419.05566152515644
+      },
+      "type": "lt",
+      "label": "Less Than (<)"
+    },
+    {
+      "index": "5",
+      "payload": {
+        "value": 10
+      },
+      "position": {
+        "x": 642.6207331339374,
+        "y": 259.4500226161986
+      },
+      "type": "const",
+      "label": "Constant"
+    },
+    {
+      "index": "6",
+      "payload": {
+        "receiver": "d"
+      },
+      "position": {
+        "x": 413.0341602418211,
+        "y": 678.8138304192933
+      },
+      "type": "ticket",
+      "label": "Create Ticket"
+    }
+  ],
+  "Connections": [
+    [
+      "3",
+      "4",
+      "arg-0"
+    ],
+    [
+      "5",
+      "4",
+      "arg-1"
+    ],
+    [
+      "4",
+      "6",
+      "arg-0"
+    ]
+  ]
+}

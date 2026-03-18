@@ -1,0 +1,79 @@
+{
+  "Policy Name": "Microsoft fabric control plane cost variance monitoring",
+  "Data Sources": {
+    "provider": [],
+    "billing_account": [],
+    "sub_account": [],
+    "service_name": [
+      "Microsoft.Fabric"
+    ],
+    "application": [],
+    "business_unit": []
+  },
+  "Nodes": [
+    {
+      "index": "23",
+      "position": {
+        "x": -289.937106918239,
+        "y": -70.33333333333334
+      },
+      "payload": {
+        "field": "net_cost",
+        "aggregate": "average",
+        "type": "all",
+        "after": "2026-03-11T13:33:22.558Z"
+      },
+      "type": "input",
+      "label": "Average Daily Cost (last month)"
+    },
+    {
+      "index": "26",
+      "payload": {
+        "value": 10
+      },
+      "position": {
+        "x": -490.53767110784344,
+        "y": -26.80180713917282
+      },
+      "type": "const"
+    },
+    {
+      "index": "0",
+      "position": {
+        "x": -364.4820354588391,
+        "y": 141.52664737948498
+      },
+      "type": "eq",
+      "label": "Equals (=)"
+    },
+    {
+      "index": "1",
+      "payload": {
+        "receiver": "a@b.com"
+      },
+      "position": {
+        "x": -338.4503192613307,
+        "y": 314.730398576624
+      },
+      "type": "ticket",
+      "label": "Create Ticket"
+    }
+  ],
+  "Connections": [
+    [
+      "26",
+      "0",
+      "arg-0"
+    ],
+    [
+      "23",
+      "0",
+      "arg-1"
+    ],
+    [
+      "0",
+      "1",
+      "arg-0"
+    ]
+  ]
+}

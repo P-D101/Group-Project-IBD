@@ -31,10 +31,10 @@ backend/VPL-Compute/fuzzer.py
 backend/VPL-Compute/graph.py
 backend/query_tester.ipynb
 backend/venv
-backend/data/programs/
-backend/data/disable-programs/*.json
-backend/data/new-programs/*.json
-backend/data/remove-programs/*.json
+# backend/data/programs/
+# backend/data/disable-programs/*.json
+# backend/data/new-programs/*.json
+# backend/data/remove-programs/*.json
 
 
 # database

@@ -1,0 +1,77 @@
+{
+  "Policy Name": "Event Instance Scaling from utilisation",
+  "Data Sources": {
+    "provider": [
+      "AWS"
+    ],
+    "billing_account": [],
+    "sub_account": [],
+    "service_name": [],
+    "application": [],
+    "business_unit": []
+  },
+  "Nodes": [
+    {
+      "index": "13",
+      "position": {
+        "x": -89.31611808041424,
+        "y": 241.8877771892776
+      },
+      "payload": {
+        "field": "net_cost",
+        "aggregate": "average",
+        "type": "all",
+        "after": "2026-03-11T13:33:22.558Z"
+      },
+      "type": "input",
+      "label": "Average Daily Cost (last month)"
+    },
+    {
+      "index": "14",
+      "position": {
+        "x": -153.91342966450878,
+        "y": 491.99531691231033
+      },
+      "type": "eq",
+      "label": "Equals (=)"
+    },
+    {
+      "index": "15",
+      "payload": {
+        "value": 10
+      },
+      "position": {
+        "x": -284.764394155367,
+        "y": 376.051424325474
+      },
+      "type": "const",
+      "label": "Constant"
+    },
+    {
+      "index": "17",
+      "position": {
+        "x": -50.3481849704283,
+        "y": 625.4883154702991
+      },
+      "type": "ticket",
+      "label": "Create Ticket"
+    }
+  ],
+  "Connections": [
+    [
+      "15",
+      "14",
+      "arg-0"
+    ],
+    [
+      "13",
+      "14",
+      "arg-1"
+    ],
+    [
+      "14",
+      "17",
+      "arg-0"
+    ]
+  ]
+}

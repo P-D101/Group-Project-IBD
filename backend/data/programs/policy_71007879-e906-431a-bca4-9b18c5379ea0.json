@@ -1,0 +1,121 @@
+{
+  "Policy Name": "Large daily cost alert",
+  "Data Sources": {
+    "provider": [
+      "AWS",
+      "Google Cloud",
+      "Microsoft",
+      "Oracle"
+    ],
+    "billing_account": [],
+    "sub_account": [],
+    "service_name": [],
+    "application": [],
+    "business_unit": []
+  },
+  "Nodes": [
+    {
+      "index": "2",
+      "payload": {},
+      "position": {
+        "x": 456.5666888442409,
+        "y": 510.79120299428615
+      },
+      "type": "gt",
+      "label": "Greater Than (>)"
+    },
+    {
+      "index": "4",
+      "payload": {},
+      "position": {
+        "x": 542.6742154563213,
+        "y": 370.72663806171704
+      },
+      "type": "multiply",
+      "label": "Multiply"
+    },
+    {
+      "index": "5",
+      "payload": {
+        "value": 1.2
+      },
+      "position": {
+        "x": 695.8640809283938,
+        "y": 238.4262996994727
+      },
+      "type": "const",
+      "label": "1.2"
+    },
+    {
+      "index": "6",
+      "payload": {
+        "receiver": "test@gmail.com"
+      },
+      "position": {
+        "x": 513.6609833593379,
+        "y": 697.9958961156899
+      },
+      "type": "ticket",
+      "label": "Create Ticket",
+      "description": "LARGE COST TODAY FELLAS"
+    },
+    {
+      "index": "0",
+      "payload": {
+        "field": "net_cost",
+        "aggregate": "average",
+        "type": "all",
+        "after": "2026-03-11T13:33:22.558Z"
+      },
+      "position": {
+        "x": 276.8656931865299,
+        "y": 214.6782000951503
+      },
+      "type": "input",
+      "label": "Daily Cost"
+    },
+    {
+      "index": "1",
+      "payload": {
+        "field": "net_cost",
+        "aggregate": "average",
+        "type": "all",
+        "after": "2026-02-10T13:33:22.558Z",
+        "before": "2026-03-12T13:33:22.558Z"
+      },
+      "position": {
+        "x": 444.8147811410374,
+        "y": 59.83152325766113
+      },
+      "type": "input",
+      "label": "Average Daily Cost (last month)"
+    }
+  ],
+  "Connections": [
+    [
+      "5",
+      "4",
+      "arg-1"
+    ],
+    [
+      "4",
+      "2",
+      "arg-1"
+    ],
+    [
+      "2",
+      "6",
+      "arg-0"
+    ],
+    [
+      "1",
+      "4",
+      "arg-0"
+    ],
+    [
+      "0",
+      "2",
+      "arg-0"
+    ]
+  ]
+}
