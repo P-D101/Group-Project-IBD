@@ -63,10 +63,13 @@ export function createNodeFromBlock(block, position) {
   }
 
   const inputConfig =
-    block.type === "input" ? block.inputConfig ?? block.payload ?? {} : undefined;
+    block.type === "input"
+      ? (block.inputConfig ?? block.payload ?? {})
+      : undefined;
   const payload =
     block.type === "const"
-      ? block.payload ?? (block.value !== undefined ? { value: constValue } : undefined)
+      ? (block.payload ??
+        (block.value !== undefined ? { value: constValue } : undefined))
       : block.type === "input"
         ? inputConfig
         : block.payload;

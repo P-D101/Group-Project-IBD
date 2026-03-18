@@ -173,18 +173,28 @@ def get_anomaly_suggestions():
     return result.suggested_tickets
 
 
+MIN_SUGGESTIONS = 5
+
+
 def get_suggestions():
     """Main entry point for GET /api/suggestions.
     
     If there are policy-raised tickets in the DB, enrich them with AI.
-    Otherwise fall back to anomaly-based suggestions.
+    If there are fewer than MIN_SUGGESTIONS (5) enriched tickets, fill the
+    remainder with anomaly-based (fallback) suggestions.
+    If there are no DB tickets, use only anomaly-based suggestions.
     """
     try:
         raw_tickets = database.get_tickets(limit=25)
 
         if raw_tickets:
             enriched = enrich_tickets_with_ai(raw_tickets)
-            return jsonify({"suggested_tickets": [t.model_dump() for t in enriched]})
+            if len(enriched) >= MIN_SUGGESTIONS:
+                return jsonify({"suggested_tickets": [t.model_dump() for t in enriched]})
+            need = MIN_SUGGESTIONS - len(enriched)
+            fallback = (get_anomaly_suggestions() or [])[:need]
+            combined = enriched + fallback
+            return jsonify({"suggested_tickets": [t.model_dump() for t in combined]})
 
         anomaly_tickets = get_anomaly_suggestions()
         return jsonify({"suggested_tickets": [t.model_dump() for t in anomaly_tickets]})

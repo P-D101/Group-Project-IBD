@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { addEdge, applyEdgeChanges, applyNodeChanges, MarkerType } from "@xyflow/react";
+import {
+  addEdge,
+  applyEdgeChanges,
+  applyNodeChanges,
+  MarkerType,
+} from "@xyflow/react";
 import Header from "../components/PolicyCreator/Header";
 import LeftSidebar from "../components/PolicyCreator/LeftSidebar";
 import CenterCanvas from "../components/PolicyCreator/CenterCanvas";
@@ -41,9 +46,9 @@ function normalizeDataSources(rawDataSources) {
 }
 
 function PolicyCreator() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const VPL_id = useParams().id;
+  const VPL_id = useParams().id;
 
   const [saveError, setSaveError] = useState("");
   // UI State
@@ -62,46 +67,52 @@ function PolicyCreator() {
     setSelectedTemplate(template);
   };
 
-    const loadFromBackendFormat = (backendPolicy) => {
-        // the frontend and backend formats are basically the same except the backend uses "index" where the frontend uses "id"
-        const nodesFieldsFixed = backendPolicy.Nodes.map(node => {
-            const {index,payload,...rest} = node;
-            return {
-              id:index,
-              inputConfig: payload,
-              payload,
-              ...rest
-            };
-        });
+  const loadFromBackendFormat = (backendPolicy) => {
+    // the frontend and backend formats are basically the same except the backend uses "index" where the frontend uses "id"
+    const nodesFieldsFixed = backendPolicy.Nodes.map((node) => {
+      const { index, payload, ...rest } = node;
+      return {
+        id: index,
+        inputConfig: payload,
+        payload,
+        ...rest,
+      };
+    });
 
-        console.log(nodesFieldsFixed)
+    console.log(nodesFieldsFixed);
 
-        setNodes(nodesFieldsFixed.map(node => createNodeFromBlock(node,node.position)));
-        
-        console.log(nodes)
+    setNodes(
+      nodesFieldsFixed.map((node) => createNodeFromBlock(node, node.position)),
+    );
 
-        setEdges(templateEdgesToEdges(backendPolicy.Connections, nodesFieldsFixed));
+    console.log(nodes);
 
-        setPolicyName(backendPolicy["Policy Name"]);
-        setDataSources(normalizeDataSources(backendPolicy["Data Sources"]));
+    setEdges(templateEdgesToEdges(backendPolicy.Connections, nodesFieldsFixed));
+
+    setPolicyName(backendPolicy["Policy Name"]);
+    setDataSources(normalizeDataSources(backendPolicy["Data Sources"]));
+  };
+  // Load policy from API if an ID was given in the page parameters
+  useEffect(() => {
+    async function fetchPolicy() {
+      let response = await fetch(
+        `http://localhost:5000/api/policies/${VPL_id}`,
+      );
+      if (!response.ok) {
+        response = await fetch(
+          `http://localhost:5000/api/policies/${VPL_id}/processing`,
+        );
+        if (!response.ok) {
+          window.alert(`Policy ID ${VPL_id} could not be found`);
+          navigate("/policy-editor");
+          return;
+        }
+      }
+      const policy = await response.json();
+      loadFromBackendFormat(policy);
     }
-    // Load policy from API if an ID was given in the page parameters
-    useEffect(() => {
-        async function fetchPolicy() {
-            let response = await fetch(`http://localhost:5000/api/policies/${VPL_id}`);
-            if (!response.ok) {
-                response = await fetch(`http://localhost:5000/api/policies/${VPL_id}/processing`);
-                if (!response.ok) {
-                    window.alert(`Policy ID ${VPL_id} could not be found`)
-                    navigate("/policy-editor")
-                    return;
-                }
-            }
-            const policy = await response.json();
-            loadFromBackendFormat(policy);
-        };
-        if (VPL_id) fetchPolicy();
-    },[])
+    if (VPL_id) fetchPolicy();
+  }, []);
 
   // When template changes, pre-populate nodes from its vplBlocks
   useEffect(() => {
@@ -323,7 +334,7 @@ function PolicyCreator() {
     selectedNodeId != null
       ? (() => {
           const node = nodes.find((n) => n.id === selectedNodeId);
-          console.log(node)
+          console.log(node);
           if (!node) return null;
           return {
             id: node.data.id,
@@ -342,20 +353,21 @@ function PolicyCreator() {
       "Policy Name": policyName,
       "Data Sources": dataSources,
       Nodes: nodes.map((node) => {
-        console.log(node)
-        const { id, inputConfig, value, position, payload, ...rest } = node.data;
+        console.log(node);
+        const { id, inputConfig, value, position, payload, ...rest } =
+          node.data;
         const nextPayload =
           node.data.type === "input"
-            ? inputConfig ?? payload ?? {}
+            ? (inputConfig ?? payload ?? {})
             : node.data.type === "const"
               ? { value: value }
-              : payload ?? {};
+              : (payload ?? {});
 
         return {
           index: node.data.id,
           payload: nextPayload,
           position: node.position,
-          ...rest
+          ...rest,
         };
       }),
       Connections: edges.map((edge) => [
@@ -481,63 +493,67 @@ function PolicyCreator() {
     }
 
     try {
-        const doSaveExisting = async (url) => {
-            const response = await fetch(url, {
-                method:"PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(policyObject),
-                mode: "cors",
-            });
-            return response;
+      const doSaveExisting = async (url) => {
+        const response = await fetch(url, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(policyObject),
+          mode: "cors",
+        });
+        return response;
+      };
+      const doSaveNew = async (url) => {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(policyObject),
+          mode: "cors",
+        });
+        return response;
+      };
+
+      let response = "";
+
+      if (VPL_id) {
+        response = await doSaveExisting(
+          `http://localhost:5000/api/policies/${VPL_id}`,
+        );
+        if (!response.ok && response.status === 403) {
+          response = await doSaveExisting(
+            `http://localhost:5000/api/policies/${VPL_id}`,
+          );
         }
-        const doSaveNew = async (url) => {
-            const response = await fetch(url, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(policyObject),
-                mode: "cors",
-            });
-            return response;
-        };
-
-        let response = "";
-
-        if (VPL_id) {
-            response = await doSaveExisting(`http://localhost:5000/api/policies/${VPL_id}`);
-            if (!response.ok && response.status === 403) {
-                response = await doSaveExisting(`http://localhost:5000/api/policies/${VPL_id}`);
-            }
-        } else {
-            response = await doSaveNew(`http://localhost:5000/api/policies`);
-            if (!response.ok && response.status === 403) {
-                response = await doSaveNew(`http://localhost:5000/api/policies`);
-            }
+      } else {
+        response = await doSaveNew(`http://localhost:5000/api/policies`);
+        if (!response.ok && response.status === 403) {
+          response = await doSaveNew(`http://localhost:5000/api/policies`);
         }
+      }
 
-
-        if (!response.ok) {
-            let details = "";
-            try {
-                const contentType = response.headers.get("content-type") || "";
-                if (contentType.includes("application/json")) {
-                    const json = await response.json();
-                    details = json?.error || JSON.stringify(json);
-                } else {
-                    details = await response.text();
-                }
-            } catch (err) {
-                details = "";
-            }
-            const statusInfo = `HTTP ${response.status} ${response.statusText}`.trim();
-            const extra = details || statusInfo;
-            window.alert(
-                `Error: Unable to save policy${extra ? ` (${extra})` : ""}`
-            );
-            return;
-        } else if (!VPL_id) {
+      if (!response.ok) {
+        let details = "";
+        try {
+          const contentType = response.headers.get("content-type") || "";
+          if (contentType.includes("application/json")) {
             const json = await response.json();
-            navigate(`/policy-editor/${json["policy_id"]}`)
+            details = json?.error || JSON.stringify(json);
+          } else {
+            details = await response.text();
+          }
+        } catch (err) {
+          details = "";
         }
+        const statusInfo =
+          `HTTP ${response.status} ${response.statusText}`.trim();
+        const extra = details || statusInfo;
+        window.alert(
+          `Error: Unable to save policy${extra ? ` (${extra})` : ""}`,
+        );
+        return;
+      } else if (!VPL_id) {
+        const json = await response.json();
+        navigate(`/policy-editor/${json["policy_id"]}`);
+      }
 
       window.alert("Policy saved succesfully");
     } catch (error) {
